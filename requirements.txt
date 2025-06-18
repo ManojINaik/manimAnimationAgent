@@ -1,0 +1,33 @@
+# Essential dependencies for Gradio interface
+gradio==4.44.0
+python-dotenv>=0.19.0
+requests>=2.25.0
+numpy>=1.21.0
+pandas>=1.3.0
+
+# AI/ML dependencies
+openai>=1.0.0
+litellm>=1.0.0
+tqdm>=4.62.0
+
+# Google Gemini support
+google-generativeai>=0.8.0
+
+# Lightweight video processing dependencies
+pillow>=8.3.0
+
+# Text-to-speech (optional)
+elevenlabs>=1.0.0
+
+# Audio processing (lightweight)
+soundfile>=0.12.0
+
+# Additional utilities
+tiktoken>=0.4.0
+
+# Memory and learning capabilities
+mem0ai>=0.1.0
+
+# Note: Heavy dependencies like manim, moviepy, pydub are excluded
+# to prevent build failures on HF Spaces. The app will gracefully
+# handle missing dependencies and show appropriate messages.

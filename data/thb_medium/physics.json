@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Work-Energy Theorem",
+        "description": "The net work done on an object is equal to the change in its kinetic energy. Mathematically, this is expressed as  W_net = \u0394KE, where W_net is the net work and \u0394KE is the change in kinetic energy.",
+        "difficulty": "Medium",
+        "remark": "This theorem connects force, displacement, and energy. It's crucial for analyzing motion when forces are not constant or when the detailed time evolution is not needed. It's often used to solve problems involving motion and energy transfer.",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "The Law of Conservation of Energy",
+        "description": "In a closed system, the total energy remains constant; it can transform from one form to another (e.g., potential to kinetic) but cannot be created or destroyed. Mathematically, E_total_initial = E_total_final.",
+        "difficulty": "Medium",
+        "remark": "This is a fundamental principle in physics, applicable to a wide range of scenarios from mechanics to thermodynamics. It simplifies problem-solving by focusing on energy balance rather than detailed force interactions.",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "The Law of Universal Gravitation",
+        "description": "Any two objects with mass attract each other with a force that is directly proportional to the product of their masses and inversely proportional to the square of the distance between their centers.  F = G(m\u2081m\u2082)/r\u00b2, where G is the gravitational constant.",
+        "difficulty": "Medium",
+        "remark": "This law describes the gravitational force that governs the motions of celestial bodies and explains why things fall towards the earth. Its mathematical form shows the distance dependence of the gravitational force.",
+        "subfield": "Gravitation"
+    },
+    {
+        "theorem": "Archimedes' Principle",
+        "description": "An object immersed in a fluid experiences an upward buoyant force equal to the weight of the fluid displaced by the object. This principle explains buoyancy and is crucial for understanding why objects float or sink.",
+        "difficulty": "Medium",
+        "remark": "Connects the density of a fluid, the volume of displaced fluid, and the buoyant force. It's used to design boats and determine densities through buoyancy measurements.",
+        "subfield": "Fluid Mechanics"
+    },
+    {
+        "theorem": "The Doppler Effect",
+        "description": "Describes the change in frequency of a wave (sound or light) when the source and the observer are moving relative to each other.  The perceived frequency shifts higher when the source and observer move closer and lower when they move apart. The mathematical formulation differs for sound and light.",
+        "difficulty": "Medium",
+        "remark": "Has applications in areas like radar speed guns, medical imaging, astronomy for finding the recession velocity of galaxies. It's crucial in understanding wave phenomena in a dynamic context.",
+        "subfield": "Wave Physics"
+    },
+    {
+        "theorem": "The Principle of Superposition of Waves",
+        "description": "When two or more waves overlap in a medium, the resultant displacement at any point is the vector sum of the displacements of the individual waves at that point. This principle governs wave interference and diffraction phenomena.",
+        "difficulty": "Medium",
+        "remark": "Explains how waves combine with each other. Its application can create both constructive and destructive interference effects. Essential in understanding the behavior of light and sound, diffraction gratings.",
+        "subfield": "Wave Physics"
+    },
+    {
+        "theorem": "Kepler's laws of planetary motion",
+        "description": "These laws describe the motion of planets around the sun. Kepler's First Law states that planets orbit in elliptical paths with the sun at one of the two foci. Kepler's Second Law states that a line drawn from the sun to a planet sweeps out equal areas in equal times. Kepler's Third Law relates the orbital period of a planet to its average distance from the sun.",
+        "difficulty": "Medium",
+        "remark": "These laws are crucial for understanding the motion of planets and are used in astronomy and space science.",
+        "subfield": "Astrophysics"
+    },
+    {
+        "theorem": "Gauss's law",
+        "description": "Gauss's law states that the electric flux through any closed surface is equal to the charge enclosed by the surface divided by the permittivity of free space.",
+        "difficulty": "Medium",
+        "remark": "This law is fundamental to understanding the relationship between electric fields and charges. It's used in electrostatics and electromagnetism to calculate electric fields around charged objects.",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Stokes' law",
+        "description": "Stokes' Law describes the force of viscous drag on a small spherical object moving through a viscous fluid.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Fluid Mechanics"
+    },
+    {
+        "theorem": "Bernoulli's principle",
+        "description": "Bernoulli's principle is a key concept in fluid dynamics that relates pressure, density, speed and height. Bernoulli's principle states that an increase in the speed of a parcel of fluid occurs simultaneously with a decrease in either the pressure or the height above a datum.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Fluid Mechanics"
+    },
+    {
+        "theorem": "Poiseuille's law",
+        "description": "the rate of laminar flow of an incompressible fluid in a tube.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Fluid Mechanics"
+    },
+    {
+        "theorem": "Stefan-Boltzmann Law of Radiation",
+        "description": "The Stefan–Boltzmann law, also known as Stefan's law, describes the intensity of the thermal radiation emitted by matter in terms of that matter's temperature. It is named for Josef Stefan, who empirically derived the relationship, and Ludwig Boltzmann who derived the law theoretically.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Carnot cycle",
+        "description": "A Carnot cycle is an ideal thermodynamic cycle proposed by French physicist Sadi Carnot in 1824.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Electromagnetic spectrum",
+        "description": "The electromagnetic spectrum is the full range of electromagnetic radiation, organized by frequency or wavelength. The spectrum is divided into separate bands, with different names for the electromagnetic waves within each band.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Ampere's law",
+        "description": "In classical electromagnetism, Ampère's circuital law relates the circulation of a magnetic field around a closed loop to the electric current passing through the loop.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Brewster's law",
+        "description": "Brewster's law is a relationship of light waves at the maximum polarization angle of light.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Brownian motion",
+        "description": "Brownian motion is the seemingly random motion of particles within a liquid or gas that emerges from constant collisions and redirection from impacting the atoms or molecules within the fluid. All matter is in constant motion which results in Brownian motion.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Statistical Physics"
+    },
+    {
+        "theorem": "Hubble's law",
+        "description": "Hubble's law, also known as the Hubble–Lemaître law, is the observation in physical cosmology that galaxies are moving away from Earth at speeds proportional to their distance. In other words, the farther a galaxy is from the Earth, the faster it moves away.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Astrophysics"
+    },
+    {
+        "theorem": "Tsiolkovsky rocket equation",
+        "description": "It is a mathematical equation that describes the motion of a rocket in a vacuum and is used to calculate the velocity, acceleration, and thrust of the rocket.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Hall Effect",
+        "description": "Hall effect is a process in which a transverse electric field is developed in a solid material when the material carrying an electric current is placed in a magnetic field that is perpendicular to the current.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    }
+]

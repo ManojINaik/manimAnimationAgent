@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "Ohm's Law",
+        "description": "The voltage (V) across a conductor is directly proportional to the current (I) flowing through it, given the resistance (R) remains constant. The formula is V = IR.  This law holds for many materials, particularly metals, and components like resistors.",
+        "difficulty": "Easy",
+        "remark": "A cornerstone of circuit analysis. While it is an approximation, it's incredibly useful in solving basic circuit problems. The 'resistance' is a macroscopic property representing the ease of electron movement.",
+        "subfield": "Electricity and Circuits"
+    },
+    {
+        "theorem": "Newton's First Law of Motion",
+        "description": "a body at rest remains at rest, or, if in motion, remains in motion at a constant velocity unless acted on by a net external force; also known as the law of inertia",
+        "difficulty": "Easy",
+        "remark": "This law is fundamental to understanding the relationship between force and motion. It establishes that forces cause acceleration which changes velocity. Applicable for solving motion problems where force and mass are known.",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Newton's Second Law of Motion",
+        "description": "The net force (F_net) acting on an object is equal to the mass (m) of the object multiplied by its acceleration (a). F_net = ma. This law is fundamental to understanding the relationship between force and motion.",
+        "difficulty": "Easy",
+        "remark": "This is one of the most important laws in classical mechanics. It establishes that forces cause acceleration which changes velocity. Applicable for solving motion problems where force and mass are known.",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Hooke's law",
+        "description": "In physics, Hooke's law is an empirical law which states that the force needed to extend or compress a spring by some distance scales linearly with respect to that distance.",
+        "difficulty": "Easy",
+        "remark": "This law is fundamental to understanding the relationship between force and motion. It establishes that forces cause acceleration which changes velocity. Applicable for solving motion problems where force and mass are known.",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Gravitational Force",
+        "description": "In physics, gravity is a fundamental interaction primarily observed as mutual attraction between all things that have mass.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Centrifugal force",
+        "description": "Centrifugal force is a fictitious force in Newtonian mechanics that appears to act on all objects when viewed in a rotating frame of reference. It appears to be directed radially away from the axis of rotation of the frame.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Kinetic energy",
+        "description": "In physics, the kinetic energy of an object is the form of energy that it possesses due to its motion. In classical mechanics, the kinetic energy of a non-rotating object of mass m traveling at a speed v is.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Torque",
+        "description": "Torque is a measure of the force that can cause an object to rotate about an axis. Just as force is what causes an object to accelerate in linear kinematics, torque is what causes an object to acquire angular acceleration. Torque is a vector quantity.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Right-hand rule",
+        "description": "The right hand rule is a hand mnemonic used in physics to identify the direction of axes or parameters that point in three dimensions.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Snell's Law",
+        "description": "Relates the angles of incidence and refraction of light when passing between two different media. It states that n₁sin(θ₁) = n₂sin(θ₂), where n₁ and n₂ are the refractive indices of the two media, and θ₁ and θ₂ are the angles of incidence and refraction, respectively.",
+        "difficulty": "Easy",
+        "remark": "This theorem is fundamental to understanding how light bends when it travels through different materials, essential for studying optics (lenses, prisms). Its application involves using trigonometry.",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "The Ideal Gas Law",
+        "description": "Relates the pressure (P), volume (V), temperature (T), and the number of moles (n) of an ideal gas: PV = nRT, where R is the ideal gas constant. It serves as a good approximation for the behavior of real gases under certain conditions.",
+        "difficulty": "Easy",
+        "remark": "Connects macroscopic gas properties and allows calculations involving gas behavior under varied conditions. Applicable for thermodynamics problems and understanding gas pressure, volume and temperature relationship.",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Pascal's Principle",
+        "description": "Pascal's law is a principle in fluid mechanics given by Blaise Pascal that states that a pressure change at any point in a confined incompressible fluid is transmitted throughout the fluid such that the same change occurs everywhere.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Fluid Mechanics"
+    },
+    {
+        "theorem": "Avogadro's number",
+        "description": "The concept of the mole can be used to convert between mass and number of particles.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Dalton's law of partial pressures",
+        "description": "Dalton's law of partial pressures states that the total pressure of a mixture of gases is the sum of the partial pressures of its components.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "PV diagram",
+        "description": "a graph of pressure vs. volume",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Color wavelengths",
+        "description": "The wavelength of a color is the range of nanometers (nm) at which it appears in the visible light spectrum.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Ultrasound",
+        "description": "Ultrasound refers to sound waves with frequencies higher than the audible range for humans.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Waves and Sound"
+    },
+    {
+        "theorem": "Coulomb's law",
+        "description": "Coulomb's inverse-square law, or simply Coulomb's law, is an experimental law of physics that calculates the amount of force between two electrically charged particles at rest. This electric force is conventionally called the electrostatic force or Coulomb force.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Kirchhoff's voltage law",
+        "description": "The sum of all the voltages around a loop is equal to zero.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Electricity and Circuits"
+    },
+    {
+        "theorem": "Thévenin's theorem",
+        "description": "Thévenin's theorem states that any linear circuit containing several voltage sources and resistors can be simplified to a Thévenin-equivalent circuit with a single voltage source and resistance connected in series with a load.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Electricity and Circuits"
+    }
+]

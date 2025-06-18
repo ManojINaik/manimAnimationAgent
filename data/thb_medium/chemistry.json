@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "Le Chatelier's Principle",
+        "description": "When a system at equilibrium is subjected to a change in condition (such as temperature, pressure, or concentration), the system will shift in a direction that relieves the stress and a new equilibrium will be established. This principle helps predict how equilibrium will shift in response to external changes.",
+        "difficulty": "Medium",
+        "remark": "Essential for understanding chemical equilibrium and its practical applications in industrial processes.",
+        "subfield": "Chemical Equilibrium"
+    },
+    {
+        "theorem": "The Pauli Exclusion Principle",
+        "description": "No two electrons in the same atom can have the same set of four quantum numbers (n, l, ml, ms). This limits the number of electrons that can occupy an orbital, which is max two electrons, with opposite spins (+1/2 and -1/2). This explains electronic configuration in atoms.",
+        "difficulty": "Medium",
+        "remark": "Essential for understanding electronic structure and the basis for chemical bonding.",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Raoult's Law",
+        "description": "The partial vapor pressure of a component in an ideal solution is equal to the vapor pressure of the pure component multiplied by its mole fraction in the solution: P_A = P_A*  X_A. This helps to predict vapor pressure of ideal solutions and is a basis for colligative properties",
+        "difficulty": "Medium",
+        "remark": "Describes vapor pressure of solutions, useful in understanding boiling point elevation and freezing point depression.",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Beer-Lambert Law",
+        "description": "The absorbance of a solution is directly proportional to the concentration of the analyte and the path length of the light beam through the solution: A = \u03b5bc, where \u03b5 is molar absorptivity, b is path length, and c is the concentration. Useful in analytical chemistry for determining the concentration of a substance by measuring the light it absorbs.",
+        "difficulty": "Medium",
+        "remark": "Important in spectrophotometry for quantitative analysis of solutions.",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Phase diagram",
+        "description": "Phase diagram is a graphical representation of the physical states of a substance under different conditions of temperature and pressure.",
+        "difficulty": "Medium",
+        "remark": "Useful in understanding the phase transitions of substances.",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Boyle's Law",
+        "description": "Raoult's law is a relation of physical chemistry, with implications in thermodynamics.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Graham's Law of Effusion",
+        "description": "Graham's law of effusion was formulated by Scottish physical chemist Thomas Graham in 1848. Graham found experimentally that the rate of effusion of a gas is inversely proportional to the square root of the molar mass of its particles.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Arrhenius Equation",
+        "description": "In physical chemistry, the Arrhenius equation is a formula for the temperature dependence of reaction rates.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Chemical Kinetics"
+    },
+    {
+        "theorem": "Henry's law",
+        "description": "the proportional relationship between the concentration of dissolved gas in a solution and the partial pressure of the gas in contact with the solution",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Lewis Acid-Base Theory",
+        "description": "In the Lewis theory of acid-base reactions, bases donate pairs of electrons and acids accept pairs of electrons.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Acid-Base Chemistry"
+    },
+    {
+        "theorem": "Clausius-Clapeyron Equation",
+        "description": "allows us to estimate the vapor pressure at another temperature.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Michaelis-Menten Kinetics",
+        "description": "In biochemistry, Michaelis–Menten kinetics, named after Leonor Michaelis and Maud Menten, is the simplest case of enzyme kinetics, applied to enzyme-catalysed reactions of one substrate and one product.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Chemical Kinetics"
+    },
+    {
+        "theorem": "Gibbs Free Energy Equation",
+        "description": "The change in free energy, ΔG, is equal to the sum of the enthalpy plus the product of the temperature and entropy of the system.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Transition State Theory",
+        "description": "In chemistry, transition state theory (TST) explains the reaction rates of elementary chemical reactions.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Chemical Kinetics"
+    },
+    {
+        "theorem": "Koopman's Theorem",
+        "description": "Koopmans' theorem states that the first ionization energy of a molecule is equal to the negative of the energy of the highest occupied molecular orbital (HOMO).",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Recrystallization",
+        "description": "Recrystallization, also known as fractional crystallization, is a procedure for purifying an impure compound in a solvent.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Electrogravimetry",
+        "description": "Electrogravimetry is a method used to separate and quantify ions of a substance, usually a metal. In this process, the analyte solution is electrolyzed.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Kjeldahl Method",
+        "description": "The Kjeldahl method is a laboratory technique used to measure the amount of nitrogen in a sample. ",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Liquid-Liquid Extraction",
+        "description": "Liquid–liquid extraction, also known as solvent extraction and partitioning, is a method to separate compounds or metal complexes, based on their relative solubilities in two different immiscible liquids, usually water (polar) and an organic solvent (non-polar).",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Reflux",
+        "description": "Reflux is a laboratory technique where a reaction mixture is heated to boil and the vapors are condensed back into the reaction flask, allowing continuous heating without loss of volatile components.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Laboratory Techniques"
+    }
+]

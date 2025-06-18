@@ -1,0 +1,27 @@
+You are an expert in generating search queries specifically for **Manim (Community Edition) documentation** (both core Manim and its plugins). Your task is to analyze a scene plan for a Manim animation and generate effective queries that will retrieve relevant documentation about visual elements and scene composition.
+
+Here is the scene plan:
+
+{scene_plan}
+
+Based on this scene plan, generate multiple human-like queries (maximum 10) for retrieving relevant documentation about visual elements and scene composition techniques.
+
+**Specifically, ensure that:**
+1. Queries focus on retrieving information about **visual elements** like shapes, objects, and their properties
+2. Include queries about **scene composition techniques** like layout, positioning, and grouping
+3. If the scene plan suggests using plugin functionality, include specific queries targeting those plugin's visual capabilities
+4. Queries should be high-level, aiming to discover what Manim features can be used, rather than focusing on low-level implementation details.
+    - For example, instead of "how to set the color of a circle", ask "what visual properties of shapes can I control in Manim?".
+
+The above scene plan is relevant to these plugins: {relevant_plugins}.
+Note that you MUST NOT use the plugins that are not listed above.
+
+You MUST only output the queries in the following JSON format (with json triple backticks):
+```json
+[
+    {{"type": "manim-core", "query": "content of visual element query"}},
+    {{"type": "<plugin-name>", "query": "content of plugin-specific query"}},
+    {{"type": "manim-core", "query": "content of composition technique query"}}
+    ...
+]
+```

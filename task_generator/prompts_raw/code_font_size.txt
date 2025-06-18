@@ -1,0 +1,5 @@
+If there is title text, font size is highly recommended to be 28.
+If there are side labels, font size is highly recommended to be 24.
+If there are formulas, font size is highly recommended to be 24.
+
+However, if the text has more than 10 words, font size should be reduced further and mutiple lines should be used.

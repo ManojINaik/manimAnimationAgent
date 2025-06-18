@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Pythagorean Theorem",
+        "description": "In a right-angled triangle, the square of the length of the hypotenuse (the side opposite the right angle) is equal to the sum of the squares of the lengths of the other two sides. If a and b are the lengths of the legs and c is the length of the hypotenuse, then  a\u00b2 + b\u00b2 = c\u00b2.",
+        "difficulty": "Easy",
+        "remark": "Fundamental theorem in geometry; widely used in various fields.",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Properties of Kites",
+        "description": "A kite is a quadrilateral with two pairs of adjacent, congruent sides. In geometry, kites have several unique properties that distinguish them from other quadrilaterals. Here are some of the key properties of kites:\n\n1. Two pairs of adjacent sides are congruent: In a kite, there are two distinct pairs of adjacent sides that have equal length. This means that if one pair of sides has a length of 'a', the other pair will also have a length of 'a', and if the other pair has a length of 'b', the first pair will also have a length of 'b'.\n\n2. Diagonals are perpendicular: The diagonals of a kite intersect at a 90-degree angle, meaning they are perpendicular to each other.\n\n3. One diagonal is bisected: In a kite, one of the diagonals is bisected by the other diagonal, meaning it is divided into two equal parts. This property is true for the diagonal connecting the vertices between the congruent sides.\n\n4. One pair of opposite angles is congruent: In a kite, the angles between the congruent sides (the angles formed by the two pairs of equal sides) are congruent, meaning they have the same degree measure.\n\n5. Area: The area of a kite can be calculated using the lengths of its diagonals. If 'd1' and 'd2' are the lengths of the diagonals, the area of the kite is given by the formula: Area = (1/2) * d1 * d2.\n\n6. Circumscribed circle: A kite can have a circumscribed circle only if it is a rhombus (all sides are congruent) or a square (all sides and angles are congruent).\n\n7. Inscribed circle: A kite can have an inscribed circle only if it is a square (all sides and angles are congruent).\n\nThese properties make kites an interesting and unique type of quadrilateral in geometry.",
+        "difficulty": "Easy",
+        "remark": "Properties of kites are useful for solving geometry problems involving kites.",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Euler's formula",
+        "description": "Euler's formula is a fundamental equation in complex analysis that establishes a deep connection between trigonometry and complex exponentials. It is named after the Swiss mathematician Leonhard Euler. The formula is given by:\n\ne^(ix) = cos(x) + i*sin(x)\n\nwhere e is the base of the natural logarithm (approximately 2.71828), i is the imaginary unit (i^2 = -1), x is a real number, and cos(x) and sin(x) are the trigonometric functions cosine and sine, respectively.\n\nEuler's formula demonstrates that complex exponentials can be expressed in terms of trigonometric functions, and vice versa. This relationship is particularly useful in various fields of mathematics, physics, and engineering, as it simplifies calculations involving complex numbers and trigonometric functions.\n\nOne of the most famous consequences of Euler's formula is Euler's identity, which is obtained by setting x = \u03c0 in the formula:\n\ne^(i\u03c0) + 1 = 0\n\nEuler's identity is considered one of the most beautiful equations in mathematics, as it combines five fundamental constants (e, i, \u03c0, 1, and 0) in a simple and elegant relationship.",
+        "difficulty": "Easy",
+        "remark": "Euler's formula is widely used in various fields, including engineering, physics, and computer science.",
+        "subfield": "Complex Analysis"
+    },
+    {
+        "theorem": "Laws of Exponents",
+        "description": "The laws of exponents simplify the multiplication and division operations.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Algebra"
+    },
+    {
+        "theorem": "One-to-one function",
+        "description": "a function for which each value of the output is associated with a unique input value",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Functions"
+    },
+    {
+        "theorem": "Inverse function",
+        "description": "For any one-to-one function f(x), the inverse is a function f^(-1)(x) such that f^(-1)(f(x))=x for all x in the domain of f; this also implies that f(f^(-1)(x))=x for all x in the domain of f^(-1)",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Functions"
+    },
+    {
+        "theorem": "Remainder theorem",
+        "description": "The remainder theorem states that when a polynomial p(x) is divided by a linear polynomial (x - a), then the remainder is equal to p(a).",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Algebra"
+    },
+    {
+        "theorem": "Rational Zero Theorem",
+        "description": "The rational root theorem is also known as the rational zero theorem (or) the rational zero test (or) rational test theorem and is used to determine the rational roots of a polynomial function. ",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Algebra"
+    },
+    {
+        "theorem": "Product-to-sum formula",
+        "description": "The product-to-sum formulas are a set of formulas from trigonometric formulas.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Heron's formula",
+        "description": "Heron's formula is a formula that is used to find the area of a triangle when the lengths of all three sides are known.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "De Moivre's Theorem",
+        "description": "Formula used to find the nth power or nth roots of a complex number; states that, for a positive integer n, z^n is found by raising the modulus to the nth power and multiplying the angles by n",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Complex Analysis"
+    },
+    {
+        "theorem": "Cramer's Rule",
+        "description": "a method for solving systems of equations that have the same number of equations as variables using determinants",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Algebra"
+    },
+    {
+        "theorem": "Angle of rotation",
+        "description": "An angle of rotation is the measure of the amount that a figure is rotated about a fixed point called a point of rotation.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Similar Triangles Theorem",
+        "description": "Two triangles are similar if their corresponding angles are equal and their corresponding sides are proportional.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Congruent Triangles Theorem",
+        "description": "Two triangles are congruent if they satisfy any of these criteria: SSS (Side-Side-Side), SAS (Side-Angle-Side), ASA (Angle-Side-Angle), AAS (Angle-Angle-Side), or HL (Hypotenuse-Leg) for right triangles.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Geometric Sequence",
+        "description": "For a geometric sequence with the first term a, common ratio r, and n terms, the sum is: S_n = a * (1 - r^n) / (1 - r) for r != 1",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Sequences and Series"
+    },
+    {
+        "theorem": "Arithmetic Sequence",
+        "description": "For an arithmetic sequence with the first term a, common difference d, and n terms, the sum is: S_n = (n/2) * (2a + (n-1)d)",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Sequences and Series"
+    },
+    {
+        "theorem": "Permutation",
+        "description": "The term permutation refers to a mathematical calculation of the number of ways a particular set can be arranged.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Combinatorics"
+    },
+    {
+        "theorem": "Directrix",
+        "description": "a line perpendicular to the axis of symmetry of a parabola; a line such that the ratio of the distance between the points on the conic and the focus to the distance to the directrix is constant.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Conic Sections"
+    },
+    {
+        "theorem": "Eccentricity",
+        "description": "the eccentricity of a conic section is a non-negative real number that uniquely characterizes its shape.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Conic Sections"
+    }
+]

@@ -1,0 +1,30 @@
+Given a topic and the context, you need to explain the topic by text.
+
+Also generate a Manim script that visually illustrates a key aspect of {topic} without including explanatory text in the animation itself.
+Your text can mention the animation, but it should not be the main focus.
+Context about the topic {topic}: {description}.
+
+The animation should focus on:
+* Illustrating the significant part of the theorem or concept – Use geometric figures, graphs, number lines, or any relevant visualization.
+* Providing an intuitive example – Instead of proving the theorem, show a concrete example or transformation that visually supports understanding.
+* Separately, provide a written explanation of the theorem as text that can be displayed outside the animation.
+
+Ensure that:
+
+* The animation is concise.
+* The Manim code is compatible with the latest version of community manim.
+* The visual elements are clear and enhance understanding.
+
+Please provide the only output as:
+
+1. A text explanation of the theorem.
+2. A complete Manim script that generates the animation. Only give the code.
+
+Output format:
+
+(Text Explanation Output)
+--- (split by ---)
+(Manim Code Output)
+
+Please do not include any other text or headers in your output.
+Only use one --- to split the text explanation and the Manim code.

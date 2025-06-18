@@ -1,0 +1,47 @@
+You are an expert in Manim animations and educational video quality assessment. Your task is to analyze a rendered Manim video and its corresponding audio narration to identify areas for visual and auditory improvement, ensuring alignment with the provided implementation plan and enhancing the video's teaching effectiveness.
+
+Please analyze the provided Manim video and listen to the accompanying audio narration. Conduct a thorough self-reflection focusing on the following aspects:
+
+**1. Visual Presentation and Clarity (Automated VLM Analysis & Expert Human-like Judgment):**
+
+*   **Object Overlap:** Does the video exhibit any visual elements (text, shapes, equations, etc.) overlapping in a way that obscures information or makes the animation difficult to understand? If possible, Detect regions of significant overlap and highlight them in your reflection.
+*   **Out-of-Bounds Objects:** Are any objects positioned partially or entirely outside of the visible frame of the video? Identify and report objects that appear to be clipped or outside the frame boundaries.
+*   **Incorrect Object Positioning:** Based on your understanding of good visual design and the scene's educational purpose, are objects placed in positions that are illogical, distracting, or misaligned with their intended locations or relationships to other elements as described in the implementation plan? Consider:
+    *   **Logical Flow:** Does the spatial arrangement support the intended visual flow and narrative progression of the scene?
+    *   **Alignment and Balance:** Is the scene visually balanced? Are elements aligned in a way that is aesthetically pleasing and contributes to clarity, or does the layout appear haphazard or unbalanced?
+    *   **Proximity and Grouping:** Are related elements positioned close enough to be visually grouped, and are unrelated elements sufficiently separated to avoid visual clutter?
+*   **General Visual Clarity & Effectiveness:** Consider broader aspects of visual communication. Are there any other issues that detract from the video's clarity, impact, or overall effectiveness? This could include:
+    *   **Visual Clutter:** Is the scene too busy or visually overwhelming at any point? Are there too many elements on screen simultaneously?
+    *   **Poor Spacing/Layout:** Is the spacing between elements inconsistent or inefficient, making the scene feel cramped or unbalanced? Are margins and padding used effectively?
+    *   **Ineffective Use of Color:** Are color choices distracting, clashing, or not contributing to the animation's message? Are colors used consistently and purposefully to highlight key information?
+    *   **Pacing Issues (Visual):** Is the visual animation too fast or too slow in certain sections, hindering comprehension? Are visual transitions smooth and well-timed?
+    *   **Animation Clarity:** Are the animations themselves clear and helpful in conveying the intended information? Do animations effectively guide the viewer's eye and focus attention?
+
+**2. Narration Quality:**
+
+*   **Narration Clarity and Pacing:** Is the narration clear, concise, and easy to understand? Is the pacing of the narration appropriate for the visual content and the target audience? Does the narration effectively support the visual explanations?
+*   **Narration Sync with Visuals:** Does the narration effectively synchronize with the on-screen visuals? Use VLM to analyze the video and identify instances where the narration is misaligned with the animations or visual elements it is describing. Report specific timings of misalignment.
+
+**3. Alignment with Implementation Plan:**
+
+*   **Visual Fidelity:** Does the rendered video accurately reflect the visual elements and spatial arrangements described in the provided Manim Implementation Plan? Identify any deviations.
+*   **Animation Fidelity:** Do the animations in the video match the animation methods and sequences outlined in the Implementation Plan? Report any discrepancies.
+
+Manim Implementation Plan:
+{implementation}
+
+Generated Code:
+{generated_code}
+
+Output Format 1:
+If any issues are identified in visual presentation, audio quality, narration, or plan alignment, please provide a detailed reflection on the issues and how to improve the video's visual and auditory quality, narration effectiveness, and code correctness. Then, you must return the updated Python code that directly addresses these issues. The code must be complete and executable.
+
+<reflection>
+[Detailed reflection on visual, auditory, narration, and plan alignment issues and improvement suggestions. Include specific timings for narration/visual sync issues and descriptions of object overlap/out-of-bounds problems if detected by VLM.  Be specific about code changes needed for improvement.]
+</reflection>
+<code>
+[Improved Python Code - Complete and Executable - Directly Addressing Reflection Points]
+</code>
+
+Output Format 2:
+If no issues are found and the video and audio are deemed high quality, visually clear, narratively effective, and fully aligned with the implementation plan, please explicitly only return "<LGTM>" as output.

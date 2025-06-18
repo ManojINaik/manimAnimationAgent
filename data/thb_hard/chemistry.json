@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Henderson-Hasselbalch Equation",
+        "description": "The pH of a buffer solution is equal to the pKa of the weak acid plus the logarithm of the ratio of the concentration of the conjugate base to the concentration of the weak acid: pH = pKa + log([A-]/[HA]). It allows for the calculation of buffer solutions pH and predicting how pH would change with addition of acid or base",
+        "difficulty": "Hard",
+        "remark": "Crucial in understanding buffer solutions and titrations. Used in biochemistry extensively.",
+        "subfield": "Acid-Base Chemistry"
+    },
+    {
+        "theorem": "Bragg's law",
+        "description": "Bragg's law in chemistry describes how X-rays reflect off of a crystal surface.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Crystallography"
+    },
+    {
+        "theorem": "Debye-Scherrer Equation",
+        "description": "The Debye-Scherrer equation is used in chemistry to calculate the size of crystalline nanoparticles. It is based on X-ray diffraction (XRD) measurements.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Crystallography"
+    },
+    {
+        "theorem": "Hückel's Rule",
+        "description": "In organic chemistry, Hückel's rule predicts that a planar ring molecule will have aromatic properties if it has 4n + 2 π-electrons, where n is a non-negative integer.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Organic Chemistry"
+    },
+    {
+        "theorem": "Hard Acid Soft Base Theory",
+        "description": "Hard Acid Soft Base Theory (HSAB): This theory works on the principle that soft acid reacts with the soft base while hard acid reacts with the hard base",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Acid-Base Chemistry"
+    },
+    {
+        "theorem": "Pauli Exclusion Principle",
+        "description": "Pauli's Exclusion Principle states that no two electrons in the same atom can have identical values for all four of their quantum numbers.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Crystal Field Theory",
+        "description": "Crystal field theory (CFT) describes the breaking of orbital degeneracy in transition metal complexes due to the presence of ligands.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Inorganic Chemistry"
+    },
+    {
+        "theorem": "Hohenberg-Kohn theorem",
+        "description": "The first Hohenberg–Kohn theorem states that 'the ground state of any interacting many particle system with a given fixed inter-particle interaction is a unique functional of the electron density n(r).",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Frost–Ebsworth diagram",
+        "description": "A Frost diagram or Frost–Ebsworth diagram is a type of graph used by inorganic chemists in electrochemistry to illustrate the relative stability of a number of different oxidation states of a particular substance. The graph illustrates the free energy vs oxidation state of a chemical species.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Electrochemistry"
+    },
+    {
+        "theorem": "Coulson-Fischer Theorem",
+        "description": "In theoretical chemistry and molecular physics, Coulson–Fischer theory provides a quantum mechanical description of the electronic structure of molecules.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Frank-Condon Principle",
+        "description": "The Franck-Condon Principle describes the intensities of vibronic transitions, or the absorption or emission of a photon.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Spectroscopy"
+    },
+    {
+        "theorem": "Nernst Equation",
+        "description": "The Nernst Equation enables the determination of cell potential under non-standard conditions.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Electrochemistry"
+    },
+    {
+        "theorem": "Slater's Rules",
+        "description": "The general principle behind Slater's Rule is that the actual charge felt by an electron is equal to what you'd expect the charge to be from a certain number of protons, but minus a certain amount of charge from other electrons.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Langmuir Adsorption Isotherm",
+        "description": "A continuous monolayer of adsorbate molecules surrounding a homogeneous solid surface is the conceptual basis for this adsorption model.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Marcus Theory",
+        "description": "Marcus theory is a theory originally developed by Rudolph A. Marcus, starting in 1956, to explain the rates of electron transfer reactions.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Physical Chemistry"
+    },
+    {
+        "theorem": "Eyring Equation",
+        "description": "The Eyring equation is an equation used in chemical kinetics to describe changes in the rate of a chemical reaction against temperature.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Chemical Kinetics"
+    },
+    {
+        "theorem": "Woodward-Hoffmann Rules",
+        "description": "Robert Burns Woodward and Roald Hoffmann devised these set of rules to explain the stereochemistry of pericyclic reactions based on the orbital symmetry.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Organic Chemistry"
+    },
+    {
+        "theorem": "Born-Haber Cycle",
+        "description": "A Born–Haber cycle applies Hess's law to calculate the lattice enthalpy by comparing the standard enthalpy change of formation of the ionic compound (from the elements) to the enthalpy required to make gaseous ions from the elements. This lattice calculation is complex.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Molecular Orbital Theory",
+        "description": "In chemistry, molecular orbital theory is a method for describing the electronic structure of molecules using quantum mechanics.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Quantum Chemistry"
+    },
+    {
+        "theorem": "Hammond Postulate",
+        "description": "The postulate, which George Hammond first proposed in 1955, states that if two states, such as a transition state and an unstable intermediate, occur consecutively during a reaction process and have nearly the same energy content, their interconversion will result in only a minor reorganisation of molecular structures.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Physical Chemistry"
+    }
+]

@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Halting Problem (Undecidability)",
+        "description": "There is no general algorithm (or program) that can determine, for any arbitrary computer program and its input, whether the program will eventually halt (stop) or run forever.",
+        "difficulty": "Medium",
+        "remark": "A core concept in theoretical computer science. Introduces the idea of limits of computation. Understanding the proof (usually using diagonalization) is key to grasp the concept. Usually taught in discrete math or Theory of Computation.",
+        "subfield": "Theory of Computation"
+    },
+    {
+        "theorem": "The Time Complexity of Binary Search",
+        "description": "In the worst case, searching for an element in a sorted array using binary search requires O(log n) time, where n is the number of elements in the array. This efficiency arises from repeatedly dividing the search interval in half.",
+        "difficulty": "Medium",
+        "remark": "Highlights the power of divide-and-conquer algorithms. Illustrates why sorted data structures are often essential. Requires understanding of logarithms",
+        "subfield": "Algorithms"
+    },
+    {
+        "theorem": "The Correctness of Simple Sorting Algorithm (e.g. Bubble Sort)",
+        "description": "Bubble sort repeatedly compares adjacent elements and swaps them if they are in the wrong order. We can formally prove that after n-1 passes, the array will be sorted. Proving it involves demonstrating that the largest element is 'bubbled' to the end of the array in each pass, by using loop invariants.",
+        "difficulty": "Medium",
+        "remark": "Demonstrates how to formally analyze simple algorithms for their correctness and requires some understanding of loop invariants. Useful for introduction to proofs in algorithm.",
+        "subfield": "Algorithms"
+    },
+    {
+        "theorem": "The Church-Turing Thesis",
+        "description": "All models of computation that we know can compute what is Turing computable. In other words, if an effective method (algorithm) for solving a problem exists at all, then a Turing machine can also compute a solution, and vice versa.",
+        "difficulty": "Medium",
+        "remark": "A fundamental principle in theoretical computer science. It defines the limit of computability. It links different computational models to a single class. Requires an understanding of the Turing Machine.",
+        "subfield": "Theory of Computation"
+    },
+    {
+        "theorem": "The Relationship between Recursion and Induction",
+        "description": "Recursive functions can be proven correct and analyzed with mathematical induction. The base case of induction matches the base case in the recursive function. The induction step corresponds to the recursive step.",
+        "difficulty": "Medium",
+        "remark": "Connects two key concepts in Computer Science. Illustrates how induction can be used to prove correctness of recursive algorithms and mathematical induction can be used to define recursive functions. Important for formal analysis.",
+        "subfield": "Programming Fundamentals"
+    },
+    {
+        "theorem": "Chroma Subsampling",
+        "description": "Chroma subsampling is a technique used in digital image processing to reduce the amount of data required to represent an image. It involves reducing the number of color channels or samples per pixel in an image, typically by using fewer bits for chroma (color) information.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Image Processing"
+    },
+    {
+        "theorem": "Median filtering",
+        "description": "Median filtering is a non-linear digital filtering technique that is used to remove noise from an image or signal. It works by replacing each pixel with the median value of the pixels in its neighborhood.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Image Processing"
+    },
+    {
+        "theorem": "Shannon Lower bound",
+        "description": "The Shannon Lower Bound refers to a theoretical limit in information theory that represents the minimum entropy or information required to encode a random source. It is tied to the Shannon Entropy, which quantifies the average information content of a random variable. Here's a breakdown of what it means:",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Information Theory"
+    },
+    {
+        "theorem": "Dijkstra's algorithm",
+        "description": "maintains a priority queue of vertices in the graph ordered by distance from the start and repeatedly selects the next shortest path to an unconnected part of the graph",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Graph Theory"
+    },
+    {
+        "theorem": "K-means clustering",
+        "description": "K-means clustering is a method of clustering that partitions the dataset into K clusters, where each cluster is represented by its centroid or center point.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Machine Learning"
+    },
+    {
+        "theorem": "K-nearest neighbors",
+        "description": "K-nearest neighbors (KNN) is a simple and effective classification algorithm that works by finding the K closest data points in the training set to a new data point and then assigning the class label based on the majority class of these neighbors.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Machine Learning"
+    },
+    {
+        "theorem": "Gradient descent",
+        "description": "Common optimization algorithm used in machine learning to minimize a loss function.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Machine Learning"
+    },
+    {
+        "theorem": "Markov Decision Processes",
+        "description": "A Markov decision process (MDP) refers to a stochastic decision-making process that uses a mathematical framework to model the decision-making of a dynamic system.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Machine Learning"
+    },
+    {
+        "theorem": "ALOHA network",
+        "description": "ALOHA is basically a multiple access protocol which describes how all the terminals can access a medium without interfering at all with one another or even colliding. It operates at the data-link layer.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Computer Networks"
+    },
+    {
+        "theorem": "Discrete Cosine Transform",
+        "description": "A discrete cosine transform (DCT) expresses a finite sequence of data points in terms of a sum of cosine functions oscillating at different frequencies.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Digital Signal Processing"
+    },
+    {
+        "theorem": "Master Theorem",
+        "description": "The master theorem is used in calculating the time complexity of recurrence relations (divide and conquer algorithms) in a simple and quick way.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Algorithms"
+    },
+    {
+        "theorem": "Fast Fourier Transform",
+        "description": "A fast Fourier transform (FFT) is an algorithm that computes the Discrete Fourier Transform (DFT) of a sequence, or its inverse (IDFT).",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Digital Signal Processing"
+    },
+    {
+        "theorem": "SR latch",
+        "description": "S-R latches i.e., Set-Reset latches are the simplest form of latches and are implemented using two inputs: S (Set) and R (Reset).",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Digital Logic"
+    },
+    {
+        "theorem": "TCP Reno",
+        "description": "TCP Reno is a classic congestion control algorithm that was introduced in the early 1990s. It uses a mechanism called additive increase multiplicative decrease (AIMD) to adjust the TCP window size, which is the amount of data that can be sent without waiting for an acknowledgment.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Computer Networks"
+    },
+    {
+        "theorem": "Chord P2P Network and finger table",
+        "description": "Chord addresses peer addressability and peer findability and message routability challenges by organizing all peers in the P2P network into a single virtual ring.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Computer Networks"
+    }
+]

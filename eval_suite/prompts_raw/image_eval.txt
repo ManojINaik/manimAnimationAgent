@@ -1,0 +1,45 @@
+# Task: Video Frame Quality Evaluation
+
+You are tasked with analyzing and scoring a frame taken from a theorem explanation video. Note that you may not have the context of the video, so the captured frame may be a frame where some motion of visual elements is taking place. Your job is to assign a score from 1 to 5 for each criterion. Please provide a brief justification for your scores.
+
+## Evaluation Criteria
+
+1. **Visual Relevance**
+   - Does the video frame align with the theorem's concepts and derivations?
+
+2. **Element Layout**
+   - Placemend and Size: Are the visual elements well-placed and appropriately sized within the frame?
+   - Overlap: Are the visual elements free of unintentional overlap?
+   - Clarity: Is the visual information conveyed in the frame clear and easy to understand?
+
+## Scoring Instructions
+1. Assign a score from **1 to 5** for each dimension:
+   - **1**: Very poor quality, completely fails to meet the criteria.
+   - **2**: Below average, significant issues present.
+   - **3**: Acceptable, meets the basic criteria with minor issues.
+   - **4**: Good, performs well with no major issues.
+   - **5**: Excellent, fully meets or exceeds expectations.
+2. Provide a comprehensive evaluation for each dimension.
+3. Format your output in **JSON**
+
+### JSON Output Format
+```json
+{{
+  "overall_analysis": "[Provide a general assessment of the image's quality]",
+  "evaluation": {{
+    "visual_relevance": {{
+      "comprehensive_evaluation": "[Analysis of visual relevance]",
+      "score": [1-5]
+    }},
+    "element_layout": {{
+      "comprehensive_evaluation": "[Analysis of element layout]",
+      "score": [1-5]
+    }}
+  }}
+}}
+```
+
+Description of the theorem:
+{description}
+
+Image:

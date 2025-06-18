@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Pigeonhole Principle",
+        "description": "If you have more pigeons than pigeonholes, then at least one pigeonhole must contain more than one pigeon.  More formally, if *n* items are put into *m* containers, with *n > m*, then at least one container must contain more than one item.",
+        "difficulty": "Easy",
+        "remark": "A fundamental principle in combinatorics with surprising applications in various areas of computer science, like proving existence in hashing or data compression. Simple to understand, powerful in use.",
+        "subfield": "Discrete Mathematics"
+    },
+    {
+        "theorem": "De Morgan's Laws",
+        "description": "De Morgan's Laws provide a way to simplify or transform logical statements involving AND, OR, and NOT.  Specifically:  1) NOT (A AND B) is equivalent to (NOT A) OR (NOT B).  2) NOT (A OR B) is equivalent to (NOT A) AND (NOT B).",
+        "difficulty": "Easy",
+        "remark": "Crucial for boolean algebra and digital logic design. Helps with simplifying complex logic expressions and is widely used in programming.",
+        "subfield": "Boolean Algebra"
+    },
+    {
+        "theorem": "The Time Complexity of Linear Search",
+        "description": "In the worst-case scenario, searching for an element in an unsorted array using linear search requires O(n) time, where 'n' is the number of elements in the array. This is because the algorithm may need to examine every element in the array to find or conclude the non-existence of the target.",
+        "difficulty": "Easy",
+        "remark": "A foundational concept in algorithm analysis. Illustrates how the running time of an algorithm scales with the input size.",
+        "subfield": "Algorithm Analysis"
+    },
+    {
+        "theorem": "The Properties of a Binary Tree",
+        "description": "For a complete or full binary tree: 1) The maximum number of nodes at level *l* is 2^l (where the root is at level 0). 2)  The total number of nodes in a complete binary tree of *h* depth is 2^(h+1) - 1.",
+        "difficulty": "Easy",
+        "remark": "Fundamental for understanding and analyzing tree data structures. Used in many algorithmic designs.",
+        "subfield": "Data Structures"
+    },
+    {
+        "theorem": "The Triangle Inequality Theorem",
+        "description": "The triangle inequality states that for any three points A, B, and C in a metric space (e.g., the Euclidean plane), the sum of the lengths of any two sides of a triangle must be greater than or equal to the length of the third side. |AB| + |BC| >= |AC|",
+        "difficulty": "Easy",
+        "remark": "Often used in graph algorithms (e.g. proving properties of shortest path) . The principle is used as basis of many distance metrics.",
+        "subfield": "Computational Geometry"
+    },
+    {
+        "theorem": "Hamming distance",
+        "description": "In information theory, the Hamming distance between two strings or vectors of equal length is the number of positions at which the corresponding symbols are different.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Information Theory"
+    },
+    {
+        "theorem": "Big O notation",
+        "description": "most common type of asymptotic notation in computer science used to measure worst case complexity",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Algorithm Analysis"
+    },
+    {
+        "theorem": "Deadlock",
+        "description": "A deadlock is a situation where two or more processes are blocked waiting for each other to release resources, resulting in a circular wait condition.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Operating Systems"
+    },
+    {
+        "theorem": "Bubble Sort",
+        "description": "Bubble sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Algorithms"
+    },
+    {
+        "theorem": "Karnaugh Map",
+        "description": "A Karnaugh map (K-map) is a graphical method for simplifying Boolean algebra expressions.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Digital Logic Design"
+    },
+    {
+        "theorem": "Hash table",
+        "description": "A hash table uses a hash function to compute an index, also called a hash code, into an array of buckets or slots, from which the desired value can be found.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Data Structures"
+    },
+    {
+        "theorem": "Linked list",
+        "description": "data structure that does not necessarily store elements next to each other and instead works by maintaining, for each element, a link to the next element in the list",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Data Structures"
+    },
+    {
+        "theorem": "Chain Code",
+        "description": "A chain code is a lossless compression based image segmentation method for binary images based upon tracing image contours. The basic principle of chain coding, like other contour codings, is to separately encode each connected component, or blob in the image.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Image Processing"
+    },
+    {
+        "theorem": "Signal-to-noise ratio",
+        "description": "The signal-to-noise ratio (SNR) is a measure of the ratio between the power of a signal and the power of background noise.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Signal Processing"
+    },
+    {
+        "theorem": "Run-length encoding",
+        "description": "Run-length encoding (RLE) is a form of data compression that encodes consecutive data elements by a single data value and count, rather than by the original data values.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Data Compression"
+    },
+    {
+        "theorem": "Elbow method",
+        "description": "The elbow method is a graphical method for finding the optimal K value in a k-means clustering algorithm.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Machine Learning"
+    },
+    {
+        "theorem": "Huffman coding",
+        "description": "In computer science and information theory, a Huffman code is a particular type of optimal prefix code that is commonly used for lossless data compression.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Data Compression"
+    },
+    {
+        "theorem": "Paging",
+        "description": "Paging is a memory management technique used in operating systems to manage virtual memory. It involves dividing the virtual address space into fixed-size blocks called pages, and storing these pages in a secondary storage device called a paging file.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Operating Systems"
+    },
+    {
+        "theorem": "OSI model",
+        "description": "The Open Systems Interconnection (OSI) model is a conceptual framework that describes how data is sent over a network.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Computer Networks"
+    },
+    {
+        "theorem": "IEEE Convertion",
+        "description": "The IEEE-754 standard describes floating-point formats, a way to represent real numbers in hardware.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Computer Architecture"
+    }
+]

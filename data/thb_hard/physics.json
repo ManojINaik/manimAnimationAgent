@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "Boltzmann machine",
+        "description": "It is a statistical physics technique applied in the context of cognitive science. It is also classified as a Markov random field.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Statistical Physics"
+    },
+    {
+        "theorem": "Geometric Brownian Motion",
+        "description": "A geometric Brownian motion (GBM) (also known as exponential Brownian motion) is a continuous-time stochastic process in which the logarithm of the randomly varying quantity follows a Brownian motion (also called a Wiener process) with drift.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Statistical Physics"
+    },
+    {
+        "theorem": "Fermat's Principle", 
+        "description": "Fermat's principle states that light travels between two points along the path that requires the least time, as compared to other nearby paths.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Huygens's Principle",
+        "description": "The Huygens–Fresnel principle states that every point on a wavefront is itself the source of spherical wavelets, and the secondary wavelets emanating from different points mutually interfere. The sum of these spherical wavelets forms a new wavefront.",
+        "difficulty": "Hard", 
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Virial Theorem",
+        "description": "In mechanics, the virial theorem provides a general equation that relates the average over time of the total kinetic energy of a stable system of discrete particles, bound by a conservative force, with that of the total potential energy of the system.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Classical Mechanics"
+    },
+    {
+        "theorem": "Poynting Theorem",
+        "description": "It states that in a given volume, the stored energy changes at a rate given by the work done on the charges within the volume, minus the rate at which energy leaves the volume.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Fresnel transmission equations",
+        "description": "Fresnel's equations describe the reflection and transmission of electromagnetic waves at an interface.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Fourier Heat Conduction Law",
+        "description": "Fourier's law states that the negative gradient of temperature and the time rate of heat transfer is proportional to the area at right angles of that gradient through which the heat flows.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Ampère's circuital law",
+        "description": "Ampere's circuital law states that the line integral of the magnetic field surrounding closed-loop equals to the number of times the algebraic sum of currents passing through the loop.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Malus's Law",
+        "description": "Malus law states that the intensity of a plane-polarised light that passes through an analyser is directly proportional to the square of the cosine of the angle between the plane of the polariser and the transmission axis of the analyser.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Van der Waals Equation",
+        "description": "The van der Waals equation is a mathematical formula that describes the behavior of real gases. It is an equation of state that relates the pressure, temperature, and molar volume in a fluid.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Rayleigh Criterion",
+        "description": "The Rayleigh criterion is the generally accepted criterion for the minimum resolvable detail - the imaging process is said to be diffraction-limited when the first diffraction minimum of the image of one source point coincides with the maximum of another.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Paschen Curve",
+        "description": "Paschen's law is an equation that gives the breakdown voltage, that is, the voltage necessary to start a discharge or electric arc, between two electrodes in a gas as a function of pressure and gap length.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Electromagnetism"
+    },
+    {
+        "theorem": "Chandrasekhar Limit",
+        "description": "The Chandrasekhar limit is the maximum mass that a star can have and still be a stable white dwarf.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Astrophysics"
+    },
+    {
+        "theorem": "Landau Damping",
+        "description": "Landau damping is a phenomena observed in plasma wherein there is an ex- ponential decay in the oscillations of the number density of electrons in a plasma (also referred to as Langmuir waves) and so stability is achieved in some area of the phase-space.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Plasma Physics"
+    },
+    {
+        "theorem": "Schwarzschild radius",
+        "description": "The Schwarzschild radius is the critical distance from the center of a massive body where the gravitational pull becomes so strong that not even light can escape, defining the boundary of a black hole.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Astrophysics"
+    },
+    {
+        "theorem": "Babinet's Principle",
+        "description": "In physics, Babinet's principle states that the diffraction pattern from an opaque body is identical to that from a hole of the same size and shape except for the overall forward beam intensity.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Schrödinger's Cat",
+        "description": "Schrödinger's cat is a thought experiment in quantum mechanics that illustrates the paradoxical nature of quantum superposition and wave function collapse.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Quantum Mechanics"
+    },
+    {
+        "theorem": "Rayleigh Criterion for Resolution",
+        "description": "For a circular aperture, lens, or mirror, the Rayleigh criterion states that two images are just resolvable when the center of the diffraction pattern of one is directly over the first minimum of the diffraction pattern of the other.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Optics"
+    },
+    {
+        "theorem": "Navier-Stokes Equations",
+        "description": "In fluid mechanics, the Navier-Stokes equations are partial differential equations that express the flow of viscous fluids.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Fluid Mechanics"
+    }
+]

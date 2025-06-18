@@ -1,0 +1,16 @@
+# Best practices for generating educational videos with manim
+
+1. Specify positions as relative to other objects whenever it makes sense.
+   * For example, if you want to place a label for a geometric object.
+2. Objects should be of different color from the black background.
+3. Keep the text on screen concise.
+   * On-screen elements should focus on showcasing the concept, examples and visuals. Labels and illustrative text are still encouraged.
+   * For explanations and observations, prefer narrations over on-screen text.
+   * You should still show calculations and algorithms in full on screen.
+   * For examples and practice problems, it is reasonable to show more text, especially key statements.
+   * Longer text should appear smaller to fit on screen.
+4. To control the timing of objects appearing:
+   * `add` has instantaneous effect, best used for the initial setup of the scene.
+   * Animations are best used during narration.
+   * Make sure the animations make sense. If an object is already on screen, it makes no sense to fade it in or create it again.
+5. Use TeX or MathTeX whenever you want to display math, including symbols and formulas.

@@ -1,0 +1,5 @@
+Here are some example technical implementation plans to help guide your implementation:
+
+{examples}
+
+Please follow a similar structure while maintaining creativity and relevance to the current scene.

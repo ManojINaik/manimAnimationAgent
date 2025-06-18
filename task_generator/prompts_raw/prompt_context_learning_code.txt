@@ -1,0 +1,5 @@
+Here are some example Manim code implementations to help guide your code generation:
+
+{examples}
+
+Please follow similar patterns and best practices while implementing the current scene.

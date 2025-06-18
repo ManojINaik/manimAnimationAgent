@@ -1,0 +1,494 @@
+The followings are the inheritance diagram of the Manim library. You can take as reference to select which class to use for the animation.
+
+``` 
+digraph Animation {
+    "AddTextLetterByLetter"
+    "ShowIncreasingSubsets"
+    "ShowIncreasingSubsets" -> "AddTextLetterByLetter"
+    "AddTextWordByWord";
+    "Succession";
+    "Succession" -> "AddTextWordByWord";
+    "AnimatedBoundary";
+    "VGroup";
+    "VGroup" -> "AnimatedBoundary";
+    "Animation";
+    "AnimationGroup";
+    "Animation" -> "AnimationGroup";
+    "ApplyComplexFunction";
+    "ApplyMethod";
+    "ApplyMethod" -> "ApplyComplexFunction";
+    "ApplyFunction";
+    "Transform";
+    "Transform" -> "ApplyFunction";
+    "ApplyMatrix";
+    "ApplyPointwiseFunction";
+    "ApplyPointwiseFunction" -> "ApplyMatrix";
+    "ApplyMethod";
+    "Transform" -> "ApplyMethod";
+    "ApplyPointwiseFunction";
+    "ApplyMethod" -> "ApplyPointwiseFunction";
+    "ApplyPointwiseFunctionToCenter";
+    "ApplyPointwiseFunction" -> "ApplyPointwiseFunctionToCenter";
+    "ApplyWave";
+    "Homotopy";
+    "Homotopy" -> "ApplyWave";
+    "Broadcast";
+    "LaggedStart";
+    "LaggedStart" -> "Broadcast";
+    "ChangeDecimalToValue";
+    "ChangingDecimal";
+    "ChangingDecimal" -> "ChangeDecimalToValue";
+    "ChangeSpeed";
+    "Animation" -> "ChangeSpeed";
+    "ChangingDecimal";
+    "Animation" -> "ChangingDecimal";
+    "Circumscribe";
+    "Succession" -> "Circumscribe";
+    "ClockwiseTransform";
+    "Transform" -> "ClockwiseTransform";
+    "ComplexHomotopy";
+    "Homotopy" -> "ComplexHomotopy";
+    "CounterclockwiseTransform";
+    "Transform" -> "CounterclockwiseTransform";
+    "Create";
+    "ShowPartial";
+    "ShowPartial" -> "Create";
+    "CyclicReplace";
+    "Transform" -> "CyclicReplace";
+    "DrawBorderThenFill";
+    "Animation" -> "DrawBorderThenFill";
+    "FadeIn";
+    "FadeOut";
+    "FadeToColor";
+    "ApplyMethod" -> "FadeToColor";
+    "FadeTransform";
+    "Transform" -> "FadeTransform";
+    "FadeTransformPieces";
+    "FadeTransform" -> "FadeTransformPieces";
+    "Flash";
+    "AnimationGroup" -> "Flash";
+    "FocusOn";
+    "Transform" -> "FocusOn";
+    "GrowArrow";
+    "GrowFromPoint";
+    "GrowFromPoint" -> "GrowArrow";
+    "GrowFromCenter";
+    "GrowFromPoint" -> "GrowFromCenter";
+    "GrowFromEdge";
+    "GrowFromPoint" -> "GrowFromEdge";
+    "GrowFromPoint";
+    "Transform" -> "GrowFromPoint";
+    "Homotopy";
+    "Animation" -> "Homotopy";
+    "Indicate";
+    "Transform" -> "Indicate";
+    "LaggedStart";
+    "AnimationGroup" -> "LaggedStart";
+    "LaggedStartMap";
+    "LaggedStart" -> "LaggedStartMap";
+    "MaintainPositionRelativeTo";
+    "Animation" -> "MaintainPositionRelativeTo";
+    "Mobject";
+    "MoveAlongPath";
+    "Animation" -> "MoveAlongPath";
+    "MoveToTarget";
+    "Transform" -> "MoveToTarget";
+    "PhaseFlow";
+    "Animation" -> "PhaseFlow";
+    "RemoveTextLetterByLetter";
+    "AddTextLetterByLetter" -> "RemoveTextLetterByLetter";
+    "ReplacementTransform";
+    "Transform" -> "ReplacementTransform";
+    "Restore";
+    "ApplyMethod" -> "Restore";
+    "Rotate";
+    "Transform" -> "Rotate";
+    "Rotating";
+    "Animation" ->  "Rotating";
+    "ScaleInPlace";
+    "ApplyMethod" -> "ScaleInPlace";
+    "ShowIncreasingSubsets";
+    "Animation" -> "ShowIncreasingSubsets";
+    "ShowPartial";
+    "Animation" -> "ShowPartial";
+    "ShowPassingFlash";
+    "ShowPartial" -> "ShowPassingFlash";
+    "ShowPassingFlashWithThinningStrokeWidth";
+    "AnimationGroup" ->  "ShowPassingFlashWithThinningStrokeWidth";
+    "ShowSubmobjectsOneByOne";
+    "ShowIncreasingSubsets" -> "ShowSubmobjectsOneByOne";
+    "ShrinkToCenter";
+    "ScaleInPlace" -> "ShrinkToCenter";
+    "SmoothedVectorizedHomotopy";
+    "Homotopy" -> "SmoothedVectorizedHomotopy";
+    "SpinInFromNothing";
+    "GrowFromCenter" -> "SpinInFromNothing";
+    "SpiralIn";
+    "Animation" -> "SpiralIn";
+    "Succession";
+    "AnimationGroup" -> "Succession";
+    "Swap";
+    "CyclicReplace" -> "Swap";
+    "TracedPath";
+    "VMobject";
+    "VMobject" -> "TracedPath";
+    "Transform";
+    "Animation" -> "Transform";
+    "TransformAnimations";
+    "Transform" -> "TransformAnimations";
+    "TransformFromCopy";
+    "Transform" -> "TransformFromCopy";
+    "TransformMatchingAbstractBase";
+    "AnimationGroup" -> "TransformMatchingAbstractBase";
+    "TransformMatchingShapes";
+    "TransformMatchingAbstractBase" -> "TransformMatchingShapes";
+    "TransformMatchingTex";
+    "TransformMatchingAbstractBase" ->  "TransformMatchingTex";
+    "Uncreate";
+    "Create" -> "Uncreate";
+    "Unwrite";
+    "Write";
+    "Write" -> "Unwrite";
+    "UpdateFromAlphaFunc";
+    "UpdateFromFunc";
+    "UpdateFromFunc" -> "UpdateFromAlphaFunc";
+    "UpdateFromFunc";
+    "Animation" -> "UpdateFromFunc";
+    "VGroup";
+    "VMobject" ->  "VGroup";
+    "VMobject";
+    "Mobject" -> "VMobject";
+
+    "Wait";
+    "Animation" -> "Wait";
+    "Wiggle";
+    "Animation" -> "Wiggle";
+    "Write";
+    "DrawBorderThenFill" ->  "Write";
+}
+```
+
+
+```
+digraph Camera {
+    "BackgroundColoredVMobjectDisplayer"
+    "Camera"
+    "MappingCamera"
+    "Camera" -> "MappingCamera"
+    "MovingCamera"
+    "Camera" -> "MovingCamera"
+    "MultiCamera"
+    "MovingCamera" -> "MultiCamera"
+    "OldMultiCamera"
+    "Camera" -> "OldMultiCamera"
+    "SplitScreenCamera"
+    "OldMultiCamera" -> "SplitScreenCamera"
+    "ThreeDCamera"
+    "Camera" -> "ThreeDCamera"
+}
+```
+
+```
+digraph MObject {
+    "AbstractImageMobject"
+    "Mobject" -> "AbstractImageMobject"
+    "Angle"
+    "VMobject" -> "Angle"
+    "AnnotationDot"
+    "Dot" -> "AnnotationDot"
+    "AnnularSector"
+    "Arc" -> "AnnularSector"
+    "Annulus"
+    "Circle" -> "Annulus"
+    "Arc"
+    "TipableVMobject" -> "Arc"
+    "ArcBetweenPoints"
+    "Arc" -> "ArcBetweenPoints"
+    "ArcBrace"
+    "Brace" -> "ArcBrace"
+    "ArcPolygon"
+    "VMobject" -> "ArcPolygon"
+    "ArcPolygonFromArcs"
+    "VMobject" -> "ArcPolygonFromArcs"
+    "Arrow"
+    "Line" -> "Arrow"
+    "Arrow3D"
+    "Line3D" -> "Arrow3D"
+    "ArrowCircleFilledTip"
+    "ArrowCircleTip" -> "ArrowCircleFilledTip"
+    "ArrowCircleTip"
+    "ArrowTip" -> "ArrowCircleTip"
+    "Circle" -> "ArrowCircleTip"
+    "ArrowSquareFilledTip"
+    "ArrowSquareTip" -> "ArrowSquareFilledTip"
+    "ArrowSquareTip"
+    "ArrowTip" -> "ArrowSquareTip"
+    "Square" -> "ArrowSquareTip"
+    "ArrowTip"
+    "VMobject" -> "ArrowTip"
+    "ArrowTriangleFilledTip"
+    "ArrowTriangleTip" -> "ArrowTriangleFilledTip"
+    "ArrowTriangleTip"
+    "ArrowTip" -> "ArrowTriangleTip"
+    "Triangle" -> "ArrowTriangleTip"
+    "ArrowVectorField"
+    "VectorField" -> "ArrowVectorField"
+    "Axes"
+    "VGroup" -> "Axes"
+    "CoordinateSystem" -> "Axes"
+    "BackgroundRectangle"
+    "SurroundingRectangle" -> "BackgroundRectangle"
+    "BarChart"
+    "Axes" -> "BarChart"
+    "Brace"
+    "svg_mobject.VMobjectFromSVGPath" -> "Brace"
+    "BraceBetweenPoints"
+    "Brace" -> "BraceBetweenPoints"
+    "BraceLabel"
+    "VMobject" -> "BraceLabel"
+    "BraceText"
+    "BraceLabel" -> "BraceText"
+    "BulletedList"
+    "Tex" -> "BulletedList"
+    "Circle"
+    "Arc" -> "Circle"
+    "Code"
+    "VGroup" -> "Code"
+    "ComplexPlane"
+    "NumberPlane" -> "ComplexPlane"
+    "ComplexValueTracker"
+    "ValueTracker" -> "ComplexValueTracker"
+    "Cone"
+    "Surface" -> "Cone"
+    "CoordinateSystem"
+    "Cross"
+    "VGroup" -> "Cross"
+    "Cube"
+    "VGroup" -> "Cube"
+    "CubicBezier"
+    "VMobject" -> "CubicBezier"
+    "CurvedArrow"
+    "ArcBetweenPoints" -> "CurvedArrow"
+    "CurvedDoubleArrow"
+    "CurvedArrow" -> "CurvedDoubleArrow"
+    "CurvesAsSubmobjects"
+    "VGroup" -> "CurvesAsSubmobjects"
+    "Cutout"
+    "VMobject" -> "Cutout"
+    "Cylinder"
+    "Surface" -> "Cylinder"
+    "DashedLine"
+    "Line" -> "DashedLine"
+    "DashedVMobject"
+    "VMobject" -> "DashedVMobject"
+    "DecimalMatrix"
+    "Matrix" -> "DecimalMatrix"
+    "DecimalNumber"
+    "VMobject" -> "DecimalNumber"
+    "DecimalTable"
+    "Table" -> "DecimalTable"
+    "DiGraph"
+    "GenericGraph" -> "DiGraph"
+    "Difference"
+    "Dodecahedron"
+    "Polyhedron" -> "Dodecahedron"
+    "Dot"
+    "Circle" -> "Dot"
+    "Dot3D"
+    "Sphere" -> "Dot3D"
+    "DoubleArrow"
+    "Arrow" -> "DoubleArrow"
+    "Elbow"
+    "VMobject" -> "Elbow"
+    "Ellipse"
+    "Circle" -> "Ellipse"
+    "Exclusion"
+    "FullScreenRectangle"
+    "ScreenRectangle" -> "FullScreenRectangle"
+    "FunctionGraph"
+    "ParametricFunction" -> "FunctionGraph"
+    "Generic"
+    "GenericGraph"
+    "Generic" -> "GenericGraph"
+    "Graph"
+    "GenericGraph" -> "Graph"
+    "Group"
+    "Mobject" -> "Group"
+    "Icosahedron"
+    "Polyhedron" -> "Icosahedron"
+    "ImageMobject"
+    "AbstractImageMobject" -> "ImageMobject"
+    "ImageMobjectFromCamera"
+    "AbstractImageMobject" -> "ImageMobjectFromCamera"
+    "ImplicitFunction"
+    "VMobject" -> "ImplicitFunction"
+    "Integer"
+    "DecimalNumber" -> "Integer"
+    "IntegerMatrix"
+    "Matrix" -> "IntegerMatrix"
+    "IntegerTable"
+    "Table" -> "IntegerTable"
+    "Intersection"
+    "LabeledDot"
+    "Dot" -> "LabeledDot"
+    "LayoutFunction"
+    "Protocol" -> "LayoutFunction"
+    "Line"
+    "TipableVMobject" -> "Line"
+    "Line3D"
+    "Cylinder" -> "Line3D"
+    "LinearBase"
+    "LogBase"
+    "ManimBanner"
+    "VGroup" -> "ManimBanner"
+    "MarkupText"
+    "svg_mobject.SVGMobject" -> "MarkupText"
+    "MathTable"
+    "Table" -> "MathTable"
+    "MathTex"
+    "SingleStringMathTex" -> "MathTex"
+    "Matrix"
+    "VMobject" -> "Matrix"
+    "Mobject"
+    "Mobject1D"
+    "PMobject" -> "Mobject1D"
+    "Mobject2D"
+    "PMobject" -> "Mobject2D"
+    "MobjectMatrix"
+    "Matrix" -> "MobjectMatrix"
+    "MobjectTable"
+    "Table" -> "MobjectTable"
+    "NumberLine"
+    "Line" -> "NumberLine"
+    "NumberPlane"
+    "Axes" -> "NumberPlane"
+    "Octahedron"
+    "Polyhedron" -> "Octahedron"
+    "PGroup"
+    "PMobject" -> "PGroup"
+    "PMobject"
+    "Mobject" -> "PMobject"
+    "Paragraph"
+    "VGroup" -> "Paragraph"
+    "ParametricFunction"
+    "VMobject" -> "ParametricFunction"
+    "Point"
+    "PMobject" -> "Point"
+    "PointCloudDot"
+    "Mobject1D" -> "PointCloudDot"
+    "PolarPlane"
+    "Axes" -> "PolarPlane"
+    "Polygon"
+    "Polygram" -> "Polygon"
+    "Polygram"
+    "VMobject" -> "Polygram"
+    "Polyhedron"
+    "VGroup" -> "Polyhedron"
+    "Prism"
+    "Cube" -> "Prism"
+    "Protocol"
+    "Generic" -> "Protocol"
+    "Rectangle"
+    "Polygon" -> "Rectangle"
+    "RegularPolygon"
+    "RegularPolygram" -> "RegularPolygon"
+    "RegularPolygram"
+    "Polygram" -> "RegularPolygram"
+    "RightAngle"
+    "Angle" -> "RightAngle"
+    "RoundedRectangle"
+    "Rectangle" -> "RoundedRectangle"
+    "SVGMobject"
+    "VMobject" -> "SVGMobject"
+    "SampleSpace"
+    "Rectangle" -> "SampleSpace"
+    "ScreenRectangle"
+    "Rectangle" -> "ScreenRectangle"
+    "Sector"
+    "AnnularSector" -> "Sector"
+    "SingleStringMathTex"
+    "svg_mobject.SVGMobject" -> "SingleStringMathTex"
+    "Sphere"
+    "Surface" -> "Sphere"
+    "Square"
+    "Rectangle" -> "Square"
+    "Star"
+    "Polygon" -> "Star"
+    "StealthTip"
+    "ArrowTip" -> "StealthTip"
+    "StreamLines"
+    "VectorField" -> "StreamLines"
+    "Surface"
+    "VGroup" -> "Surface"
+    "SurroundingRectangle"
+    "RoundedRectangle" -> "SurroundingRectangle"
+    "Table"
+    "VGroup" -> "Table"
+    "TangentLine"
+    "Line" -> "TangentLine"
+    "Tetrahedron"
+    "Polyhedron" -> "Tetrahedron"
+    "Tex"
+    "MathTex" -> "Tex"
+    "Text"
+    "svg_mobject.SVGMobject" -> "Text"
+    "ThreeDAxes"
+    "Axes" -> "ThreeDAxes"
+    "ThreeDVMobject"
+    "VMobject" -> "ThreeDVMobject"
+    "TipableVMobject"
+    "VMobject" -> "TipableVMobject"
+    "Title"
+    "Tex" -> "Title"
+    "Torus"
+    "Surface" -> "Torus"
+    "Triangle"
+    "RegularPolygon" -> "Triangle"
+    "Underline"
+    "Line" -> "Underline"
+    "Union"
+    "UnitInterval"
+    "NumberLine" -> "UnitInterval"
+    "VDict"
+    "VMobject" -> "VDict"
+    "VGroup"
+    "VMobject" -> "VGroup"
+    "VMobject"
+    "Mobject" -> "VMobject"
+    "VMobjectFromSVGPath"
+    "VMobject" -> "VMobjectFromSVGPath"
+    "ValueTracker"
+    "Mobject" -> "ValueTracker"
+    "Variable"
+    "VMobject" -> "Variable"
+    "Vector"
+    "Arrow" -> "Vector"
+    "VectorField"
+    "VGroup" -> "VectorField"
+    "VectorizedPoint"
+    "VMobject" -> "VectorizedPoint"
+}
+```
+
+```
+digraph Scene {
+    "LinearTransformationScene"
+    "VectorScene"
+    "VectorScene" -> "LinearTransformationScene"
+    "MovingCameraScene"
+    "Scene"
+    "Scene" -> "MovingCameraScene"
+    "RerunSceneHandler"
+    "Scene"
+    "SceneFileWriter"
+    "SpecialThreeDScene"
+    "ThreeDScene"
+    "ThreeDScene" -> "SpecialThreeDScene"
+    "ThreeDScene"
+    "Scene" -> "ThreeDScene"
+    "VectorScene"
+    "Scene" -> "VectorScene"
+    "ZoomedScene"
+    "MovingCameraScene" -> "ZoomedScene"
+}
+```

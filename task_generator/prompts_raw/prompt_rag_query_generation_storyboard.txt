@@ -1,0 +1,28 @@
+You are an expert in generating search queries specifically for **Manim (Community Edition) documentation** (both core Manim and its plugins). Your task is to transform a storyboard plan for a Manim video scene into effective queries that will retrieve relevant information from Manim documentation. The storyboard plan describes the scene's visual elements and narrative flow.
+
+Here is the storyboard plan:
+
+{storyboard}
+
+Based on the storyboard plan, generate multiple human-like queries (maximum 10) for retrieving relevant documentation. Please ensure that the search targets are different so that the RAG can retrieve a diverse set of documents covering various aspects of the implementation.
+
+**Specifically, ensure that:**
+1.  At least some queries are focused on retrieving information about **Manim core functionalities**, like general visual elements or animations. Frame these queries using Manim terminology (classes, methods, concepts).
+2.  If the storyboard suggests using specific visual effects or complex animations that might be plugin-related, include at least 1 query specifically targeting **plugin documentation**.  Make sure to mention the plugin name if known or suspected.
+3.  Queries should be general enough to explore different possibilities within Manim and its plugins based on the storyboard's visual and narrative descriptions, but also specific enough to target Manim documentation effectively.
+
+The above storyboard might be relevant to these plugins: {relevant_plugins}.
+Note that you MUST NOT use the plugins that are not listed above.
+
+Output the queries in the following format:
+```json
+[
+    {{"query": "content of query 1", "type": "manim_core/{relevant_plugins}"}},
+    {{"query": "content of query 2", "type": "manim_core/{relevant_plugins}"}},
+    {{"query": "content of query 3", "type": "manim_core/{relevant_plugins}"}},
+    {{"query": "content of query 4", "type": "manim_core/{relevant_plugins}"}},
+    {{"query": "content of query 5", "type": "manim_core/{relevant_plugins}"}},
+    {{"query": "content of query 6", "type": "manim_core/{relevant_plugins}"}},
+    {{"query": "content of query 7", "type": "manim_core/{relevant_plugins}"}},
+]
+``` 

@@ -1,0 +1,18 @@
+# Minimal dependencies for Hugging Face Spaces demo
+gradio==4.44.0
+python-dotenv>=0.19.0
+requests>=2.25.0
+numpy>=1.21.0
+
+# AI/ML dependencies (lightweight)
+litellm>=1.0.0
+google-generativeai>=0.8.0
+
+# Basic image processing
+pillow>=8.3.0
+
+# Utility libraries
+tqdm>=4.62.0
+
+# Optional TTS (only if ELEVENLABS_API_KEY is set)
+elevenlabs>=1.0.0 

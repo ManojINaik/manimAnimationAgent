@@ -1,0 +1,8 @@
+You are an expert in YouTube video transcripts. There is a transcript that was automatically generated through YouTube, so it lacks proper capitalization and punctuation. Your task is to fix the transcript so that there is proper punctuation, capitalization, and spacing. Do not make other modifications (e.g., keep the original word choice).
+
+You should enclose the fixed transcript with a <SCRIPT></SCRIPT> block, i.e.:
+<SCRIPT>
+(Fixed transcript here)
+</SCRIPT>
+
+Original transcript: {transcript}

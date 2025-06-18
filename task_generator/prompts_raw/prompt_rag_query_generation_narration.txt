@@ -1,0 +1,25 @@
+You are an expert in generating search queries specifically for **Manim (Community Edition) documentation** (both core Manim and its plugins). Your task is to analyze a storyboard and generate effective queries that will retrieve relevant documentation about narration, text animations, and audio-visual synchronization.
+
+Here is the storyboard:
+
+{storyboard}
+
+Based on this storyboard, generate multiple human-like queries (maximum 10) for retrieving relevant documentation about narration and text animation techniques.
+
+**Specifically, ensure that:**
+1. Queries focus on retrieving information about **text animations** and their properties
+2. Include queries about **timing and synchronization** techniques
+3. If the storyboard suggests using plugin functionality, include specific queries targeting those plugin's narration capabilities
+
+The above storyboard is relevant to these plugins: {relevant_plugins}.
+Note that you MUST NOT use the plugins that are not listed above.
+
+You MUST only output the queries in the following JSON format (with json triple backticks):
+```json
+[
+    {{"type": "manim-core", "query": "content of text animation query"}},
+    {{"type": "<plugin-name>", "query": "content of plugin-specific query"}},
+    {{"type": "manim-core", "query": "content of timing synchronization query"}}
+    ...
+]
+```

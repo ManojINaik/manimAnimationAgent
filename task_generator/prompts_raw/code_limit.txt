@@ -1,0 +1,4 @@
+Note that the frame width and height are 14.222222222222221 and 8.0 respectively. And the center of the frame is (0, 0, 0).
+It means to avoid putting any object out of the frame, you should limit the x and y coordinates of the objects.
+limit x to be within -7.0 and 7.0 for objects, and limit y to be within -4.0 and 4.0 for objects.
+Place the objects near the center of the frame, without overlapping with each other.
