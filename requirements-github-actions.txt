@@ -1,5 +1,5 @@
-# GitHub Actions Requirements - Complete dependency list
-# Optimized for video rendering with ALL required dependencies
+# GitHub Actions Requirements - Complete dependency list with audio support
+# Optimized for video rendering with ALL required dependencies including audio dubbing
 
 # Core Python Libraries
 python-dotenv>=1.0.1
@@ -26,10 +26,20 @@ matplotlib>=3.8.0
 pysrt>=1.1.2
 pylatexenc>=2.10
 
-# Audio Processing (Basic - no PyAudio/hardware deps)
+# Audio Processing & TTS (CI/CD compatible)
 SpeechRecognition>=3.14.0
 pydub>=0.25.1
 soundfile>=0.12.1
+gTTS>=2.5.0
+pyttsx3>=2.90
+librosa>=0.10.1
+
+# Audio Libraries (without PyAudio - use alternatives)
+# NOTE: For audio dubbing in GitHub Actions, we use:
+# - gTTS for basic TTS (no API key needed)
+# - pyttsx3 for offline TTS
+# - pydub for audio manipulation
+# - librosa for audio analysis
 
 # RAG/Vector Database/LangChain
 langchain>=0.3.0
@@ -58,6 +68,13 @@ mem0ai>=0.1.0
 
 # Additional Analysis/Monitoring
 langfuse>=2.0.0
+
+# Audio dubbing strategy for GitHub Actions:
+# 1. Use gTTS (Google Text-to-Speech) - free, no hardware needed
+# 2. Use pyttsx3 as fallback - offline TTS
+# 3. Avoid PyAudio/hardware-dependent libraries
+# 4. Use pydub for audio file manipulation
+# 5. ElevenLabs only if API key is available (graceful fallback)
 
 # Exclude problematic dependencies for CI/CD:
 # - PyAudio (requires system audio libraries)
