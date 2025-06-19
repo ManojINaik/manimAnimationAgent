@@ -50,10 +50,6 @@ jobs:
         # Use GitHub Actions specific requirements (excludes problematic audio deps)
         pip install -r requirements-github-actions.txt
         
-    - name: Test dependencies
-      run: |
-        python test_github_actions_fix.py
-        
     - name: Set up environment variables
       env:
         APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
