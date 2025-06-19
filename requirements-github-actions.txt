@@ -1,49 +1,66 @@
-# GitHub Actions Requirements - Optimized for video rendering
-# Excludes audio dependencies that are problematic in CI/CD environments
+# GitHub Actions Requirements - Complete dependency list
+# Optimized for video rendering with ALL required dependencies
 
-# Core ML/AI Libraries
+# Core Python Libraries
+python-dotenv>=1.0.1
+
+# AI/ML/LLM Dependencies
 google-generativeai>=0.4.0
 openai>=1.12.0
 litellm>=1.28.0
 anthropic>=0.18.0
+tiktoken>=0.4.0
 
-# Video/Animation Libraries
+# Video/Animation/Graphics Libraries
 manim>=0.18.0
 opencv-python>=4.9.0.80
 Pillow>=10.2.0
 imageio>=2.34.0
 imageio-ffmpeg>=0.4.9
+moviepy>=2.0.0
+numpy>=1.26.0
+scipy>=1.12.0
+matplotlib>=3.8.0
 
-# Appwrite and Database
+# Text/Subtitle Processing
+pysrt>=1.1.2
+pylatexenc>=2.10
+
+# Audio Processing (Basic - no PyAudio/hardware deps)
+SpeechRecognition>=3.14.0
+pydub>=0.25.1
+soundfile>=0.12.1
+
+# RAG/Vector Database/LangChain
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+langchain-text-splitters>=0.3.0
+chromadb>=0.6.0
+
+# Database/Storage
 appwrite>=4.0.0
-python-dotenv>=1.0.1
+requests>=2.31.0
 
-# Web Framework (if needed)
+# Web Framework/API
 gradio>=4.15.0
 fastapi>=0.109.0
 uvicorn>=0.27.0
 
-# Utilities
-requests>=2.31.0
-numpy>=1.26.0
-scipy>=1.12.0
-matplotlib>=3.8.0
+# Data Processing/Utilities
 pandas>=2.2.0
-
-# File Processing
+tqdm>=4.62.0
 python-multipart>=0.0.7
 aiofiles>=23.2.1
 
-# Audio Processing (Simplified - no PyAudio)
-pydub>=0.25.1
-librosa>=0.10.1
-soundfile>=0.12.1
+# Memory and Learning
+mem0ai>=0.1.0
 
-# Additional Dependencies
-pylatexenc>=2.10
-pysrt>=1.1.2
+# Additional Analysis/Monitoring
+langfuse>=2.0.0
 
 # Exclude problematic dependencies for CI/CD:
 # - PyAudio (requires system audio libraries)
 # - TTS libraries that need audio hardware
-# - Real-time audio processing libraries 
+# - Real-time audio processing libraries
+# - ElevenLabs (requires API keys + audio hardware) 
