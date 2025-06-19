@@ -1,6 +1,5 @@
 # Core dependencies
 appwrite==5.0.2
-asyncio
 
 # Video generation dependencies  
 manim>=0.18.0
@@ -11,9 +10,10 @@ litellm>=1.35.0
 google-generativeai>=0.4.0
 openai>=1.0.0
 
-# Memory and RAG
+# Memory and RAG - Using lighter alternatives
 mem0ai>=0.0.20
-chromadb>=0.4.22
+# Removed chromadb due to Rust compilation requirements in serverless
+# Using alternative vector storage or in-memory approach
 
 # Audio/Voice
 elevenlabs>=0.2.27
@@ -24,4 +24,8 @@ langfuse>=2.20.0
 # Utilities
 python-dotenv>=1.0.0
 pydantic>=2.0.0
-aiofiles>=23.2.1 
+aiofiles>=23.2.1
+
+# Additional serverless-friendly dependencies
+requests>=2.31.0
+numpy>=1.24.0 
