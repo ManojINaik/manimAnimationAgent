@@ -253,3 +253,7 @@ vector_store/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+frontend_example/node_modules
+frontend_example/.next
+frontend_example/dist

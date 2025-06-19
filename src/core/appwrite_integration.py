@@ -188,18 +188,28 @@ class AppwriteVideoManager:
                 if "already exists" not in str(e).lower():
                     print(f"Error creating status attribute: {e}")
 
-            # Add integer attribute
-            try:
-                self.databases.create_integer_attribute(
-                    database_id=self.database_id,
-                    collection_id=self.videos_collection_id,
-                    key="scene_count",
-                    required=True
-                )
-                await asyncio.sleep(0.1)
-            except AppwriteException as e:
-                if "already exists" not in str(e).lower():
-                    print(f"Error creating scene_count attribute: {e}")
+            # Add integer attributes
+            integer_attrs = [
+                {"key": "scene_count", "required": True},
+                {"key": "progress", "required": False, "min": 0, "max": 100, "default": 0},
+                {"key": "current_scene", "required": False, "min": 0}
+            ]
+            
+            for attr in integer_attrs:
+                try:
+                    self.databases.create_integer_attribute(
+                        database_id=self.database_id,
+                        collection_id=self.videos_collection_id,
+                        key=attr["key"],
+                        required=attr["required"],
+                        min=attr.get("min"),
+                        max=attr.get("max"),
+                        default=attr.get("default")
+                    )
+                    await asyncio.sleep(0.1)
+                except AppwriteException as e:
+                    if "already exists" not in str(e).lower():
+                        print(f"Error creating {attr['key']} attribute: {e}")
 
             # Add float attribute
             try:
