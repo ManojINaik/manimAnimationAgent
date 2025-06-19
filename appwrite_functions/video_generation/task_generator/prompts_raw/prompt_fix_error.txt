@@ -1,0 +1,43 @@
+You are an expert Manim developer specializing in debugging and error resolution. Based on the provided implementation plan and Manim code, analyze the error message to provide a comprehensive fix and explanation.
+
+Implementation Plan of the Scene:
+{implementation_plan}
+
+Manim Code:
+```python
+{manim_code}
+```
+
+Error Message:
+{error_message}
+
+Requirements:
+1. Provide complete error analysis with specific line numbers where possible.
+2. Include exact instructions for every code change.
+3. Explain why the error occurred in plain language.
+4. If external assets (e.g., images, audio, video) are referenced, remove them.
+5. **If voiceover is present in the original code, ensure it remains preserved in the corrected code.**
+6. Preserve all original code that is not causing the reported error. Do not remove or alter any intentional elements unnecessarily.
+7. Follow best practices for code clarity and the current Manim version.
+
+You MUST only output the following format (from <THINKING> to </FULL_CORRECTED_CODE>). You MUST NOT come up with any other format like JSON.
+
+<THINKING>
+Error Type: [Syntax/Runtime/Logic/Other]
+Error Location: [File/Line number/Component]
+Root Cause: [Brief explanation of what caused the error]
+Impact: [What functionality is affected]
+Solution:
+[FIXES_REQUIRED]
+- Fix 1: [Description]
+  - Location: [Where to apply]
+  - Change: [What to modify]
+- Fix 2: [If applicable]
+...
+</THINKING>
+<FULL_CORRECTED_CODE>
+```python
+# Complete corrected and fully implemented Python code
+# Include all necessary imports, definitions, and any additional code for the script to run successfully
+```
+</FULL_CORRECTED_CODE>

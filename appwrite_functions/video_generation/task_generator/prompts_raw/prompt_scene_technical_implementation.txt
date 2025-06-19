@@ -1,0 +1,97 @@
+You are an expert in educational video production and Manim (Community Edition), adept at translating pedagogical narration plans into robust and spatially accurate Manim code.  
+**Reminder:** This technical implementation plan is fully self-contained. There is no dependency on the implementation from any previous or subsequent scenes.
+
+Create a detailed technical implementation plan for Scene {scene_number} (Manim code focused), *informed by the provided Manim documentation context*, strictly adhering to defined spatial constraints (safe area margins: 0.5 units, minimum spacing: 0.3 units), and **addressing potential text bounding box overflow issues**.
+
+Topic: {topic}
+Description: {description}
+
+Scene Overview:
+{scene_outline}
+
+Scene Vision and Storyboard:
+{scene_vision_storyboard}
+
+The following manim plugins are relevant to the scene:
+{relevant_plugins}
+
+**Spatial Constraints (Strictly Enforced):**
+*   **Safe area margins:** 0.5 units on all sides from the scene edges.  All objects must be positioned within these margins.
+*   **Minimum spacing:** 0.3 units between any two Manim objects (measured edge to edge). This prevents overlaps and maintains visual clarity.
+
+**Positioning Requirements:**
+1.  All positioning MUST be relative (`next_to`, `align_to`, `shift`) from ORIGIN, safe margins, or other objects. **No absolute coordinates are allowed.**
+2.  Use transition buffers (`Wait` times) between sub-scenes and animation steps.
+
+**Diagrams/Sketches (Highly Recommended):**
+*   Include diagrams/sketches (even text-based) for complex layouts to visualize spatial relationships, improve clarity, and reduce spatial errors.
+
+**Common Mistakes:**
+*   The Triangle class in Manim creates equilateral triangles by default. To create a right-angled triangle, use the Polygon class instead.
+
+**Manim Plugins:**
+*   You may use established, well-documented Manim plugins if they offer significant advantages in terms of code clarity, efficiency, or functionality not readily available in core Manim.
+*   **If a plugin is used:**
+    *   Clearly state the plugin name and version (if applicable).
+    *   Provide a brief justification for using the plugin (e.g., "Using `manim-plugin-name` for its advanced graph layout capabilities").
+    *   Ensure all plugin usage adheres to the plugin's documentation.
+    *   Include a comment in the plan: `### Plugin: <plugin_name> - <brief justification>`.
+
+**Focus:**
+*   Creating *pedagogically sound and spatially correct Manim code*.
+*   Detailed technical descriptions, referencing Manim documentation.
+*   Strict adherence to spatial constraints and relative positioning.
+
+You MUST generate the technical implementation plan for the scene in the following format (from ```xml to </SCENE_TECHNICAL_IMPLEMENTATION_PLAN>```):
+
+```xml
+<SCENE_TECHNICAL_IMPLEMENTATION_PLAN>
+0. **Dependencies**:
+    - **Manim API Version**: Target the latest stable Manim release, using only documented API elements.
+    - **Allowed Imports**: `manim`, `numpy`, and any explicitly approved and documented Manim plugins.  No external assets (e.g., images, audio, or video files) are allowed, but established Manim plugins are permitted.
+    
+1. **Manim Object Selection & Configuration (Text and Shapes)**:
+    - Clearly define the Manim objects (e.g., `Tex`, `MathTex`, `Circle`, `Line`, etc.) used to construct the scene.  Also include any objects provided by used plugins.
+    - Specify all key parameters such as text content, font size, color, stroke, or shape dimensions.
+    - **Text Considerations**:
+        - **Use `MathTex` for mathematical expressions and equations, ensuring valid LaTeX syntax.** For example: `MathTex("x^2 + y^2 = r^2")`.
+        - **Use `Tex` for all non-mathematical text, including titles, labels, explanations, and general text.** For example: `Tex("This is a circle")`.
+        - **If you need to include regular text *within* a `MathTex` environment (e.g., for explanations alongside a formula), use the `\\text{{}}` command.** For example: `MathTex(r"\\text{{Area of circle}} = \\pi r^2")`.
+        - **Do not use `MathTex` for regular text, as it will result in incorrect spacing and formatting.**
+        - **LaTeX Packages**: If any `Tex` or `MathTex` objects require LaTeX packages beyond those included in Manim's default template, specify them here.  For example: "Requires: `\\usepackage{{amssymb}}`".  Create a `TexTemplate` object and add the necessary packages using `add_to_preamble()`.
+        - **Font Size Recommendations**:
+            - If there is title text, font size is highly recommended to be 28.
+            - If there are side labels or formulas, font size is highly recommended to be 24.
+            - However, if the text has more than 10 words, the font size should be reduced further and multiple lines should be used.
+    - Confirm all objects begin within the safe area (0.5 units from all edges) and maintain at least 0.3 units spacing to avoid overlaps.
+    
+2. **VGroup Structure & Hierarchy**:
+    - Organize related elements into `VGroup`s for efficient spatial and animation management.  If a plugin provides a specialized group-like object, consider using it.
+    - For each `VGroup`, define the parent-child relationships and ensure internal spacing of at least 0.3 units.
+    - Clearly document the purpose for each grouping (e.g., "formula_group" for mathematical expressions).
+    
+3. **Spatial Positioning Strategy**:
+    - Mandate the exclusive use of relative positioning methods (`next_to`, `align_to`, `shift`), based on ORIGIN, safe margins, or other objects.
+    - For every object, specify:
+        - The reference object (or safe edge) used for positioning.
+        - The specific method (and direction/aligned edge) along with a `buff` value (minimum 0.3 units).
+    - Outline the layout in sequential stages, inserting visual checkpoints to verify that every element continues to respect safe margins and spacing.
+    - Highlight measures to safeguard text bounding boxes, especially for multi-line text.
+    - Reference the font size recommendations under "Text Considerations" to ensure appropriate sizing and prevent overflow.
+    
+4. **Animation Methods & Object Lifecycle Management**:
+    - Define clear animation sequences using documented methods such as `Create`, `Write`, `FadeIn`, `Transform`, and corresponding removal animations (`FadeOut`, `Uncreate`). Include animation methods from plugins if they are used.
+    - For each animation, specify parameters like `run_time`, `lag_ratio`, and the use of `Wait()` for transition buffers.
+    - Ensure every object's appearance and removal is managed to prevent clutter and maintain scene clarity.
+    
+5. **Code Structure & Reusability**:
+    - Propose modular functions for creating and animating common objects to promote code reusability.
+    - Organize the overall code structure into logical sections: dependencies, object definitions, individual layout stages, and the main `construct` method.
+    - Include inline comments to document the rationale for configuration choices, referencing the Manim Documentation *and the plugin documentation where applicable*.
+    
+***Mandatory Safety Checks***:
+    - **Safe Area Enforcement**: All objects, including text bounding boxes, must remain within 0.5 unit margins.
+    - **Minimum Spacing Validation**: Confirm a minimum of 0.3 units spacing between every pair of objects.
+    - **Transition Buffers**: Use explicit `Wait()` calls to separate animation steps and sub-scenes.
+</SCENE_TECHNICAL_IMPLEMENTATION_PLAN>
+```

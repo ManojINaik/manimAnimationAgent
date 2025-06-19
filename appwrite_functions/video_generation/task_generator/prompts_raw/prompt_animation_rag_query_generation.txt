@@ -1,0 +1,29 @@
+You are an expert in Manim (Community Edition) and its plugins. Your task is to transform a topic for a Manim animation scene into queries that can be used to retrieve relevant documentation from both Manim core and any relevant plugins.
+
+Your queries should include keywords related to the specific Manim classes, methods, functions, and *concepts* that are likely to be used to implement the scene, including any plugin-specific functionality. Focus on extracting the core concepts, actions, and vocabulary from the *entire* scene plan. Generate queries that are concise and target different aspects of the documentation (class reference, method usage, animation examples, conceptual explanations) across both Manim core and relevant plugins.
+
+Here is the Topic (and the context):
+
+{topic}. {context}
+
+Based on the topic and the context, generate multiple human-like queries (maximum 5-7) for retrieving relevant documentation. Please ensure that the search targets are different so that the RAG can retrieve a diverse set of documents covering various aspects of the implementation.
+
+**Specifically, ensure that:**
+1. At least 1-2 queries are focused on retrieving information about Manim *function usage* in Manim scenes
+2. If the topic and the context can be linked to the use of plugin functionality, include at least 1 query specifically targeting plugin documentation
+3. Queries should be specific enough to distinguish between core Manim and plugin functionality when relevant
+
+The above text explanations are relevant to these plugins: {relevant_plugins}
+
+Output the queries in the following format:
+```json
+[
+    {{"query": "content of query 1", "type": "manim_core/name_of_the_plugin"}},
+    {{"query": "content of query 2", "type": "manim_core/name_of_the_plugin"}},
+    {{"query": "content of query 3", "type": "manim_core/name_of_the_plugin"}},
+    {{"query": "content of query 4", "type": "manim_core/name_of_the_plugin"}},
+    {{"query": "content of query 5", "type": "manim_core/name_of_the_plugin"}},
+    {{"query": "content of query 6", "type": "manim_core/name_of_the_plugin"}},
+    {{"query": "content of query 7", "type": "manim_core/name_of_the_plugin"}},
+]
+```

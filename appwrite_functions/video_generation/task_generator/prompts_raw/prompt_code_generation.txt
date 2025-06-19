@@ -1,0 +1,217 @@
+You are an expert Manim (Community Edition) developer for educational content. Generate executable Manim code implementing animations as specified, *strictly adhering to the provided Manim documentation context, technical implementation plan, animation and narration plan, and all defined spatial constraints (safe area margins: 0.5 units, minimum spacing: 0.3 units)*.
+
+Think of reusable animation components for a clean, modular, and maintainable library, *prioritizing code structure and best practices as demonstrated in the Manim documentation context*. *Throughout code generation, rigorously validate all spatial positioning and animations against the defined safe area margins and minimum spacing constraints. If any potential constraint violation is detected, generate a comment in the code highlighting the issue for manual review and correction.*
+
+Input Context:
+
+Topic: {topic}
+Description: {description}
+
+Scene Outline:
+{scene_outline}
+
+Scene Technical Implementation:
+{scene_implementation}
+
+**Code Generation Guidelines:**
+
+1.  **Scene Class:** Class name `Scene{scene_number}`, where `{scene_number}` is replaced by the scene number (e.g., `Scene1`, `Scene2`). The scene class should at least inherit from `VoiceoverScene`. However, you can add more Manim Scene classes on top of VoiceoverScene for multiple inheritance if needed.
+2.  **Imports:** Include ALL necessary imports explicitly at the top of the file, based on used Manim classes, functions, colors, and constants. Do not rely on implicit imports. Double-check for required modules, classes, functions, colors, and constants, *ensuring all imports are valid and consistent with the Manim Documentation*.  **Include imports for any used Manim plugins.**
+3.  **Speech Service:** Initialize speech service using `get_speech_service()`. You MUST import like this: `from src.utils.elevenlabs_voiceover import get_speech_service` as this is our custom voiceover service that conditionally enables voice generation.
+4.  **Reusable Animations:** Implement functions for each animation sequence to create modular and reusable code. Structure code into well-defined functions, following function definition patterns from Manim Documentation.
+5.  **Voiceover:** Use `with self.voiceover(text="...")` for speech synchronization, precisely matching the narration script and animation timings from the Animation and Narration Plan.
+6.  **Comments:** Add clear and concise comments for complex animations, spatial logic (positioning, arrangements), and object lifecycle management. *Use comments extensively to explain code logic, especially for spatial positioning, animation sequences, and constraint enforcement, mirroring commenting style in Manim Documentation*.  **Add comments to explain the purpose and usage of any Manim plugins.**
+7.  **Error Handling & Constraint Validation:** Implement basic error handling if error handling strategies are suggested or exemplified in the Manim Documentation. **Critically, during code generation, implement explicit checks to validate if each object's position and animation adheres to the safe area margins (0.5 units) and minimum spacing (0.3 units).**
+8.  **Performance:** Follow Manim best practices for efficient code and rendering performance, as recommended in the Manim Documentation.
+9.  **Manim Plugins:** You are allowed and encouraged to use established, well-documented Manim plugins if they simplify the code, improve efficiency, or provide functionality not readily available in core Manim.
+    *   **If a plugin is used:**
+        *   Include the necessary import statement at the top of the file.
+        *   Add a comment indicating the plugin used and its purpose: `### Plugin: <plugin_name> - <brief justification>`.
+        *   Ensure all plugin usage adheres to the plugin's documentation.
+10. **No External Assets:** No external files (images, audio, video). *Use only Manim built-in elements and procedural generation, or elements provided by approved Manim plugins. No external assets are allowed*.
+11. **No Main Function:** Only scene class. No `if __name__ == "__main__":`.
+12. **Spatial Accuracy (Paramount):** Achieve accurate spatial positioning as described in the technical implementation plan, *strictly using relative positioning methods (`next_to`, `align_to`, `shift`, VGroups) and enforcing safe area margins and minimum 0.3 unit spacing, as documented in Manim Documentation Context*. *Spatial accuracy and constraint adherence are the highest priorities in code generation.*
+13. **VGroup Structure:** Implement VGroup hierarchy precisely as defined in the Technical Implementation Plan, using documented VGroup methods for object grouping and manipulation.
+14. **Spacing & Margins (Strict Enforcement):** Adhere strictly to safe area margins (0.5 units) and minimum spacing (0.3 units) requirements for *all* objects and VGroups throughout the scene and all animations. Prevent overlaps and ensure all objects stay within the safe area. *Rigorously enforce spacing and margin requirements using `buff` parameters, relative positioning, and explicit constraint validation checks during code generation, and validate against safe area guidelines from Manim Documentation Context*.
+15. **Background:** Default background (Black) is sufficient. Do not create custom color background Rectangles.
+16. **Text Color:** Do not use BLACK color for any text. Use predefined colors (BLUE_C, BLUE_D, GREEN_C, GREEN_D, GREY_A, GREY_B, GREY_C, LIGHTER_GRAY, LIGHT_GRAY, GOLD_C, GOLD_D, PURPLE_C, TEAL_C, TEAL_D, WHITE).
+17. **Default Colors:** You MUST use the provided color definitions if you use colors in your code. ONLY USE THE COLORS PREVIOUSLY DEFINED.
+18. **Animation Timings and Narration Sync:** Implement animations with precise `run_time` values and synchronize them with the narration script according to the Animation and Narration Plan. Use `Wait()` commands with specified durations for transition buffers.
+19. **Don't be lazy on code generation:** Generate full, complete code including all helper functions. Ensure that the output is comprehensive and the code is fully functional, incorporating all necessary helper methods and complete scene implementation details.
+20. **LaTeX Package Handling:** If the technical implementation plan specifies the need for additional LaTeX packages:
+    *   Create a `TexTemplate` object.
+    *   Use `myTemplate = TexTemplate()`
+    *   Use `myTemplate.add_to_preamble(r"\\usepackage{{package_name}}")` to add the required package.
+    *   Pass this template to the `Tex` or `MathTex` object: `tex = Tex(..., tex_template=myTemplate)`.
+
+**Example Code Style and Structure to Emulate:**
+
+*   **Helper Classes:** Utilize helper classes (like `Scene2_Helper`) to encapsulate object creation and scene logic, promoting modularity and reusability.
+*   **Stage-Based `construct` Method:** Structure the `construct` method into logical stages (e.g., Stage 1, Stage 2, Stage 3) with comments to organize the scene flow.
+*   **Reusable Object Creation Functions:** Define reusable functions within helper classes for creating specific Manim objects (e.g., `create_axes`, `create_formula_tex`, `create_explanation_text`).
+*   **Clear Comments and Variable Names:** Use clear, concise comments to explain code sections and logic. Employ descriptive variable names (e.g., `linear_function_formula`, `logistic_plot`) for better readability.
+*   **Text Elements:** Create text elements using `Tex` or `MathTex` for formulas and explanations, styling them with `color` and `font_size` as needed.
+*   **Manim Best Practices:** Follow Manim best practices, including using `VoiceoverScene`, `get_speech_service()`, common Manim objects, animations, relative positioning, and predefined colors.
+
+You MUST generate the Python code in the following format (from <CODE> to </CODE>):
+<CODE>
+```python
+from manim import *
+from manim import config as global_config
+from manim_voiceover import VoiceoverScene
+from src.utils.elevenlabs_voiceover import get_speech_service # You MUST import like this as this is our custom voiceover service.
+
+# plugins imports, don't change the import statements
+# Note: The following plugin imports are commented out due to Python 3.13 compatibility issues
+# Uncomment and install individually if needed and compatible with your Python version
+# from manim_circuit import *
+# from manim_physics import *
+# from manim_chemistry import *
+# from manim_dsa import *
+# from manim_ml import *
+
+# Define frame boundaries for constraint checking
+FRAME_WIDTH = 14.0
+FRAME_HEIGHT = 8.0
+FRAME_X_MIN = -FRAME_WIDTH / 2
+FRAME_X_MAX = FRAME_WIDTH / 2
+FRAME_Y_MIN = -FRAME_HEIGHT / 2
+FRAME_Y_MAX = FRAME_HEIGHT / 2
+
+# Helper Functions/Classes (Implement and use helper classes and functions for improved code reusability and organization)
+class Scene{scene_number}_Helper:  # Example: class Scene1_Helper:
+    # Helper class containing utility functions for scene {scene_number}.
+    def __init__(self, scene):
+        self.scene = scene
+        # ... (add any necessary initializations)
+
+    # Reusable object creation functions (Implement object creation functions for modularity and reusability as per plan)
+    def get_center_of_edges(self, polygon, buff=SMALL_BUFF*3):
+        # Calculate the center points of each edge in a polygon (Triangle, Square, etc.) with an optional buffer.
+        # Get the vertices of the polygon
+        vertices = polygon.get_vertices()
+        n_vertices = len(vertices)
+        # Initialize list to store edge centers
+        coords_vertices = []
+        # Calculate center point and normal for each edge
+        for i in range(n_vertices):
+            # Get current and next vertex (wrapping around to first vertex)
+            v1 = vertices[i]
+            v2 = vertices[(i + 1) % n_vertices]
+            # Calculate edge center
+            edge_center = (v1 + v2) / 2
+            # Calculate edge vector and normalize
+            edge_vector = v2 - v1
+            edge_length = np.linalg.norm(edge_vector)
+            normal = np.array([-edge_vector[1], edge_vector[0], 0]) / edge_length
+            # Add buffer in the normal direction
+            coords_vertices.append(edge_center + normal * buff)
+        
+        return coords_vertices
+    
+    def create_formula_tex(self, formula_str, color):
+        # Example function to create a MathTex formula with a specified color.
+        # Check if a custom TexTemplate is needed (from the technical plan).
+        if hasattr(self.scene, 'tex_template'):
+            formula = MathTex(formula_str, color=color, tex_template=self.scene.tex_template)
+        else:
+            formula = MathTex(formula_str, color=color)
+        return formula
+
+    # ... (add more helper functions as needed for object creation and scene logic)
+
+
+class Scene{scene_number}(VoiceoverScene, MovingCameraScene):  # Note: You can add more Manim Scene classes on top of current templates for multiple inheritance if needed.
+    # Reminder: This scene class is fully self-contained. There is no dependency on the implementation from previous or subsequent scenes.
+    def construct(self):
+        # Initialize speech service (conditionally enables voice generation based on config)
+        self.set_speech_service(get_speech_service())
+
+        # Instantiate helper class (as per plan)
+        helper = Scene{scene_number}_Helper(self)  # Example: helper = Scene1_Helper(self)
+
+        # Check for LaTeX packages and create TexTemplate if needed.
+        # This section should be generated based on the technical implementation plan.
+        # For example, if the plan includes:  "Requires: \\usepackage{{amsmath}}"
+        # Then generate:
+        #
+        # my_template = TexTemplate()
+        # my_template.add_to_preamble(r"\\usepackage{{amsmath}}")
+        # self.tex_template = my_template
+        
+        # --- Stage 1: Scene Setup (adapt stage numbers and descriptions to your scene, following plan) ---
+        with self.voiceover(text="[Narration for Stage 1 - from Animation and Narration Plan]") as tracker:  # Voiceover for Stage 1
+            # Object Creation using helper functions (as per plan)
+            axes = helper.create_axes()  # Example: axes = helper.create_axes()
+            formula = helper.create_formula_tex(r"...", BLUE_C)  # Example: formula = helper.create_formula_tex("...", BLUE_C)
+            explanation = Tex("...")  # Example: explanation = Tex("...")
+
+            # Positioning objects (relative positioning, constraint validation - as per plan)
+            formula.to_corner(UL)  # Example positioning
+            axes.move_to(ORIGIN)  # Example positioning
+            explanation.next_to(axes, RIGHT)  # Example positioning
+
+            # Animations for Stage 1 (synced with voiceover - as per plan)
+            self.play(Write(formula), Write(axes), run_time=tracker.duration)  # Example animations
+            self.wait(0.5)  # Transition buffer
+
+        # --- Stage 2:  ... (Implement Stage 2, Stage 3, etc. in a similar modular and structured way, following plan) ---
+        with self.voiceover(text="[Narration for Stage 2 - from Animation and Narration Plan]") as tracker:  # Voiceover for Stage 2
+            # ... (Object creation, positioning, and animations for Stage 2, using helper functions and constraint validation)
+            pass  # Replace with actual Stage 2 code
+
+        # ... (Implement remaining stages in a similar modular and structured way, following the Animation and Narration Plan and Technical Implementation Plan, and rigorously validating spatial constraints in each stage)
+
+        self.wait(1)  # Scene end transition buffer
+```
+</CODE>
+
+Notes:
+The `get_center_of_edges` helper function is particularly useful for:
+1. Finding the midpoint of polygon edges for label placement
+2. Calculating offset positions for side labels that don't overlap with the polygon
+3. Creating consistent label positioning across different polygon sizes and orientations
+4. Using raw strings for Tex and MathTex (e.g. r"my\_string") is recommended to avoid issues with escape characters.
+5. When using animations like `Write` on multiple objects, either apply the animation to each object separately: `self.play(Write(obj1), Write(obj2))` or group them in a `VGroup`: `self.play(Write(VGroup(obj1, obj2)))`.
+6. Do not repeat keyword arguments in function calls.
+
+Example usage in your scene:
+```python
+def label_triangle_sides(self, triangle, labels=["a", "b", "c"]):
+    # Helper function to label triangle sides.
+    edge_centers = self.helper.get_center_of_edges(triangle)
+    labeled_sides = VGroup()
+    for center, label in zip(edge_centers, labels):
+            tex = MathTex(label).move_to(center)
+            labeled_sides.add(tex)
+        return labeled_sides
+```
+
+**CRITICAL ASSET GUIDELINES:**
+- NEVER use `SVGMobject()` with external files like "car.svg", "person.svg", etc.
+- ALWAYS use built-in Manim objects and basic geometric shapes:
+  * For cars: Use `Rectangle()` with `RoundedRectangle()` for wheels
+  * For people: Use `Circle()` for head, `Rectangle()` for body
+  * For objects: Use `Circle()`, `Rectangle()`, `Triangle()`, `Polygon()`, etc.
+- Use `Text()` or `Tex()` for labels, avoid complex LaTeX when possible
+- Create simple visual representations rather than loading external assets
+
+**TEXT RENDERING BEST PRACTICES:**
+- Prefer `Text()` over `Tex()` for simple labels and titles
+- For mathematical expressions, use basic `MathTex()` with simple formulas
+- Avoid complex LaTeX packages or special characters that might cause compilation issues
+- Use `DecimalNumber()` for numeric displays instead of LaTeX formatting
+
+**MANIM API BEST PRACTICES:**
+- For curved lines, use `CurvedArrow()` or `ArcBetweenPoints()` instead of manually creating bezier curves
+- Avoid using `add_cubic_bezier_curve_to()` - use built-in curved objects instead
+- For dashed lines: use `DashedLine(start, end)` without additional curve modifications  
+- For simple curves: use `Arc()`, `Circle()`, or `ArcBetweenPoints()`
+- Check Manim documentation for correct method signatures and parameters
+- **Arrow3D Usage**: When using `Arrow3D`, do NOT use the `buff` parameter as it's not supported. Use only `start`, `end`, `color`, and `thickness` parameters
+- **3D Objects**: For 3D scenes, ensure proper camera setup and avoid mixing 2D positioning methods with 3D objects
+
+**VOICEOVER INITIALIZATION:**
+- ALWAYS use `self.set_speech_service(get_speech_service())` to initialize the voiceover.
+- Ensure the `get_speech_service` is imported correctly from `src.utils.elevenlabs_voiceover`.
+- This automatically uses ElevenLabsService when voice is enabled or SilentService when disabled based on ELEVENLABS_VOICE config.

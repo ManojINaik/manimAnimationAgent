@@ -1,0 +1,23 @@
+{
+  "runtime": "python-3.12",
+  "entrypoint": "main.py",
+  "path": "./",
+  "name": "Video Generation Function",
+  "description": "Asynchronous video generation pipeline for Manim animations",
+  "timeout": 1800,
+  "execute": ["any"],
+  "events": [],
+  "schedule": "",
+  "env": [
+    "APPWRITE_API_KEY",
+    "APPWRITE_PROJECT_ID",
+    "APPWRITE_ENDPOINT",
+    "GEMINI_API_KEY",
+    "OPENAI_API_KEY",
+    "ELEVENLABS_API_KEY",
+    "LANGFUSE_PUBLIC_KEY",
+    "LANGFUSE_SECRET_KEY",
+    "LANGFUSE_HOST",
+    "mem0_api_key"
+  ]
+} 

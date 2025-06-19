@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "Taylor's theorem",
+        "description": "Taylor's theorem gives an approximation of a k-times differentiable function around a given point by a polynomial of degree k, called the k-th order Taylor polynomial.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Simpson's rule",
+        "description": "In numerical integration, Simpson's rules are several approximations for definite integrals, named after Thomas Simpson.",
+        "difficulty": "Hard", 
+        "remark": "",
+        "subfield": "Numerical Analysis"
+    },
+    {
+        "theorem": "Velocity vector",
+        "description": "Velocity is the speed in combination with the direction of motion of an object.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Vector Calculus"
+    },
+    {
+        "theorem": "Double Riemann sum",
+        "description": "A double Riemann sum is a mathematical method used to approximate the value of a double integral over a two-dimensional region.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Multivariable Calculus"
+    },
+    {
+        "theorem": "Fubini's theorem",
+        "description": "Fubini's Theorem is a fundamental result in calculus that allows the evaluation of a double integral as an iterated integral, provided certain conditions are met. It simplifies the computation of double integrals over a rectangular or general region by breaking them into two single integrals.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Multivariable Calculus"
+    },
+    {
+        "theorem": "Jacobian matrix and determinant",
+        "description": "In vector calculus, the Jacobian matrix of a vector-valued function of several variables is the matrix of all its first-order partial derivatives.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Vector Calculus"
+    },
+    {
+        "theorem": "Green's theorem",
+        "description": "Green's theorem is used to integrate the derivatives in a particular plane.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Vector Calculus"
+    },
+    {
+        "theorem": "Stokes' theorem",
+        "description": "relates the flux integral over a surface S to a line integral around the boundary C of the surface S",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Vector Calculus"
+    },
+    {
+        "theorem": "Burnside's Lemma",
+        "description": "Burnside's Lemma, also known as the Cauchy-Frobenius Lemma or the Orbit-Counting Theorem, is a fundamental result in combinatorics that deals with counting the number of distinct elements in a set under the action of a group. It is particularly useful in counting problems involving symmetries and permutations.\n\nThe lemma is named after the British mathematician William Burnside, who contributed significantly to the development of group theory.\n\nStatement of Burnside's Lemma:\n\nLet G be a finite group that acts on a finite set X. Then the number of distinct orbits of X under the action of G is given by:\n\n(1/|G|) * \u03a3 |Fix(g)|\n\nwhere |G| is the order of the group (i.e., the number of elements in G), the sum is taken over all elements g in G, and |Fix(g)| is the number of elements in X that are fixed by the action of g (i.e., the number of elements x in X such that g(x) = x).\n\nIn simpler terms, Burnside's Lemma states that the number of distinct orbits (or equivalence classes) in a set under the action of a group can be found by averaging the number of fixed points of each group element.\n\nBurnside's Lemma is often used in combinatorial problems where we need to count the number of distinct configurations of an object, taking into account its symmetries. By applying the lemma, we can avoid overcounting configurations that are equivalent under a given symmetry operation.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Group Theory"
+    },
+    {
+        "theorem": "Lah Number",
+        "description": "In mathematics, the (signed and unsigned) Lah numbers are coefficients expressing rising factorials in terms of falling factorials and vice versa.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Combinatorics"
+    },
+    {
+        "theorem": "Ramsey's theorem",
+        "description": "Ramsey's theorem essentially states that if a structure (such as a graph or a set of numbers) is large enough, then some kind of order or regularity will always emerge, no matter how it is arranged or colored.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Combinatorics"
+    },
+    {
+        "theorem": "Schwarz Lemma theorem",
+        "description": "Schwarz Lemma is a fundamental result in complex analysis that provides a bound on the behavior of holomorphic functions (i.e., complex-differentiable functions) in the unit disk. It is named after the German mathematician Hermann Schwarz.\n\nStatement of Schwarz Lemma:\n\nLet f be a holomorphic function on the open unit disk D = {z \u2208 \u2102 : |z| < 1} such that f(0) = 0 and |f(z)| \u2264 1 for all z \u2208 D. Then, for all z \u2208 D, the following inequalities hold:\n\n1. |f(z)| \u2264 |z|\n2. |f'(0)| \u2264 1\n\nMoreover, if equality holds for some z \u2260 0 (i.e., |f(z)| = |z|) or |f'(0)| = 1, then f is a rotation, i.e., f(z) = e^(i\u03b8)z for some real \u03b8.\n\nThe Schwarz Lemma has several important consequences and generalizations in complex analysis, such as the Riemann Mapping Theorem and the Pick's Lemma. It is a powerful tool for understanding the behavior of holomorphic functions in the unit disk and provides a way to compare the size of their derivatives at the origin.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Complex Analysis"
+    },
+    {
+        "theorem": "Cauchy Riemann Theorem",
+        "description": "The Cauchy-Riemann Theorem is a fundamental result in complex analysis, a branch of mathematics that studies functions of complex variables. It provides necessary and sufficient conditions for a complex function to be holomorphic (complex differentiable) in a given domain.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Complex Analysis"
+    },
+    {
+        "theorem": "Morera's Theorem",
+        "description": "Morera's theorem, named after Giacinto Morera, gives an important criterion for proving that a function is holomorphic.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Complex Analysis"
+    },
+    {
+        "theorem": "Catalan-Mingantu Number",
+        "description": "The Catalan numbers are a sequence of natural numbers that occur in various counting problems, often involving recursively defined objects. ",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Combinatorics"
+    },
+    {
+        "theorem": "Liouville's theorem",
+        "description": "Liouville's theorem states that: The density of states in an ensemble of many identical states with different initial conditions is constant along every trajectory in phase space. It states that if one constructs an ensemble of paths, the probability density along the trajectory remains constant.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Complex Analysis"
+    },
+    {
+        "theorem": "Derangement Formula",
+        "description": "In combinatorial mathematics, a derangement is a permutation of the elements of a set in which no element appears in its original position.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Combinatorics"
+    },
+    {
+        "theorem": "Delian problem",
+        "description": "Doubling the cube, also known as the Delian problem, is an ancient geometric problem. Given the edge of a cube, the problem requires the construction of the edge of a second cube whose volume is double that of the first.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Geometry"
+    },
+    {
+        "theorem": "Polya's Enumeration Theorem",
+        "description": "Pólya's Enumeration Theorem, also known as Pólya's Counting Theorem, is a powerful result in combinatorics used to count distinct arrangements or configurations of objects that are invariant under a group of symmetries.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Combinatorics"
+    },
+    {
+        "theorem": "Cauchy's theorem",
+        "description": "Cauchy's Theorem is a fundamental result in group theory, a branch of abstract algebra. It provides a condition under which a finite group contains an element of a specific order. It is named after the French mathematician Augustin-Louis Cauchy.",
+        "difficulty": "Hard",
+        "remark": "",
+        "subfield": "Group Theory"
+    }
+]

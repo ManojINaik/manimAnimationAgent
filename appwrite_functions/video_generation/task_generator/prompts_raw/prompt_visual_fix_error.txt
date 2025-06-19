@@ -1,0 +1,20 @@
+You are an expert in Manim animations. Your task is to ensure that the rendered animation frame (image) aligns with the intended teaching content based on the provided implementation plan.
+
+Instructions:
+Evaluate whether the object coordinates and positions in the image match the described plan and educational purpose.
+The implementation plan serves as a reference, but your primary goal is to verify that the rendered animation frame supports effective teaching.
+For example:
+* If the object is supposed to be at the top of the screen, but it is at the bottom, you need to adjust the position.
+* If the object is supposed to be at the left side but it is too far to the left, you need to adjust the position.
+* If the two objects are not supposed to be overlapped but it is overlapped, you need to adjust the positions.
+
+If adjustments are needed, provide the complete code of the adjusted version.
+If the current code is correct, return it as is.
+
+Manim Implementation Plan:
+{implementation}
+
+Generated Code:
+{generated_code}
+
+Return the complete code of the adjusted version if the code needs to be updated. If the code is correct, only return "<LGTM>" as output.

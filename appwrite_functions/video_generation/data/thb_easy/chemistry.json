@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Aufbau Principle",
+        "description": "Electrons fill atomic orbitals in order of increasing energy levels. This means the lowest energy orbitals are filled first, followed by higher energy orbitals. This helps in predicting electronic configuration and understanding the properties of elements.",
+        "difficulty": "Easy",
+        "remark": "Fundamental principle for building the electron configurations of atoms and understanding the periodic table.",
+        "subfield": "Atomic Structure"
+    },
+    {
+        "theorem": "The Law of Conservation of Mass",
+        "description": "In a closed system, the total mass of the reactants is equal to the total mass of the products. This implies that matter is neither created nor destroyed during a chemical reaction, only transformed. This principle is fundamental for understanding stoichiometry.",
+        "difficulty": "Easy",
+        "remark": "A cornerstone of chemistry, this principle allows us to balance chemical equations and make quantitative predictions.",
+        "subfield": "Chemical Reactions and Stoichiometry"
+    },
+    {
+        "theorem": "The Octet Rule",
+        "description": "Atoms tend to gain, lose, or share electrons in order to achieve a full outer shell of eight electrons (or two in the case of hydrogen and some other exceptions). This explains the bonding behaviour of most main group elements, guiding the formations of compounds.",
+        "difficulty": "Easy",
+        "remark": "Simple and powerful rule to understand the formations of chemical bonds and predict molecules' structures.",
+        "subfield": "Chemical Bonding"
+    },
+    {
+        "theorem": "Alkali metals",
+        "description": "The alkali metals consist of the chemical elements lithium (Li), sodium (Na), potassium (K), rubidium (Rb), caesium (Cs), and francium (Fr).",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Periodic Table and Elements"
+    },
+    {
+        "theorem": "Distillation",
+        "description": "In chemistry, Distillation is among the most useful methods available to chemists for separating the parts of a liquid. A process that relies on a cycle of heating, vaporization, condensing and cooling. A liquid of a lower boiling point will vaporize before a liquid of higher boiling point.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Separation Techniques"
+    },
+    {
+        "theorem": "Crystallization",
+        "description": "In chemistry, Crystallization, or crystallisation, is the process of atoms or molecules arranging into a well-defined, rigid crystal lattice in order to minimize their energetic state. The smallest entity of a crystal lattice is called a unit cell, which can accept atoms or molecules to grow a macroscopic crystal.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Solid State Chemistry"
+    },
+    {
+        "theorem": "Titration",
+        "description": "Titration is a common laboratory method of quantitative chemical analysis to determine the concentration of an identified analyte. A reagent, termed the titrant or titrator, is prepared as a standard solution of known concentration and volume.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Ionic Compound",
+        "description": "An ionic compound is a chemical compound composed of ions. Ionic compounds are formed by the electrostatic attraction between positively charged cations and negatively charged anions.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Chemical Bonding"
+    },
+    {
+        "theorem": "Noble gas",
+        "description": "The noble gases are so named because they rarely react with other elements. Helium, neon, argon, krypton, xenon and radon atoms all have a full outer valence shell of electrons, which makes them quite unreactive.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Periodic Table and Elements"
+    },
+    {
+        "theorem": "Transition Metal",
+        "description": "Transition metal, any of various chemical elements that have valence electrons—i.e., electrons that can participate in the formation of chemical bonds—in two shells instead of only one.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Periodic Table and Elements"
+    },
+    {
+        "theorem": "Balance Chemical Equation",
+        "description": "A balanced equation is an equation for a chemical reaction in which the number of atoms for each element in the reaction and the total charge are the same for both the reactants and the products.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Chemical Reactions and Stoichiometry"
+    },
+    {
+        "theorem": "Combustion analysis",
+        "description": "Combustion analysis is a method used in both organic chemistry and analytical chemistry to determine the elemental composition (more precisely empirical formula) of a pure organic compound by combusting the sample under conditions where the resulting combustion products can be quantitatively analyzed.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Analytical Chemistry"
+    },
+    {
+        "theorem": "Oxidation",
+        "description": "In chemistry, the oxidation state, or oxidation number, is the hypothetical charge of an atom if all of its bonds to other atoms were fully ionic. It describes the degree of oxidation of an atom in a chemical compound. Conceptually, the oxidation state may be positive, negative or zero.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Redox Chemistry"
+    },
+    {
+        "theorem": "First law of thermodynamics",
+        "description": "The first law of thermodynamics is a formulation of the law of conservation of energy in the context of thermodynamic processes. The law distinguishes two principal forms of energy transfer, heat and thermodynamic work, that modify a thermodynamic system containing a constant amount of matter.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "Hess's Law",
+        "description": "The enthalpy change of a reaction is independent of the path taken from reactants to products. This allows the calculation of enthalpy changes for reactions that cannot be easily measured directly by using a series of reactions with known enthalpy changes. The overall enthalpy change is the sum of enthalpy changes of individual steps.",
+        "difficulty": "Easy",
+        "remark": "Useful for calculating enthalpy changes of complex reactions. It's based on the state function of enthalpy.",
+        "subfield": "Thermodynamics"
+    },
+    {
+        "theorem": "The Ideal Gas Law",
+        "description": "The product of the pressure and volume of an ideal gas is proportional to the product of the amount of gas and its absolute temperature: PV = nRT. This law describes the behavior of ideal gases and helps predict their volume, pressure, temperature, or amount under given conditions.",
+        "difficulty": "Easy",
+        "remark": "Ideal for understanding the behaviour of gases, often used in stoichiometry related to gases. Assumes no intermolecular forces or particle volume.",
+        "subfield": "Gas Laws"
+    },
+    {
+        "theorem": "Charles's Law",
+        "description": "Charles's law (also known as the law of volumes) is an experimental gas law that describes how gases tend to expand when heated.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Gas Laws"
+    },
+    {
+        "theorem": "Gay-Lussac's Law",
+        "description": "Gay-Lussac's law usually refers to Joseph-Louis Gay-Lussac's law of combining volumes of gases, discovered in 1808 and published in 1809.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Gas Laws"
+    },
+    {
+        "theorem": "pH Scale Definition",
+        "description": "pH is a measure of the hydrogen ion concentration in a solution.",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Acid-Base Chemistry"
+    },
+    {
+        "theorem": "Van't Hoff Equation",
+        "description": "The Van 't Hoff equation has been widely utilized to explore the changes in state functions in a thermodynamic system. ",
+        "difficulty": "Easy",
+        "remark": "",
+        "subfield": "Chemical Kinetics"
+    }
+]

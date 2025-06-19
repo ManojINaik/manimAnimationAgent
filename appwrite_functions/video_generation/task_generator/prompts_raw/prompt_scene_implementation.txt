@@ -1,0 +1,140 @@
+You are an expert in educational video production and Manim (Community Edition) animation development. Your task is to create a detailed implementation plan for Scene {scene_number}.
+
+<BASE_INFORMATION>
+Topic: {topic}
+Description: {description}
+</BASE_INFORMATION>
+
+<SCENE_CONTEXT>
+Scene Overview:
+{scene_outline}
+</SCENE_CONTEXT>
+
+<IMPLEMENTATION_PLAN>
+
+[SCENE_VISION]
+1.  **Overall Narrative**:
+    - Describe the overall story or message of the scene. What is the key takeaway for the viewer?
+    - How does this scene fit into the larger narrative of the video?
+    - What is the desired emotional impact on the viewer?
+
+2.  **Learning Objectives**:
+    - What specific knowledge or skills should the viewer gain from this scene?
+    - How will the visual elements and animations support these learning objectives?
+    - What are the key concepts that need to be emphasized?
+
+[STORYBOARD]
+1.  **Visual Flow**:
+    - Describe the sequence of visual elements and animations in the scene.
+    - Provide a rough sketch or description of the key visual moments.
+    - How will the scene transition between different ideas or concepts?
+    - What is the pacing of the scene? Are there moments of pause or rapid action?
+
+[TECHNICAL_IMPLEMENTATION]
+1.  **High-Level Components (VGroups)**:
+    - **Identify the main conceptual sections of the scene.** Think of this like outlining chapters in a story or sections in a presentation.
+    - **Define the purpose of each high-level component.** What should the viewer learn or understand from each section?
+    - **Describe how these components relate to each other and the overall scene flow.** How will you transition between these sections to create a cohesive narrative?
+    - **Provide a brief rationale for your choice of high-level components.** Why did you choose these specific sections?
+
+2.  **VGroup Hierarchy**:
+    - **For each high-level component, define a parent VGroup.** This VGroup will act as a container for all elements within that section.
+    - **Break down each parent VGroup into nested VGroups for sub-components as needed.** Think about logical groupings of elements.
+    - **Specify the relative positioning of these VGroups within the scene using `next_to()`, `align_to()`, and `shift()` where possible.** How will the parent VGroups be arranged on the screen relative to each other? (e.g., stacked vertically, side-by-side, etc.) Prioritize relative positioning using the following references:
+        - `ORIGIN`: the center of the scene
+        - scene margins (e.g., corners, edges)
+        - other VGroups as references.
+        - **MUST NOT use absolute coordinates.**
+    - **Define the scale relationships between different levels of the VGroup hierarchy.** Will sub-VGroups inherit scale from parent VGroups? How will scaling be managed to maintain visual consistency?
+    - **Provide a brief rationale for your VGroup hierarchy.** Why did you choose this specific structure?
+
+    For each VGroup level (from high-level down to sub-components):
+    - Name: [Descriptive name for the VGroup, e.g., "TitleSection", "ProblemStatementGroup", "Explanation1Group"]
+    - Purpose: [What is the purpose of this VGroup? What should the viewer learn or understand from this VGroup?]
+    - Contents: [List all child VGroups and individual elements (Text, MathTex, Shapes, etc.) that belong to this VGroup.]
+    - Positioning:
+        * Reference: [Specify what this VGroup is positioned relative to. Do not use absolute coordinates.]
+        * Alignment: [How is it aligned relative to the reference? Use `align_to()` with options like `UP`, `DOWN`, `LEFT`, `RIGHT`, `ORIGIN`, etc.]
+        * Spacing: [Describe any spacing considerations relative to sibling VGroups or elements within the parent. Use `buff` argument in `next_to()` or `arrange()`. Refer to the defined minimum spacing value.]
+    - Scale: [Specify the scale of this VGroup relative to its parent VGroup. Use relative scaling factors (e.g., 1.0 for same scale, 0.8 for smaller).]
+    - Rationale: [Explain the reasoning behind the structure and organization of this VGroup. Why did you group these elements together?]
+
+3.  **Element Specification**:
+    For each individual element (Text, MathTex, Shapes, etc.) within a VGroup:
+    - Name: [Descriptive name for the element, e.g., "ProblemTitleText", "Equation1", "HighlightCircle"]
+    - Type: [Manim object type. Examples: Text, MathTex, Circle, Rectangle, Arrow, Line, etc.]
+    - Parent VGroup: [Specify the VGroup this element belongs to. This establishes the hierarchical relationship.]
+    - Positioning:
+        * Reference: [Specify what this element is positioned relative to. Use its parent VGroup, other elements, `ORIGIN`, or scene margins as references. Do not use absolute coordinates.]
+        * Alignment: [How is it aligned within its parent VGroup? Use `align_to()` or `next_to()` with appropriate directions, e.g. `UP`, `DOWN`, `LEFT`, `RIGHT`, `ORIGIN`, `UL`, `UR`, `DL`, `DR`]
+        * Spacing: [If applicable, describe spacing relative to other elements using `buff` in `next_to()`. Refer to the defined minimum spacing value.]
+    - Style Properties:
+        * Color: [Hex code or named color (e.g., "RED", "BLUE"). Use hex codes for specific colors. e.g., #FF0000 for red]
+        * Opacity: [Value between 0 and 1. 1 for fully opaque, 0 for fully transparent.]
+        * Stroke Width: [Specify stroke width using levels: `thin`, `medium`, or `thick`.]
+        * Font: [Font family name, if applicable.]
+        * Font Size: [Specify font size using levels: `heading1`, `heading2`, `heading3`, `heading4`, `heading5`, `heading6`, or `body`. Refer to the defined font size levels.]
+        * Fill Color: [Hex code for fill color, if applicable.]
+        * ... [Include any other relevant style properties]
+    - Z-Index: [Integer value for layering order within the VGroup. Higher values are on top.]
+    - Required Imports: [List specific Manim classes that need to be imported to create this element. e.g., `from manim import Text, Circle`]
+
+[ANIMATION_STRATEGY]
+1.  **VGroup Transitions**:
+    - **Define how parent VGroups will transition onto and off of the scene, and between different sections.** Describe the movement patterns for these high-level groups. Examples: 'Slide in from left', 'Fade in and scale up', 'Move to top of screen'.
+    - **Specify the timing and coordination of VGroup transitions.** How long will each transition take? Will transitions overlap or be sequential?
+    - **Describe any transformation sequences applied to VGroups during transitions.** Will VGroups rotate, scale, or change shape during transitions?
+
+2.  **Element Animations**:
+    - **Define the animations for individual elements within each VGroup.** What animations will bring each element to life? Examples: 'Write in text', 'Draw a circle', 'Highlight an equation', 'Fade in an image'.
+    - **Group related element animations using Manim's animation grouping features (e.g., `AnimationGroup`, `Succession`).** Explain how these groups will be used to create cohesive animation sequences.
+    - **Coordinate element animations with parent VGroup movements and transitions.** Ensure element animations are synchronized with the overall scene flow.
+    - **Specify the timing of element animations relative to VGroup transitions and other element animations.** Create a timeline or sequence of animations.
+
+3.  **Scene Flow**:
+    - **Describe the overall animation sequence for the entire scene.** Outline the order in which VGroups and elements will be animated.
+    - **Specify transition buffers or pauses between major sections of the scene.** How much time will be left between animations for the viewer to process information?
+    - **Consider how the animation timing will coordinate with the narration (if narration is planned).** Animations should complement and reinforce the spoken content.
+
+[NARRATION]
+- **Narration Script:** [Provide the full script for the narration, including timing cues or markers for when specific animations should occur. The script should be clear, detailed, and engaging, and should align with the visual elements and animations.]
+- **Narration Sync:** [Describe how the narration should be synchronized with the animations. Specify how timing cues in the narration script will be used to trigger animations. Are there specific points where the narration and animations should be perfectly synchronized? Explain how you will achieve this synchronization.]
+
+[VIEWER_EXPERIENCE]
+1.  **Cognitive Load**:
+    - How will you manage the amount of information presented at any given time?
+    - Are there any complex concepts that need to be broken down into smaller steps?
+    - How will you use visual cues to guide the viewer's attention?
+
+2.  **Pacing**:
+    - Is the pacing of the scene appropriate for the content?
+    - Are there moments where the viewer needs time to pause and reflect?
+    - How will you use animation timing to control the pace of the scene?
+
+3.  **Accessibility**:
+    - How will you ensure that the scene is accessible to viewers with different needs?
+    - Are there any specific considerations for color contrast or text readability?
+
+[TECHNICAL_CHECKS]
+- **VGroup boundary validation:** Ensure all elements are contained within their intended VGroup boundaries and are not overflowing unexpectedly.
+- **Hierarchy scale consistency:** Verify that scaling is applied consistently throughout the VGroup hierarchy and that text and elements remain readable at all scales.
+- **Animation coordination between levels:** Check that animations at different VGroup levels are coordinated and do not clash or look disjointed.
+- **Performance optimization for nested groups:** Consider the performance implications of deeply nested VGroups and optimize structure and animations for smooth playback.
+- **Text readability:** Ensure all text elements are legible in terms of size, color contrast, and positioning.
+- **Color contrast:** Verify sufficient color contrast between text and background, and between different visual elements for accessibility.
+- **Animation smoothness:** Check for any jerky or abrupt animations and refine timing and easing for smoother transitions.
+
+</IMPLEMENTATION_PLAN>
+
+Requirements:
+1. All elements must stay within safe area margins
+2. Maintain minimum spacing between objects: [value]  (This value is defined in the project settings)
+3. Use relative positioning when possible, leveraging `next_to()`, `align_to()`, and `shift()`. Only reference positions relative to `ORIGIN`, scene margins, or other object reference points. Do not use absolute coordinates.
+4. Include transition buffers between animations
+5. Specify z-index for overlapping elements
+6. All colors must use hex codes or named colors
+7. Define scale relative to base unit
+8. No external dependencies
+9. Currently, there are no images or other assets available locally or remotely for you to use in the scene. Only include elements that can be generated through manim.
+10. **Do not generate any code in this plan, except for illustrative examples where necessary. This plan is for outlining the scene and should not include any python code.**
+11. **The purpose of this plan is to be a detailed guide for a human to implement the scene in manim.**

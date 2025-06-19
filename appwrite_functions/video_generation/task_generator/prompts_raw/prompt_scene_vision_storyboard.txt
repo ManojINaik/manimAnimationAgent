@@ -1,0 +1,71 @@
+You are an expert in educational video production and Manim animation.
+**Reminder:** Each scene's vision and storyboard plan is entirely self-contained. There is no dependency on any implementation from previous or subsequent scenes. However, the narration will treat all scenes as part of a single, continuous video.
+
+Create a scene vision and storyboard plan for Scene {scene_number}, thinking in Manim terms, and strictly adhering to the defined spatial constraints.
+
+Topic: {topic}
+Description: {description}
+
+Scene Overview:
+{scene_outline}
+
+The following manim plugins are relevant to the scene:
+{relevant_plugins}
+
+**Spatial Constraints (Strictly Enforced):**
+*   **Safe area margins:** 0.5 units on all sides from the scene edges. *All objects must be positioned within these margins.*
+*   **Minimum spacing:** 0.3 units between any two Manim objects (measured edge to edge). *Ensure a minimum spacing of 0.3 units to prevent overlaps and maintain visual clarity. This spacing must be maintained between all objects in the scene, including text, shapes, and graphs.*
+
+**Positioning Requirements:**
+1.  Safe area margins (0.5 units).
+2.  Minimum spacing between objects (0.3 units).
+3.  Relative positioning (`next_to`, `align_to`, `shift`) from `ORIGIN`, margins, or object references. **No absolute coordinates are allowed.** All positioning MUST be relative and clearly specified using reference points and relative positioning methods.
+4.  Transition buffers (`Wait` times) between sub-scenes and animation steps for visual clarity and pacing.
+
+**Diagrams/Sketches (Optional but Recommended for Complex Scenes):**
+*   For complex scenes, consider including a simple diagram or sketch (even text-based) of the intended layout to visually clarify spatial relationships and ensure adherence to spacing and margin constraints.
+
+**Focus:**
+*   Focus on clear visual communication of the scene's learning objective through effective use of Manim objects and animations, while strictly adhering to the defined spatial constraints.
+*   Provide detailed visual descriptions in Manim terms to guide human implementation.
+*   Prioritize explanation and visualization of the theorem. Do not include any promotional elements or quiz sessions.
+*   Minimize text usage - rely primarily on visual elements, mathematical notation, and animations to convey concepts. Use text sparingly and only when necessary for clarity.
+
+**Common Mistakes:**
+*   The Triangle class in Manim creates equilateral triangles by default. To create a right-angled triangle, use the Polygon class instead.
+
+**Manim Plugins:**
+*   Consider using established Manim plugins if they significantly simplify the implementation or offer visual elements not readily available in core Manim.  If a plugin is used, clearly indicate this in the storyboard with a note like "**Plugin Suggestion:** Consider using the `manim-plugin-name` plugin for [brief explanation of benefit]."
+
+You MUST generate the scene vision and storyboard plan for the scene in the following format (from ```xml to </SCENE_VISION_STORYBOARD_PLAN>```):
+
+```xml
+<SCENE_VISION_STORYBOARD_PLAN>
+[SCENE_VISION]
+1.  **Scene Overview**:
+    - Scene story, key takeaway, video role. *Consider how this scene fits within the overall video narrative.*
+    - **Visual learning objectives for viewers:** Think about *specific Manim object types* that best represent the learning objective. Example: "Visualize roots as `Dot` objects on an `Axes` graph." Be specific about Manim object classes (e.g., `MathTex`, `Shapes`, `Graphs`, `Axes`, `VGroup`).  If a plugin provides a relevant object type, mention it (e.g., "Visualize X using `PluginObject` from `manim-plugin-name`").
+    - How Manim visuals & animations support learning? Consider `MathTex`, `Shapes`, `Graphs`, `Axes`, `VGroup`. Focus on spatial arrangement and clarity, ensuring adherence to safe area margins and minimum spacing (0.3 units). Consider using `VGroup` to group related formula components for easier animation and spatial control. Example: "Use `VGroup` to group related formula components for easier animation and spatial control, ensuring a minimum spacing of 0.3 units between VGroup and other scene elements."  If a plugin offers a more efficient way to achieve a visual effect, mention it.
+    - Key concepts to emphasize visually using visual hierarchy and spatial arrangement in Manim, while respecting safe area margins and minimum spacing (0.3 units).  **Use `MathTex` for mathematical expressions and equations. Use `Tex` for general text, titles, labels, and any non-mathematical text. When mixing text with mathematical symbols in `MathTex`, use the `\\text{{}}` command (e.g., `MathTex(r"\\text{{Area}} = \\pi r^2")`)**
+
+[STORYBOARD]
+1.  **Visual Flow & Pacing (Manim Animation Sequence)**:
+    - Describe the sequence of Manim visuals and animations (`Text`, `Circle`, `Arrow`, `Create`, `FadeIn`, `Transform`, etc.). Be specific about animation types and their parameters (e.g., `run_time`).  If a plugin provides a specific animation type, mention it (e.g., "Use `PluginAnimation` from `manim-plugin-name`").
+    - Key visual moments: composition and arrangement of Manim elements, ensuring all elements are within safe area margins and maintain a minimum 0.3 unit spacing. Example: "`MathTex` formula center (`.move_to(ORIGIN)`) with `Write` animation, ensuring 0.3 unit spacing from scene edges and other elements."
+    - Visual transitions between ideas using Manim animations (`Transform`, `Shift`, `FadeOutAndShift`, etc.). Specify transition animations and their timings.
+    - Scene pacing (pauses, action) and Manim animation timing's role. Use `Wait()` for transition buffers and visual clarity.
+    - **Sub-scene Breakdown**: Divide the scene into logical sub-scenes, each focusing on a specific step in the explanation or visualization.
+        - For each sub-scene, start with a **Visual Element**: The primary visual component that drives the explanation (e.g., mathematical notation, diagram, graph).  If this element comes from a plugin, clearly state this (e.g., "Visual Element: `PluginObject` from `manim-plugin-name`").
+        - Detail the **Animation Sequence**: Describe step-by-step the Manim animations and visual elements for each sub-scene. Be specific about:
+            - **Text Usage Guidelines:**
+                - **Use `MathTex` *only* for mathematical expressions and equations.**
+                - **Use `Tex` for all other text, including labels, explanations, and titles.**
+                - **When mixing text with mathematical symbols in `MathTex`, wrap the text portions in `\\text{{}}`. Example: `MathTex(r"\\text{{Area of circle}} = \\pi r^2")`.**
+            - Manim object classes (`MathTex`, `Circle`, `Arrow`, `Axes`, `Plot`, `Line`, `VGroup`, etc.), prioritizing mathematical notation and visual elements over text.  Include plugin object classes where appropriate.
+            - Animation types (`Create`, `Write`, `FadeIn`, `Transform`, `FadeOut`, `Circumscribe`, `FocusOn`, etc.) and their parameters (e.g., `run_time`). Include plugin animation types where appropriate.
+            - Positioning of objects using relative positioning methods (`.next_to()`, `.align_to()`, `.shift()`, `.to_corner()`, `.move_to(ORIGIN)`, etc.) and references to other objects or scene elements. **No absolute coordinates allowed.**
+            - Color and style specifications (e.g., `color=BLUE`, `stroke_width=2`, `dashed=True`).
+            - Explicitly mention safe area margins and minimum spacing (0.3 units) for all objects within each sub-scene.
+
+</SCENE_VISION_STORYBOARD_PLAN>
+```

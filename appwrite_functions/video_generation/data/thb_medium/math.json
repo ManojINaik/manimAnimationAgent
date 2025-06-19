@@ -1,0 +1,142 @@
+[
+    {
+        "theorem": "The Factor Theorem",
+        "description": "A polynomial f(x) has a factor (x - a) if and only if f(a) = 0. This theorem helps in finding roots and factors of polynomials.",
+        "difficulty": "Medium",
+        "remark": "Crucial for solving polynomial equations and understanding polynomial behavior.",
+        "subfield": "Algebra"
+    },
+    {
+        "theorem": "The Law of Sines",
+        "description": "In any triangle, the ratio of the length of a side to the sine of its opposite angle is constant. If a, b, and c are the side lengths, and A, B, and C are the opposite angles, then a/sin(A) = b/sin(B) = c/sin(C).",
+        "difficulty": "Medium",
+        "remark": "Useful for solving triangles when you have angle-side relationships.",
+        "subfield": "Trigonometry"
+    },
+    {
+        "theorem": "The Binomial Theorem",
+        "description": "For any non-negative integer n and real numbers a and b, (a + b)^n = Σ(k=0 to n) [n choose k] a^(n-k) b^k, where [n choose k] is the binomial coefficient, also written as nCk. It gives a formula for expanding powers of binomials.",
+        "difficulty": "Medium",
+        "remark": "Important in algebra, combinatorics, and probability.",
+        "subfield": "Algebra"
+    },
+    {
+        "theorem": "The Intermediate Value Theorem",
+        "description": "If f(x) is a continuous function on a closed interval [a, b] and k is any number between f(a) and f(b), then there exists at least one number c in the interval [a, b] such that f(c) = k. This theorem helps to find roots and demonstrate the behavior of continuous functions.",
+        "difficulty": "Medium",
+        "remark": "Fundamental for understand continuous functions in calculus",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "The Cosine Rule",
+        "description": "In any triangle, the square of the length of one side is equal to the sum of the squares of the lengths of the other two sides minus twice the product of the lengths of those two sides multiplied by the cosine of the angle between them. For a triangle with side lengths a, b, c, and opposite angles A, B, C:  a² = b² + c² - 2bc*cos(A). Similar formulas are valid for b² and c².",
+        "difficulty": "Medium",
+        "remark": "Used in any triangle to solve for sides and/or angles",
+        "subfield": "Trigonometry"
+    },
+    {
+        "theorem": "The Divergence Test",
+        "description": "If lim (n→∞) aₙ ≠ 0 or doesn't exist, then the series ∑aₙ diverges. It is a simple test to identify divergent series but will not be able to determine if the series is convergent.",
+        "difficulty": "Medium",
+        "remark": "An important initial check when examining series convergence.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "The Squeeze Theorem (or Sandwich Theorem)",
+        "description": "If g(x) ≤ f(x) ≤ h(x) for all x near a (except possibly at a), and if lim(x→a) g(x) = L and lim(x→a) h(x) = L, then lim(x→a) f(x) = L. Useful for evaluating limits when direct calculation is difficult, by bounding a function between two simpler functions.",
+        "difficulty": "Medium",
+        "remark": "Commonly used in calculus for finding challenging limits.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "The Chain Rule",
+        "description": "The chain rule is a formula for finding the derivative of a composite function. It states that the derivative of a function composed of two functions is the product of the derivative of the outer function and the derivative of the inner function.",
+        "difficulty": "Medium",
+        "remark": "Commonly used in calculus for finding the derivative of composite functions.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Product Rule",
+        "description": "The product rule is a formula for finding the derivative of a product of two functions. It states that the derivative of a product of two functions is the sum of the product of the first function and the derivative of the second function, and the product of the second function and the derivative of the first function.",
+        "difficulty": "Medium",
+        "remark": "Commonly used in calculus for finding the derivative of products of functions.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Quotient Rule",
+        "description": "The quotient rule is a formula for finding the derivative of a quotient of two functions. It states that the derivative of a quotient of two functions is the quotient of the derivative of the numerator and the denominator, minus the product of the numerator and the derivative of the denominator, all divided by the square of the denominator.",
+        "difficulty": "Medium",
+        "remark": "Commonly used in calculus for finding the derivative of quotients of functions.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Power Rule",
+        "description": "The power rule is a formula for finding the derivative of a power of a function. It states that the derivative of a power of a function is the product of the power and the derivative of the function.",
+        "difficulty": "Medium",
+        "remark": "Commonly used in calculus for finding the derivative of powers of functions.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Integration by Substitution",
+        "description": "Integration by substitution is a technique used to simplify the integration of a function by substituting a new variable for the original variable.",
+        "difficulty": "Medium",
+        "remark": "Commonly used in calculus for finding the integral of functions.",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Disk & Washer Method",
+        "description": "The washer method formula is used to find the volume of two functions that are rotated around the x-axis.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Extreme value theorem",
+        "description": "if 𝑓 is a continuous function over a finite, closed interval, then 𝑓 has an absolute maximum and an absolute minimum",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Fermat's theorem",
+        "description": "if 𝑓 has a local extremum at 𝑐, then 𝑐 is a critical point of 𝑓",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Mean Value Theorem",
+        "description": "Mean Value Theorem states that if a function f is continuous on the closed interval [a,b] and differentiable on the open interval (a,b), then there exists a point c in the interval (a,b) such that f'(c) is equal to the function's average rate of change over [a,b].",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Newton-Raphson method",
+        "description": "The Newton-Raphson method, also known as the Newton's method, is a widely used iterative numerical technique for finding the approximate roots of a real-valued function. It is named after Sir Isaac Newton and Joseph Raphson, who independently developed the method in the 17th century.\n\nThe method is based on the idea of linear approximation, where a function is approximated by its tangent line at a given point. The intersection of this tangent line with the x-axis provides a better approximation of the root than the initial point. This process is then repeated iteratively until the desired level of accuracy is achieved.\n\nGiven a function f(x) and an initial guess x0 for the root, the Newton-Raphson method can be described by the following iterative formula:\n\nx1 = x0 - f(x0) / f'(x0)\n\nHere, f'(x0) is the derivative of the function f(x) evaluated at the point x0. The new approximation x1 is then used as the starting point for the next iteration, and the process is repeated until the difference between successive approximations is smaller than a predefined tolerance level or a maximum number of iterations is reached.\n\nThe Newton-Raphson method converges rapidly when the initial guess is close to the actual root and the function is well-behaved. However, the method may fail to converge or converge to a wrong root if the initial guess is not close enough to the actual root, or if the function has multiple roots, or if the derivative of the function is zero or nearly zero at the root.\n\nDespite these limitations, the Newton-Raphson method is widely used in various fields of science and engineering due to its simplicity and fast convergence properties when applied to well-behaved functions.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Numerical Analysis"
+    },
+    {
+        "theorem": "Rolle's theorem",
+        "description": "Rolle's theorem or Rolle's lemma essentially states that any real-valued differentiable function that attains equal values at two distinct points must have at least one point, somewhere between them, at which the slope of the tangent line is zero.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Second derivative test",
+        "description": "The second partial derivatives test classifies the point as a local maximum or local minimum.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Calculus"
+    },
+    {
+        "theorem": "Pappus's Theorem",
+        "description": "Pappus's centroid theorem is either of two related theorems dealing with the surface areas and volumes of surfaces and solids of revolution.",
+        "difficulty": "Medium",
+        "remark": "",
+        "subfield": "Geometry"
+    }
+]
