@@ -1,0 +1,86 @@
+name: Video Renderer
+on:
+  # Trigger manually or via webhook
+  workflow_dispatch:
+    inputs:
+      video_id:
+        description: 'Video ID to render'
+        required: true
+        type: string
+  # Also run on a schedule to check for queued videos
+  schedule:
+    - cron: '*/5 * * * *'  # Every 5 minutes
+  
+  # Trigger via repository dispatch (webhook)
+  repository_dispatch:
+    types: [render_video]
+
+jobs:
+  render-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          pkg-config \
+          libcairo2-dev \
+          libgirepository1.0-dev \
+          ffmpeg \
+          libpango1.0-dev
+          
+    - name: Install Python dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Set up environment variables
+      env:
+        APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+        APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+        APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: |
+        echo "Environment variables set"
+        
+    - name: Check for queued videos
+      id: check_queue
+      env:
+        APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+        APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+        APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+      run: |
+        python scripts/check_video_queue.py
+        
+    - name: Render videos
+      if: steps.check_queue.outputs.videos_found == 'true'
+      env:
+        APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+        APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+        APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        VIDEO_ID: ${{ github.event.inputs.video_id || github.event.client_payload.video_id }}
+      run: |
+        python scripts/github_video_renderer.py
+        
+    - name: Upload artifacts (for debugging)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: video-render-logs
+        path: |
+          output/
+          *.log
+        retention-days: 7 
