@@ -180,7 +180,7 @@ class AppwriteVideoManager:
                     database_id=self.database_id,
                     collection_id=self.videos_collection_id,
                     key="status",
-                    elements=["queued", "planning", "rendering", "completed", "failed"],
+                    elements=["queued", "planning", "ready_for_render", "queued_for_render", "rendering", "completed", "failed"],
                     required=True
                 )
                 await asyncio.sleep(0.1)
