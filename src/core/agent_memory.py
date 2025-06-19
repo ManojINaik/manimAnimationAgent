@@ -24,7 +24,7 @@ class AgentMemory:
     Uses Mem0 to store and retrieve patterns that help improve code generation.
     """
     
-    def __init__(self, api_key: Optional[str] = None, agent_id: str = "theorem-explain-agent"):
+    def __init__(self, api_key: Optional[str] = None, agent_id: str = "manimAnimationAgent"):
         """
         Initialize the agent memory system.
         

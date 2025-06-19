@@ -1692,7 +1692,7 @@ Scene Technical Implementation:
 
 1.  **Scene Class:** Class name `Scene{scene_number}`, where `{scene_number}` is replaced by the scene number (e.g., `Scene1`, `Scene2`). The scene class should at least inherit from `VoiceoverScene`. However, you can add more Manim Scene classes on top of VoiceoverScene for multiple inheritance if needed.
 2.  **Imports:** Include ALL necessary imports explicitly at the top of the file, based on used Manim classes, functions, colors, and constants. Do not rely on implicit imports. Double-check for required modules, classes, functions, colors, and constants, *ensuring all imports are valid and consistent with the Manim Documentation*.  **Include imports for any used Manim plugins.**
-3.  **Speech Service:** Initialize `ElevenLabsService()`. You MUST import like this: `from src.utils.elevenlabs_voiceover import ElevenLabsService` as this is our custom voiceover service.
+3.  **Speech Service:** Initialize speech service using `get_speech_service()`. You MUST import like this: `from src.utils.elevenlabs_voiceover import get_speech_service` as this is our custom voiceover service that conditionally enables voice generation.
 4.  **Reusable Animations:** Implement functions for each animation sequence to create modular and reusable code. Structure code into well-defined functions, following function definition patterns from Manim Documentation.
 5.  **Voiceover:** Use `with self.voiceover(text="...")` for speech synchronization, precisely matching the narration script and animation timings from the Animation and Narration Plan.
 6.  **Comments:** Add clear and concise comments for complex animations, spatial logic (positioning, arrangements), and object lifecycle management. *Use comments extensively to explain code logic, especially for spatial positioning, animation sequences, and constraint enforcement, mirroring commenting style in Manim Documentation*.  **Add comments to explain the purpose and usage of any Manim plugins.**
@@ -1726,7 +1726,7 @@ Scene Technical Implementation:
 *   **Reusable Object Creation Functions:** Define reusable functions within helper classes for creating specific Manim objects (e.g., `create_axes`, `create_formula_tex`, `create_explanation_text`).
 *   **Clear Comments and Variable Names:** Use clear, concise comments to explain code sections and logic. Employ descriptive variable names (e.g., `linear_function_formula`, `logistic_plot`) for better readability.
 *   **Text Elements:** Create text elements using `Tex` or `MathTex` for formulas and explanations, styling them with `color` and `font_size` as needed.
-*   **Manim Best Practices:** Follow Manim best practices, including using `VoiceoverScene`, `ElevenLabsService`, common Manim objects, animations, relative positioning, and predefined colors.
+*   **Manim Best Practices:** Follow Manim best practices, including using `VoiceoverScene`, `get_speech_service()`, common Manim objects, animations, relative positioning, and predefined colors.
 
 You MUST generate the Python code in the following format (from <CODE> to </CODE>):
 <CODE>
@@ -1734,14 +1734,16 @@ You MUST generate the Python code in the following format (from <CODE> to </CODE
 from manim import *
 from manim import config as global_config
 from manim_voiceover import VoiceoverScene
-from src.utils.elevenlabs_voiceover import ElevenLabsService # You MUST import like this as this is our custom voiceover service.
+from src.utils.elevenlabs_voiceover import get_speech_service # You MUST import like this as this is our custom voiceover service.
 
 # plugins imports, don't change the import statements
-from manim_circuit import *
-from manim_physics import *
-from manim_chemistry import *
-from manim_dsa import *
-from manim_ml import *
+# Note: The following plugin imports are commented out due to Python 3.13 compatibility issues
+# Uncomment and install individually if needed and compatible with your Python version
+# from manim_circuit import *
+# from manim_physics import *
+# from manim_chemistry import *
+# from manim_dsa import *
+# from manim_ml import *
 
 # Helper Functions/Classes (Implement and use helper classes and functions for improved code reusability and organization)
 class Scene{scene_number}_Helper:  # Example: class Scene1_Helper:
@@ -1790,7 +1792,7 @@ class Scene{scene_number}(VoiceoverScene, MovingCameraScene):  # Note: You can a
     # Reminder: This scene class is fully self-contained. There is no dependency on the implementation from previous or subsequent scenes.
     def construct(self):
         # Initialize speech service
-        self.set_speech_service(ElevenLabsService())
+        self.set_speech_service(get_speech_service())
 
         # Instantiate helper class (as per plan)
         helper = Scene{scene_number}_Helper(self)  # Example: helper = Scene1_Helper(self)

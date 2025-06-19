@@ -32,107 +32,75 @@ class VideoRenderer:
         self.print_response = print_response
         self.use_visual_fix_code = use_visual_fix_code
 
-    async def render_scene(self, code: str, file_prefix: str, curr_scene: int, curr_version: int, code_dir: str, media_dir: str, max_retries: int = 3, use_visual_fix_code=False, visual_self_reflection_func=None, banned_reasonings=None, scene_trace_id=None, topic=None, session_id=None):
-        """Render a single scene and handle error retries and visual fixes.
+    async def render_scene(self, code: str, file_prefix: str, curr_scene: int, curr_version: int, code_dir: str, media_dir: str, max_retries: int = 3, use_visual_fix_code=False, visual_self_reflection_func=None, banned_reasonings=None, scene_trace_id=None, topic=None, session_id=None, on_success_callback=None):
+        """Render a single Manim scene with the given code.
 
         Args:
-            code (str): The Manim code to render
-            file_prefix (str): Prefix for output files
+            code (str): Python code to render
+            file_prefix (str): Prefix for output files  
             curr_scene (int): Current scene number
             curr_version (int): Current version number
-            code_dir (str): Directory for code files
-            media_dir (str): Directory for media output
+            code_dir (str): Directory to save code files
+            media_dir (str): Directory for Manim media output
             max_retries (int, optional): Maximum retry attempts. Defaults to 3.
-            use_visual_fix_code (bool, optional): Whether to use visual fix code. Defaults to False.
-            visual_self_reflection_func (callable, optional): Function for visual self-reflection. Defaults to None.
-            banned_reasonings (list, optional): List of banned reasoning strings. Defaults to None.
-            scene_trace_id (str, optional): Scene trace identifier. Defaults to None.
-            topic (str, optional): Topic name. Defaults to None.
-            session_id (str, optional): Session identifier. Defaults to None.
+            use_visual_fix_code (bool, optional): Use visual error fixing. Defaults to False.
+            visual_self_reflection_func: Function for visual reflection
+            banned_reasonings: List of banned reasoning patterns
+            scene_trace_id: Trace ID for this scene
+            topic: Video topic
+            session_id: Session ID
+            on_success_callback: Async callback function to call on successful render
 
         Returns:
             tuple: (code, error_message) where error_message is None on success
         """
         retries = 0
-        while retries < max_retries:
-            try:
-                # Execute manim in a thread to prevent blocking
-                file_path = os.path.join(code_dir, f"{file_prefix}_scene{curr_scene}_v{curr_version}.py")
-                project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-                manim_executable = os.path.join(project_root, ".venv", "Scripts", "manim.exe")
-                process_env = os.environ.copy()
-                if 'PYTHONPATH' in process_env:
-                    process_env['PYTHONPATH'] = f"{project_root}{os.pathsep}{process_env['PYTHONPATH']}"
-                else:
-                    process_env['PYTHONPATH'] = project_root
-                result = await asyncio.to_thread(
-                    subprocess.run,
-                    [manim_executable, "-qh", file_path, "--media_dir", media_dir, "--progress_bar", "none"],
-                    capture_output=True,
-                    text=True,
-                    env=process_env
-                )
+        file_path = os.path.join(code_dir, f"{file_prefix}_scene{curr_scene}_v{curr_version}.py")
+        scene_dir = os.path.join(self.output_dir, file_prefix, f"scene{curr_scene}")
+        
+        # Save code to file
+        with open(file_path, "w", encoding='utf-8') as f:
+            f.write(code)
 
-                # if result.returncode != 0, it means that the code is not rendered successfully
-                # so we need to fix the code by returning the code and the error message
-                if result.returncode != 0:
-                    raise Exception(result.stderr)
-
-                if use_visual_fix_code and visual_self_reflection_func and banned_reasonings:
-                    # Get the rendered video path
-                    video_path = os.path.join(
-                        media_dir,
-                        "videos",
-                        f"{file_prefix}_scene{curr_scene}_v{curr_version}.mp4"
-                    )
-                    
-                    # For Gemini/Vertex AI models, pass the video directly
-                    if self.scene_model.model_name.startswith(('gemini/', 'vertex_ai/')):
-                        media_input = video_path
-                    else:
-                        # For other models, use image snapshot
-                        media_input = self.create_snapshot_scene(
-                            topic, curr_scene, curr_version, return_type="path"
-                        )
-                        
-                    new_code, log = visual_self_reflection_func(
-                        code,
-                        media_input,
-                        scene_trace_id=scene_trace_id,
-                        topic=topic,
-                        scene_number=curr_scene,
-                        session_id=session_id
-                    )
-
-                    with open(os.path.join(code_dir, f"{file_prefix}_scene{curr_scene}_v{curr_version}_vfix_log.txt"), "w") as f:
-                        f.write(log)
-
-                    # Check for termination markers
-                    if "<LGTM>" in new_code or any(word in new_code for word in banned_reasonings):
-                        break
-
-                    code = new_code
-                    curr_version += 1
-                    with open(os.path.join(code_dir, f"{file_prefix}_scene{curr_scene}_v{curr_version}.py"), "w") as f:
-                        f.write(code)
-                    print(f"Code saved to scene{curr_scene}/code/{file_prefix}_scene{curr_scene}_v{curr_version}.py")
-                    retries = 0
-                    continue
-
-                break  # Exit retry loop on success
-
-            except Exception as e:
-                print(f"Error: {e}")
-                print(f"Retrying {retries+1} of {max_retries}...")
-
-                with open(os.path.join(code_dir, f"{file_prefix}_scene{curr_scene}_v{curr_version}_error.log"), "a") as f:
-                    f.write(f"\nError in attempt {retries}:\n{str(e)}\n")
-                retries += 1
-                return code, str(e) # Indicate failure and return error message
+        # Render the scene
+        try:
+            project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+            # Use 'manim' command directly since it's in the virtual environment
+            manim_command = "manim"
+            process_env = os.environ.copy()
+            if 'PYTHONPATH' in process_env:
+                process_env['PYTHONPATH'] = f"{project_root}{os.pathsep}{process_env['PYTHONPATH']}"
+            else:
+                process_env['PYTHONPATH'] = project_root
+            result = subprocess.run(
+                [manim_command, "-qh", file_path, "--media_dir", media_dir],
+                capture_output=True,
+                text=True,
+                env=process_env
+            )
             
+            if result.returncode != 0:
+                raise Exception(result.stderr)
+                
+        except Exception as e:
+            print(f"Error: {e}")
+            print(f"Retrying {retries+1} of {max_retries}...")
+
+            with open(os.path.join(code_dir, f"{file_prefix}_scene{curr_scene}_v{curr_version}_error.log"), "a") as f:
+                f.write(f"\nError in attempt {retries}:\n{str(e)}\n")
+            retries += 1
+            return code, str(e) # Indicate failure and return error message
+        
         print(f"Successfully rendered {file_path}")
         with open(os.path.join(self.output_dir, file_prefix, f"scene{curr_scene}", "succ_rendered.txt"), "w") as f:
             f.write("")
+
+        # Call the success callback if provided (for uploading scene videos)
+        if on_success_callback:
+            try:
+                await on_success_callback(curr_scene, file_path, scene_dir)
+            except Exception as e:
+                print(f"⚠️ Scene upload callback failed: {e}")
 
         return code, None # Indicate success
 
@@ -165,15 +133,15 @@ class VideoRenderer:
                 try:
                     media_dir = os.path.join(self.output_dir, file_prefix, "media")
                     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-                    manim_executable = os.path.join(project_root, ".venv", "Scripts", "manim.exe")
+                    # Use 'manim' command directly since it's in the virtual environment
+                    manim_command = "manim"
                     process_env = os.environ.copy()
                     if 'PYTHONPATH' in process_env:
                         process_env['PYTHONPATH'] = f"{project_root}{os.pathsep}{process_env['PYTHONPATH']}"
                     else:
                         process_env['PYTHONPATH'] = project_root
                     result = subprocess.run(
-                        f"{manim_executable} -qh {file_path} --media_dir {media_dir}",
-                        shell=True,
+                        [manim_command, "-qh", file_path, "--media_dir", media_dir],
                         capture_output=True,
                         text=True,
                         env=process_env

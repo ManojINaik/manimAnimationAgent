@@ -14,7 +14,7 @@ This guide explains how to deploy the manimAnimationAgent to Hugging Face Spaces
 1. Go to [Hugging Face Spaces](https://huggingface.co/spaces)
 2. Click "Create new Space"
 3. Configure:
-   - **Space name**: Your choice (e.g., "theorem-explanation-agent")
+   - **Space name**: Your choice (e.g., "manimAnimationAgent")
    - **License**: MIT
    - **SDK**: Gradio
    - **Hardware**: CPU Basic (sufficient for most cases)
@@ -45,6 +45,7 @@ DEMO_MODE=false
 **Optional Settings:**
 ```bash
 ELEVENLABS_API_KEY=your-elevenlabs-key  # For TTS
+ELEVENLABS_VOICE=false  # Set to true to enable voice generation, false to disable
 LANGFUSE_SECRET_KEY=your-langfuse-key   # For logging
 ```
 

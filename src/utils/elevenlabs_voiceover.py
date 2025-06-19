@@ -147,23 +147,36 @@ class ElevenLabsService(SpeechService):
         """Create a silent audio file as fallback when API fails."""
         try:
             import numpy as np
-            from scipy.io import wavfile
+            from pydub import AudioSegment
             
-            sample_rate = 22050
-            samples = int(sample_rate * duration)
-            silence = np.zeros(samples, dtype=np.float32)
+            # Create silent audio using pydub
+            duration_ms = int(duration * 1000)  # Convert to milliseconds
+            silent_audio = AudioSegment.silent(duration=duration_ms)
             
-            # Convert to appropriate format for wav
-            silence_int = (silence * 32767).astype(np.int16)
-            wavfile.write(output_file.replace('.mp3', '.wav'), sample_rate, silence_int)
-            
+            # Export as MP3
+            silent_audio.export(output_file, format="mp3")
             print(f"Created silent audio fallback: {output_file}")
             
         except Exception as e:
-            print(f"Failed to create silent audio: {e}")
-            # Create an empty file as last resort
-            with open(output_file, 'w') as f:
-                f.write("")
+            print(f"Failed to create silent audio with pydub: {e}")
+            try:
+                # Fallback: create a minimal MP3 file with proper headers
+                import struct
+                
+                # Create a minimal MP3 header + silent frame
+                mp3_header = b'\xff\xfb\x90\x00'  # Basic MP3 header
+                mp3_data = b'\x00' * 1024  # Silent data
+                
+                with open(output_file, 'wb') as f:
+                    f.write(mp3_header + mp3_data)
+                    
+                print(f"Created minimal MP3 file: {output_file}")
+                
+            except Exception as e2:
+                print(f"Failed to create minimal MP3: {e2}")
+                # Create an empty file as last resort
+                with open(output_file, 'w') as f:
+                    f.write("")
 
     def generate_from_text(self, text: str, cache_dir: str = None, path: str = None) -> dict:
         """
@@ -207,4 +220,107 @@ class ElevenLabsService(SpeechService):
             "original_audio": audio_path,
         }
 
-        return json_dict 
+        return json_dict
+
+
+class SilentService(SpeechService):
+    """Silent speech service that creates silent audio files when voice generation is disabled."""
+
+    def __init__(self, **kwargs):
+        """Initialize silent service."""
+        super().__init__(**kwargs)
+
+    def get_data_hash(self, input_data: dict) -> str:
+        """Generate hash for silent audio files."""
+        data_str = json.dumps(input_data, sort_keys=True)
+        return hashlib.sha256(data_str.encode('utf-8')).hexdigest()
+
+    def text_to_speech(self, text: str, output_file: str) -> str:
+        """Create a silent audio file instead of generating speech."""
+        duration = len(text) * 0.1  # Rough estimate: 0.1 seconds per character
+        self._create_silent_audio(output_file, duration)
+        return output_file
+
+    def _create_silent_audio(self, output_file: str, duration: float):
+        """Create a silent audio file."""
+        try:
+            import numpy as np
+            from pydub import AudioSegment
+            from pydub.generators import Sine
+            
+            # Create silent audio using pydub
+            duration_ms = int(duration * 1000)  # Convert to milliseconds
+            silent_audio = AudioSegment.silent(duration=duration_ms)
+            
+            # Export as MP3
+            silent_audio.export(output_file, format="mp3")
+            print(f"Created silent audio (voice disabled): {output_file}")
+            
+        except Exception as e:
+            print(f"Failed to create silent audio with pydub: {e}")
+            try:
+                # Fallback: create a minimal MP3 file with proper headers
+                import struct
+                
+                # Create a minimal MP3 header + silent frame
+                # This creates a valid MP3 file that won't cause header errors
+                mp3_header = b'\xff\xfb\x90\x00'  # Basic MP3 header
+                mp3_data = b'\x00' * 1024  # Silent data
+                
+                with open(output_file, 'wb') as f:
+                    f.write(mp3_header + mp3_data)
+                    
+                print(f"Created minimal MP3 file: {output_file}")
+                
+            except Exception as e2:
+                print(f"Failed to create minimal MP3: {e2}")
+                # Create an empty file as last resort
+                with open(output_file, 'w') as f:
+                    f.write("")
+
+    def generate_from_text(self, text: str, cache_dir: str = None, path: str = None) -> dict:
+        """Generate silent audio from text."""
+        if cache_dir is None:
+            cache_dir = self.cache_dir
+
+        input_data = {
+            "input_text": text, 
+            "service": "silent", 
+        }
+        
+        cached_result = self.get_cached_result(input_data, cache_dir)
+        if cached_result is not None:
+            return cached_result
+
+        if path is None:
+            audio_path = self.get_data_hash(input_data) + ".mp3"
+        else:
+            audio_path = path
+
+        # Generate silent audio file
+        full_audio_path = str(Path(cache_dir) / audio_path)
+        self.text_to_speech(text, full_audio_path)
+
+        json_dict = {
+            "input_text": text,
+            "input_data": input_data,
+            "original_audio": audio_path,
+            "final_audio": audio_path,  # Add final_audio key to match expected format
+        }
+
+        return json_dict
+
+
+def get_speech_service(**kwargs):
+    """
+    Get the appropriate speech service based on configuration.
+    
+    Returns:
+        SpeechService: Either ElevenLabsService or SilentService based on ELEVENLABS_VOICE setting
+    """
+    if Config.ELEVENLABS_VOICE:
+        print("Voice generation enabled - using ElevenLabsService")
+        return ElevenLabsService(**kwargs)
+    else:
+        print("Voice generation disabled - using SilentService")
+        return SilentService(**kwargs) 

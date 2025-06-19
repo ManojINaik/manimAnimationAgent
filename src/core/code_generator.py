@@ -79,7 +79,7 @@ class CodeGenerator:
         # Initialize Agent Memory for self-improving capabilities
         self.use_agent_memory = use_agent_memory and HAS_AGENT_MEMORY
         if self.use_agent_memory:
-            self.agent_memory = AgentMemory(agent_id=f"theorem-explain-agent-{session_id}" if session_id else "theorem-explain-agent")
+            self.agent_memory = AgentMemory(agent_id=f"manimAnimationAgent-{session_id}" if session_id else "manimAnimationAgent")
         else:
             self.agent_memory = None
             if use_agent_memory:
