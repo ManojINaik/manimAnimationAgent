@@ -15,4 +15,6 @@ class Config:
     # ElevenLabs TTS configurations
     ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
     ELEVENLABS_DEFAULT_VOICE_ID = os.getenv('ELEVENLABS_DEFAULT_VOICE_ID', 'EXAVITQu4vr4xnSDxMaL')  # Default: Bella voice 
-    ELEVENLABS_VOICE = os.getenv('ELEVENLABS_VOICE', 'true').lower() == 'true'  # Control voice generation 
+    # Allow several env-var spellings: ELEVENLABS_VOICE=true (preferred) or ELEVENLABS=true
+    _voice_flag = os.getenv('ELEVENLABS_VOICE', os.getenv('ELEVENLABS', 'false')).lower()
+    ELEVENLABS_VOICE = _voice_flag == 'true'  # Control voice generation 

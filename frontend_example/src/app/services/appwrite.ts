@@ -95,6 +95,58 @@ export async function generateVideo(topic: string, description: string): Promise
     videoId?: string;
     error?: string;
 }> {
+    // 1. Try hitting the internal Next.js API route – this handles
+    // longer timeouts and avoids CORS issues when the FastAPI backend
+    // runs locally.
+    try {
+        const apiRes = await fetch('/api/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, description })
+        });
+
+        const apiJson = await apiRes.json();
+        if (apiRes.ok && apiJson.success) {
+            return {
+                success: true,
+                videoId: apiJson.task_id || apiJson.videoId,
+            };
+        }
+
+        // If the internal API returns an error, continue to fallback
+        console.warn('Internal API call failed; attempting Appwrite function:', apiJson.error);
+    } catch (err) {
+        console.warn('Internal API call error; attempting Appwrite function:', err);
+    }
+
+    // 2. If internal API not working, and BACKEND URL is explicitly defined,
+    // attempt direct backend call (useful for production deployments with
+    // public FastAPI endpoint).
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+    if (backendUrl) {
+        try {
+            const res = await fetch(`${backendUrl}/api/generate`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic, context: description })
+            });
+
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.message || 'Request failed');
+
+            return {
+                success: json.success,
+                videoId: json.task_id || json.videoId,
+                error: json.error
+            };
+        } catch (err) {
+            console.warn('Direct backend call failed, falling back to Appwrite Function:', err);
+            // fall through to function call
+        }
+    }
+
+    // 3. Fallback: invoke the Appwrite cloud function
     try {
         const response = await functions.createExecution(
             VIDEO_FUNCTION_ID,
@@ -102,8 +154,20 @@ export async function generateVideo(topic: string, description: string): Promise
             false // async execution
         );
 
-        const result = JSON.parse(response.response);
-        return result;
+        const rawResponse = (response as any).response; // response type from SDK is any
+
+        let parsed: any = { success: false };
+        try {
+            parsed = rawResponse ? JSON.parse(rawResponse) : {};
+        } catch (e) {
+            console.warn('Unable to parse Appwrite function response, returning raw execution object');
+        }
+
+        return {
+            success: parsed.success ?? false,
+            videoId: parsed.videoId || parsed.task_id,
+            error: parsed.error
+        };
     } catch (error) {
         console.error('Failed to generate video:', error);
         return {
@@ -121,7 +185,7 @@ export async function getVideo(videoId: string): Promise<VideoDocument | null> {
             VIDEOS_COLLECTION_ID,
             videoId
         );
-        return response as VideoDocument;
+        return response as unknown as VideoDocument;
     } catch (error) {
         console.error('Failed to get video:', error);
         return null;
@@ -136,7 +200,7 @@ export async function getVideoScenes(videoId: string): Promise<SceneDocument[]> 
             SCENES_COLLECTION_ID,
             [`video_id="${videoId}"`]
         );
-        return response.documents as SceneDocument[];
+        return response.documents as unknown as SceneDocument[];
     } catch (error) {
         console.error('Failed to get video scenes:', error);
         return [];
