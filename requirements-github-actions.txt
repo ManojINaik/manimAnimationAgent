@@ -39,6 +39,10 @@ pydub>=0.25.1
 librosa>=0.10.1
 soundfile>=0.12.1
 
+# Additional Dependencies
+pylatexenc>=2.10
+pysrt>=1.1.2
+
 # Exclude problematic dependencies for CI/CD:
 # - PyAudio (requires system audio libraries)
 # - TTS libraries that need audio hardware
