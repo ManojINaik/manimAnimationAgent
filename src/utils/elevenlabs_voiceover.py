@@ -494,26 +494,33 @@ class SilentService(SpeechService):
 def get_speech_service(**kwargs):
     """
     Get the appropriate speech service based on configuration and environment.
-    
-    Returns:
-        SpeechService: ElevenLabsService, GTTSService, or SilentService based on environment and settings
+
+    Priority order:
+    1. If voice generation explicitly enabled via ELEVENLABS_VOICE:
+       • Use ElevenLabsService when an API key is available.
+       • If no API key is configured, gracefully fall back to GTTSService so CI pipelines still generate audio.
+    2. If running inside GitHub Actions (GITHUB_ACTIONS=true) but voice generation is NOT enabled,
+       default to GTTSService which works reliably in head-less environments.
+    3. Otherwise, create silent audio placeholders to avoid local TTS dependencies.
     """
-    # Check if we're in GitHub Actions environment
-    is_github_actions = os.getenv('GITHUB_ACTIONS') == 'true'
-    
+    # Detect CI environment
+    is_github_actions = os.getenv('GITHUB_ACTIONS', '').lower() == 'true'
+
+    # 1) Explicit voice generation request
+    if Config.ELEVENLABS_VOICE:
+        if Config.ELEVENLABS_API_KEY:
+            print("Voice generation enabled - using ElevenLabsService")
+            return ElevenLabsService(**kwargs)
+        else:
+            # Voice requested but no API key – fall back to a CI-friendly option instead of failing hard
+            print("Voice generation requested but ELEVENLABS_API_KEY not set - using GTTSService fallback")
+            return GTTSService(**kwargs)
+
+    # 2) Running inside GitHub Actions without voice enabled
     if is_github_actions:
-        # In GitHub Actions, use gTTS for audio dubbing (works without hardware)
         print("🔧 GitHub Actions detected - using GTTSService for CI/CD audio generation")
         return GTTSService(**kwargs)
-    elif Config.ELEVENLABS_VOICE and Config.ELEVENLABS_API_KEY:
-        # Local development with ElevenLabs API key
-        print("Voice generation enabled - using ElevenLabsService")
-        return ElevenLabsService(**kwargs)
-    elif Config.ELEVENLABS_VOICE:
-        # Voice enabled but no API key - fallback to gTTS
-        print("Voice enabled but no ElevenLabs API key - using GTTSService fallback")
-        return GTTSService(**kwargs)
-    else:
-        # Voice disabled - use silent service
-        print("Voice generation disabled - using SilentService")
-        return SilentService(**kwargs) 
+
+    # 3) Default: voice generation disabled
+    print("Voice generation disabled - using SilentService")
+    return SilentService(**kwargs) 

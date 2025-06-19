@@ -466,6 +466,16 @@ class VideoGenerator:
                             code_url=code_url
                         )
                         print(f"✅ Scene {scene_num} uploaded successfully")
+
+                        # Clean up local copies now that they are stored remotely
+                        try:
+                            os.remove(video_path)
+                        except OSError:
+                            pass
+                        try:
+                            os.remove(file_path)
+                        except OSError:
+                            pass
                     else:
                         print(f"⚠️ Failed to upload scene {scene_num} video")
                 else:
@@ -905,6 +915,17 @@ class VideoGenerator:
                         combined_video_url=video_url or combined_video_path,
                         subtitles_url=subtitles_url
                     )
+
+                    # Remove local copies now that they are stored remotely
+                    try:
+                        os.remove(combined_video_path)
+                    except OSError:
+                        pass
+                    try:
+                        if os.path.exists(combined_srt_path):
+                            os.remove(combined_srt_path)
+                    except OSError:
+                        pass
                     
                     print(f"🎉 Video generation completed for '{topic}' - Files uploaded to storage!")
                 else:
