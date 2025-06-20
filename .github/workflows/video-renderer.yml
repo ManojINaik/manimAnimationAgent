@@ -54,7 +54,8 @@ jobs:
           libsndfile1-dev \
           libfftw3-dev \
           libatlas-base-dev \
-          sox
+          sox \
+          texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk dvisvgm
           
     # Cache Python dependencies
     - name: Cache Python dependencies
