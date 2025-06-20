@@ -1027,7 +1027,7 @@ if __name__ == "__main__":
     parser.add_argument('--sample_size', '--sample', type=int, default=None, help='Number of theorems to sample')
     parser.add_argument('--verbose', action='store_true', help='Print verbose output')
     parser.add_argument('--max_retries', type=int, default=5, help='Maximum number of retries for code generation')
-    parser.add_argument('--use_rag', '--rag', action='store_true', help='Use Retrieval Augmented Generation')
+    parser.add_argument('--use_rag', '--rag', action='store_true', help='Use Retrieval Augmented Generation (requires working embedding services)')
     parser.add_argument('--use_visual_fix_code','--visual_fix_code', action='store_true', help='Use VLM to fix code with rendered visuals')
     parser.add_argument('--chroma_db_path', type=str, default=Config.CHROMA_DB_PATH, help="Path to Chroma DB") # Use Config
     parser.add_argument('--manim_docs_path', type=str, default=Config.MANIM_DOCS_PATH, help="Path to manim docs") # Use Config

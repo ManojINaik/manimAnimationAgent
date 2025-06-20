@@ -42,14 +42,22 @@ class RAGIntegration:
         self.session_id = session_id
         self.relevant_plugins = None
 
-        self.vector_store = RAGVectorStore(
-            chroma_db_path=chroma_db_path,
-            manim_docs_path=manim_docs_path,
-            embedding_model=embedding_model,
-            session_id=self.session_id,
-            use_langfuse=use_langfuse,
-            helper_model=helper_model
-        )
+        try:
+            self.vector_store = RAGVectorStore(
+                chroma_db_path=chroma_db_path,
+                manim_docs_path=manim_docs_path,
+                embedding_model=embedding_model,
+                session_id=self.session_id,
+                use_langfuse=use_langfuse,
+                helper_model=helper_model
+            )
+            print("✅ RAG vector store initialized successfully")
+            self.embedding_available = True
+        except Exception as e:
+            print(f"⚠️ RAG vector store initialization failed: {e}")
+            print("🔄 RAG integration will operate in degraded mode - no embedding search available")
+            self.vector_store = None
+            self.embedding_available = False
 
     def set_relevant_plugins(self, plugins: List[str]) -> None:
         """Set the relevant plugins for the current video.
@@ -282,6 +290,10 @@ class RAGIntegration:
         Returns:
             List[str]: List of relevant documentation snippets
         """
+        if not self.embedding_available or self.vector_store is None:
+            print("⚠️ Embedding not available - returning empty RAG results")
+            return []
+            
         return self.vector_store.find_relevant_docs(
             queries=rag_queries,
             k=2,

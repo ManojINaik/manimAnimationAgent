@@ -58,15 +58,22 @@ class VideoPlanner:
         self.use_rag = use_rag
         self.rag_integration = None
         if use_rag:
-            self.rag_integration = RAGIntegration(
-                helper_model=helper_model,
-                output_dir=output_dir,
-                chroma_db_path=chroma_db_path,
-                manim_docs_path=manim_docs_path,
-                embedding_model=embedding_model,
-                use_langfuse=use_langfuse,
-                session_id=session_id
-            )
+            try:
+                self.rag_integration = RAGIntegration(
+                    helper_model=helper_model,
+                    output_dir=output_dir,
+                    chroma_db_path=chroma_db_path,
+                    manim_docs_path=manim_docs_path,
+                    embedding_model=embedding_model,
+                    use_langfuse=use_langfuse,
+                    session_id=session_id
+                )
+                print("✅ RAG integration initialized successfully")
+            except Exception as e:
+                print(f"⚠️ RAG integration failed: {e}")
+                print("🔄 Continuing without RAG - text embedding not available")
+                self.rag_integration = None
+                self.use_rag = False  # Disable RAG functionality
         self.relevant_plugins = []  # Initialize as an empty list
 
     def _load_context_examples(self, example_type: str) -> str:

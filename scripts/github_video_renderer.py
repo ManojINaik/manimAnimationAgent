@@ -97,9 +97,9 @@ class GitHubVideoRenderer:
                 scene_model=scene_model,
                 output_dir=f"output/{video_id}",
                 verbose=True,
-                use_rag=True,
-                use_context_learning=True,
-                use_visual_fix_code=True,
+                use_rag=False,  # Default to False for reliability
+                use_context_learning=False,
+                use_visual_fix_code=False,
                 use_appwrite=True
             )
             

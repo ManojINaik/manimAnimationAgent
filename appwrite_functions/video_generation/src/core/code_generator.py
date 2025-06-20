@@ -86,13 +86,20 @@ class CodeGenerator:
                 print("Warning: Agent memory requested but not available. Install mem0ai for self-improving capabilities.")
 
         if use_rag:
-            self.vector_store = RAGVectorStore(
-                chroma_db_path=chroma_db_path,
-                manim_docs_path=manim_docs_path,
-                embedding_model=embedding_model,
-                session_id=self.session_id,
-                use_langfuse=use_langfuse
-            )
+            try:
+                self.vector_store = RAGVectorStore(
+                    chroma_db_path=chroma_db_path,
+                    manim_docs_path=manim_docs_path,
+                    embedding_model=embedding_model,
+                    session_id=self.session_id,
+                    use_langfuse=use_langfuse
+                )
+                print("✅ RAG system initialized successfully")
+            except Exception as e:
+                print(f"⚠️ RAG initialization failed: {e}")
+                print("🔄 Continuing without RAG - text embedding not available")
+                self.vector_store = None
+                self.use_rag = False  # Disable RAG functionality
         else:
             self.vector_store = None
 

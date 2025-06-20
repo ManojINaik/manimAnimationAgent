@@ -125,7 +125,7 @@ class RAGVectorStore:
         return self.core_vector_store  # Return core store for backward compatibility
 
     def _get_embedding_function(self) -> Embeddings:
-        """Creates an embedding function using litellm.
+        """Creates an embedding function using litellm with fallback options.
 
         Returns:
             Embeddings: A LangChain Embeddings instance that wraps litellm functionality
@@ -133,6 +133,33 @@ class RAGVectorStore:
         class LiteLLMEmbeddings(Embeddings):
             def __init__(self, embedding_model):
                 self.embedding_model = embedding_model
+                # Define fallback models in order of preference
+                self.fallback_models = [
+                    "gemini/text-embedding-004",
+                    "text-embedding-ada-002",
+                    "vertex_ai/text-embedding-005"
+                ]
+
+            def _try_embedding(self, texts, is_query=False):
+                """Try embedding with main model and fallbacks."""
+                models_to_try = [self.embedding_model] + [m for m in self.fallback_models if m != self.embedding_model]
+                
+                for model in models_to_try:
+                    try:
+                        response = embedding(
+                            model=model,
+                            input=texts,
+                            task_type="CODE_RETRIEVAL_QUERY" if model == "vertex_ai/text-embedding-005" else None
+                        )
+                        if model != self.embedding_model:
+                            print(f"⚠️ Embedding fallback: Using {model} instead of {self.embedding_model}")
+                        return response
+                    except Exception as e:
+                        print(f"⚠️ Embedding model {model} failed: {e}")
+                        continue
+                
+                # If all models fail, raise a clear error for graceful degradation
+                raise Exception(f"🚫 All embedding models failed. Tried: {models_to_try}. RAG functionality not available.")
 
             def embed_documents(self, texts: list[str]) -> list[list[float]]:
                 # Temporarily disable callbacks for embeddings to avoid conflicts
@@ -141,11 +168,7 @@ class RAGVectorStore:
                 litellm.success_callback = []
                 litellm.failure_callback = []
                 try:
-                    response = embedding(
-                        model=self.embedding_model,
-                        input=texts,
-                        task_type="CODE_RETRIEVAL_QUERY" if self.embedding_model == "vertex_ai/text-embedding-005" else None
-                    )
+                    response = self._try_embedding(texts)
                     return [r["embedding"] for r in response["data"]]
                 finally:
                     # Restore original callbacks
@@ -159,11 +182,7 @@ class RAGVectorStore:
                 litellm.success_callback = []
                 litellm.failure_callback = []
                 try:
-                    response = embedding(
-                        model=self.embedding_model,
-                        input=[text],
-                        task_type="CODE_RETRIEVAL_QUERY" if self.embedding_model == "vertex_ai/text-embedding-005" else None
-                    )
+                    response = self._try_embedding([text], is_query=True)
                     return response["data"][0]["embedding"]
                 finally:
                     # Restore original callbacks
