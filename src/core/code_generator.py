@@ -728,10 +728,11 @@ class CodeGenerator:
             )
             # Also fix more general cases with multiple np.array wraps
             fixed_code = re.sub(
-                r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\s*\*\s*[0-9.]+\)',
+                r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\s*\*\s*([0-9.]+)\)',
                 r'\1 * \2',
                 fixed_code
             )
+            # Remove simple np.array wrapping around direction constants
             fixed_code = re.sub(
                 r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\)',
                 r'\1',

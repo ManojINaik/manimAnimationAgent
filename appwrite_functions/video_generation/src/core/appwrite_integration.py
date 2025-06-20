@@ -760,6 +760,10 @@ class AppwriteVideoManager:
             if status:
                 update_data["status"] = status
             if generated_code:
+                if not isinstance(generated_code, str):
+                    generated_code = str(generated_code)
+                if len(generated_code) > 5000:
+                    generated_code = generated_code[:4970] + "... (truncated)"
                 update_data["generated_code"] = generated_code
             if video_url:
                 update_data["video_url"] = video_url
