@@ -14,7 +14,9 @@ async function triggerGithubWorkflow(videoId: string) {
   try {
     // Add timeout to prevent hanging
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutMs = Number(process.env.GITHUB_API_TIMEOUT_MS || 30000); // default 30s if not set
+    console.log(`GitHub fetch timeout set to ${timeoutMs} ms`);
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
     
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
       method: 'POST',
