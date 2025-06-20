@@ -717,6 +717,50 @@ class CodeGenerator:
                         lines.insert(insert_idx, 'from manim import *  # Added by auto-fix to include color constants')
                         fixed_code = "\n".join(lines)
         
+        # Fix 12: Polygon vertex array dimension errors 
+        if "setting an array element with a sequence" in error and "exceed the maximum number of dimension" in error:
+            import re
+            # Fix wrapped numpy arrays in Polygon calls - remove np.array() wrapping
+            fixed_code = re.sub(
+                r'Polygon\\(\\[np\\.array\\(([^)]+)\\),\\s*np\\.array\\(([^)]+)\\),\\s*np\\.array\\(([^)]+)\\)\\]',
+                r'Polygon([\\1, \\2, \\3]',
+                fixed_code
+            )
+            # Also fix more general cases with multiple np.array wraps
+            fixed_code = re.sub(
+                r'np\\.array\\((ORIGIN|UP|DOWN|LEFT|RIGHT)\\s*\\*\\s*[0-9.]+\\)',
+                r'\\1 * \\2',
+                fixed_code
+            )
+            fixed_code = re.sub(
+                r'np\\.array\\((ORIGIN|UP|DOWN|LEFT|RIGHT)\\)',
+                r'\\1',
+                fixed_code
+            )
+        
+        # Fix 13: get_edge_center() with integer instead of direction vector
+        if "'int' object is not subscriptable" in error and "get_edge_center" in error:
+            import re
+            # Replace get_edge_center(i) with proper direction vectors
+            direction_map = {
+                '0': 'DOWN',    # Bottom edge
+                '1': 'RIGHT',   # Right edge  
+                '2': 'UP',      # Top edge
+                '3': 'LEFT'     # Left edge (if it exists)
+            }
+            for idx, direction in direction_map.items():
+                fixed_code = re.sub(
+                    rf'\\.get_edge_center\\({idx}\\)',
+                    f'.get_edge_center({direction})',
+                    fixed_code
+                )
+            # More general pattern for variable indices
+            fixed_code = re.sub(
+                r'\\.get_edge_center\\((\\w+)\\)',
+                r'.get_edge_center([DOWN, RIGHT, UP, LEFT][\\1] if \\1 < 4 else DOWN)',
+                fixed_code
+            )
+        
         return fixed_code
 
     def visual_self_reflection(self, code: str, media_path: Union[str, Image.Image], scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> str:
