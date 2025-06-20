@@ -781,6 +781,13 @@ class CodeGenerator:
                 fixed_code
             )
         
+        # Unpack numpy array passed as a single positional argument to Polygon
+        fixed_code = re.sub(
+            r'Polygon\(\s*np\.array\(',
+            'Polygon(*np.array(',
+            fixed_code
+        )
+        
         return fixed_code
 
     def visual_self_reflection(self, code: str, media_path: Union[str, Image.Image], scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> str:
