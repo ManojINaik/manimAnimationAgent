@@ -11,39 +11,65 @@ async function triggerGithubWorkflow(videoId: string) {
   console.log('Triggering GitHub workflow:', { owner, repo, workflow, videoId });
   console.log('GitHub PAT available:', !!ghPat);
 
-  try {
-    // Add timeout to prevent hanging
-    const controller = new AbortController();
-    const timeoutMs = Number(process.env.GITHUB_API_TIMEOUT_MS || 30000); // default 30s if not set
-    console.log(`GitHub fetch timeout set to ${timeoutMs} ms`);
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-    
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
-      method: 'POST',
-      headers: {
-        Authorization: `token ${ghPat}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github+json',
-      },
-      body: JSON.stringify({
-        ref: 'main',
-        inputs: { video_id: videoId },
-      }),
-      signal: controller.signal,
-    }).finally(() => clearTimeout(timeoutId));
-    
-    console.log('GitHub API response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('GitHub API error:', errorText);
-      throw new Error(`GitHub API failed: ${response.status} - ${errorText}`);
+  const maxRetries = 3;
+  const baseDelay = 1000; // 1 second
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`GitHub dispatch attempt ${attempt}/${maxRetries}`);
+      
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutMs = Number(process.env.GITHUB_API_TIMEOUT_MS || 30000); // default 30s if not set
+      console.log(`GitHub fetch timeout set to ${timeoutMs} ms`);
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      
+      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
+        method: 'POST',
+        headers: {
+          Authorization: `token ${ghPat}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.github+json',
+          'User-Agent': 'Manim-Animation-Agent/1.0',
+        },
+        body: JSON.stringify({
+          ref: 'main',
+          inputs: { video_id: videoId },
+        }),
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeoutId));
+      
+      console.log('GitHub API response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('GitHub API error:', errorText);
+        throw new Error(`GitHub API failed: ${response.status} - ${errorText}`);
+      }
+      
+      console.log('✅ Successfully triggered GitHub workflow');
+      return; // Success, exit retry loop
+    } catch (err: any) {
+      console.error(`❌ GitHub dispatch attempt ${attempt} failed:`, err);
+      
+      const isNetworkError = err.code === 'ETIMEDOUT' || 
+                           err.code === 'ECONNRESET' || 
+                           err.name === 'AbortError' ||
+                           err.message?.includes('fetch failed') ||
+                           err.message?.includes('network') ||
+                           err.message?.includes('timeout');
+      
+      if (attempt === maxRetries || !isNetworkError) {
+        // Last attempt or non-retryable error
+        console.error('❌ All GitHub dispatch attempts failed or non-retryable error');
+        return; // Exit without throwing to avoid blocking document creation
+      }
+      
+      // Wait before retry with exponential backoff
+      const delay = baseDelay * Math.pow(2, attempt - 1);
+      console.log(`⏳ Waiting ${delay}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
-    
-    console.log('✅ Successfully triggered GitHub workflow');
-  } catch (err) {
-    console.error('❌ Failed to dispatch GitHub workflow:', err);
-    // Don't throw - just log the error so document creation succeeds
   }
 }
 
@@ -96,7 +122,8 @@ export async function POST(request: NextRequest) {
 
     // Fire GitHub Actions workflow asynchronously (do not await to avoid blocking response)
     triggerGithubWorkflow((videoDocument as any).$id).catch(err => {
-      console.error('GitHub workflow trigger failed:', err);
+      console.error('❌ GitHub workflow trigger ultimately failed after all retries:', err);
+      // Don't throw - just log the error so document creation succeeds
     });
 
     return NextResponse.json({
