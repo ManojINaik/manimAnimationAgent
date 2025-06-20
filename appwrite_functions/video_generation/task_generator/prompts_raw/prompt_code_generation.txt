@@ -208,6 +208,7 @@ def label_triangle_sides(self, triangle, labels=["a", "b", "c"]):
 - For dashed lines: use `DashedLine(start, end)` without additional curve modifications  
 - For simple curves: use `Arc()`, `Circle()`, or `ArcBetweenPoints()`
 - Check Manim documentation for correct method signatures and parameters
+- **Polygon Usage**: When creating polygons (e.g., triangles), pass each vertex as a separate positional argument: `Polygon(v1, v2, v3, ..., color=BLUE)`. **Do NOT** wrap vertices in a list (`Polygon([v1, v2, v3])`) and **do NOT** use the keyword argument `points=`. For common shapes, consider using built-in classes like `Triangle()`, `RightTriangle()`, or `RegularPolygon(n)` which require fewer manual vertices and reduce errors.
 - **Arrow3D Usage**: When using `Arrow3D`, do NOT use the `buff` parameter as it's not supported. Use only `start`, `end`, `color`, and `thickness` parameters
 - **3D Objects**: For 3D scenes, ensure proper camera setup and avoid mixing 2D positioning methods with 3D objects
 
@@ -215,3 +216,5 @@ def label_triangle_sides(self, triangle, labels=["a", "b", "c"]):
 - ALWAYS use `self.set_speech_service(get_speech_service())` to initialize the voiceover.
 - Ensure the `get_speech_service` is imported correctly from `src.utils.elevenlabs_voiceover`.
 - This automatically uses ElevenLabsService when voice is enabled or SilentService when disabled based on ELEVENLABS_VOICE config.
+
+• For common shapes consider using built-in classes like `Triangle()`, `RightTriangle()`, or `RegularPolygon(n)`, which require fewer manual vertices and reduce errors.

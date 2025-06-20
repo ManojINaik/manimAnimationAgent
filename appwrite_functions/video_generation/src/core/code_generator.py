@@ -720,22 +720,41 @@ class CodeGenerator:
         # Fix 12: Polygon vertex array dimension errors 
         if "setting an array element with a sequence" in error and "exceed the maximum number of dimension" in error:
             import re
+            # Remove erroneous 'points=' keyword argument usage
+            fixed_code = re.sub(r'Polygon\(\s*points\s*=\s*', 'Polygon(', fixed_code)
+
+            # Convert Polygon([v1, v2, v3]) -> Polygon(v1, v2, v3)
+            # Case 1: no additional args after the list
+            fixed_code = re.sub(
+                r'Polygon\(\[([^\]]+)\]\)',
+                r'Polygon(\1)',
+                fixed_code,
+                flags=re.DOTALL
+            )
+            # Case 2: with additional args/kwargs after the list
+            fixed_code = re.sub(
+                r'Polygon\(\[([^\]]+)\],',
+                r'Polygon(\1,',
+                fixed_code,
+                flags=re.DOTALL
+            )
+
             # Fix wrapped numpy arrays in Polygon calls - remove np.array() wrapping
             fixed_code = re.sub(
                 r'Polygon\\(\\[np\\.array\\(([^)]+)\\),\\s*np\\.array\\(([^)]+)\\),\\s*np\\.array\\(([^)]+)\\)\\]',
-                r'Polygon([\\1, \\2, \\3]',
+                r'Polygon(\\1, \\2, \\3',
                 fixed_code
             )
             # Also fix more general cases with multiple np.array wraps
             fixed_code = re.sub(
-                r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\s*\*\s*([0-9.]+)\)',
-                r'\1 * \2',
+                r'np\\.array\\((ORIGIN|UP|DOWN|LEFT|RIGHT)\\s*\\*\\s*([0-9.]+)\\)',
+                r'\\1 * \\2',
                 fixed_code
             )
             # Remove simple np.array wrapping around direction constants
             fixed_code = re.sub(
-                r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\)',
-                r'\1',
+                r'np\\.array\\((ORIGIN|UP|DOWN|LEFT|RIGHT)\\)',
+                r'\\1',
                 fixed_code
             )
         
