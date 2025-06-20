@@ -52,7 +52,7 @@ class RAGVectorStore:
     def __init__(self, 
                  chroma_db_path: str = "chroma_db",
                  manim_docs_path: str = "rag/manim_docs",
-                 embedding_model: str = "text-embedding-ada-002",
+                 embedding_model: str = "gemini/text-embedding-004",
                  trace_id: str = None,
                  session_id: str = None,
                  use_langfuse: bool = True,

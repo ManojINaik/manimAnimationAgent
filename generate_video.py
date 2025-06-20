@@ -95,7 +95,7 @@ class VideoGenerator:
                  context_learning_path="data/context_learning",
                  chroma_db_path="data/rag/chroma_db",
                  manim_docs_path="data/rag/manim_docs",
-                 embedding_model="azure/text-embedding-3-large",
+                 embedding_model="gemini/text-embedding-004",
                  use_visual_fix_code=False,
                  use_langfuse=True,
                  trace_id=None,
@@ -1033,7 +1033,7 @@ if __name__ == "__main__":
     parser.add_argument('--manim_docs_path', type=str, default=Config.MANIM_DOCS_PATH, help="Path to manim docs") # Use Config
     parser.add_argument('--embedding_model', type=str,
                        default=Config.EMBEDDING_MODEL, # Use Config
-                       choices=["azure/text-embedding-3-large", "vertex_ai/text-embedding-005"],
+                       choices=["gemini/text-embedding-004", "vertex_ai/text-embedding-005"],
                        help='Select the embedding model to use')
     parser.add_argument('--use_context_learning', action='store_true',
                        help='Use context learning with example Manim code')

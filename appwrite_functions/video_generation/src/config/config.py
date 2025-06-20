@@ -10,7 +10,7 @@ class Config:
     CONTEXT_LEARNING_PATH = "data/context_learning"
     CHROMA_DB_PATH = "data/rag/chroma_db"
     MANIM_DOCS_PATH = "data/rag/manim_docs"
-    EMBEDDING_MODEL = "azure/text-embedding-3-large"
+    EMBEDDING_MODEL = "gemini/text-embedding-004"
     
     # ElevenLabs TTS configurations
     ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')

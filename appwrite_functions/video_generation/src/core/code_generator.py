@@ -43,7 +43,7 @@ except ImportError:
 class CodeGenerator:
     """A class for generating and managing Manim code."""
 
-    def __init__(self, scene_model, helper_model, output_dir="output", print_response=False, use_rag=False, use_context_learning=False, context_learning_path="data/context_learning", chroma_db_path="rag/chroma_db", manim_docs_path="rag/manim_docs", embedding_model="azure/text-embedding-3-large", use_visual_fix_code=False, use_langfuse=True, session_id=None, use_agent_memory=True):
+    def __init__(self, scene_model, helper_model, output_dir="output", print_response=False, use_rag=False, use_context_learning=False, context_learning_path="data/context_learning", chroma_db_path="rag/chroma_db", manim_docs_path="rag/manim_docs", embedding_model="gemini/text-embedding-004", use_visual_fix_code=False, use_langfuse=True, session_id=None, use_agent_memory=True):
         """Initialize the CodeGenerator.
 
         Args:
@@ -56,7 +56,7 @@ class CodeGenerator:
             context_learning_path (str, optional): Path to context learning examples. Defaults to "data/context_learning".
             chroma_db_path (str, optional): Path to ChromaDB. Defaults to "rag/chroma_db".
             manim_docs_path (str, optional): Path to Manim docs. Defaults to "rag/manim_docs".
-            embedding_model (str, optional): Name of embedding model. Defaults to "azure/text-embedding-3-large".
+            embedding_model (str, optional): Name of embedding model. Defaults to "gemini/text-embedding-004".
             use_visual_fix_code (bool, optional): Whether to use visual code fixing. Defaults to False.
             use_langfuse (bool, optional): Whether to use Langfuse logging. Defaults to True.
             session_id (str, optional): Session identifier. Defaults to None.
