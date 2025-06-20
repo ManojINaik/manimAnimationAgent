@@ -53,7 +53,8 @@ jobs:
           libasound2-dev \
           libsndfile1-dev \
           libfftw3-dev \
-          libatlas-base-dev
+          libatlas-base-dev \
+          sox
           
     # Cache Python dependencies
     - name: Cache Python dependencies

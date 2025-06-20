@@ -19,6 +19,8 @@ class Config:
     _voice_flag = os.getenv('ELEVENLABS_VOICE', os.getenv('ELEVENLABS', 'false')).lower()
     ELEVENLABS_ENABLED = _voice_flag in ['true', '1', 'yes', 'on', 'enabled']
     
+    ELEVENLABS_VOICE = ELEVENLABS_ENABLED  # Backwards-compat alias
+    
     # GitHub Actions specific configurations
     RENDER_VIDEO = os.getenv('RENDER_VIDEO', 'true').lower() in ['true', '1', 'yes']
     
