@@ -161,7 +161,7 @@ export default function VideoGenerator() {
 
     const getStatusIcon = (status: string) => {
         switch (status) {
-            case 'queued': return '⏳';
+            case 'queued':
             case 'queued_for_render': return '⏳';
             case 'planning': return '🧠';
             case 'rendering': return '🎬';
