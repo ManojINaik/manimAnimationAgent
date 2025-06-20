@@ -20,6 +20,7 @@ from pydantic import BaseModel
 from datetime import datetime
 import uuid
 import logging
+import requests
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -57,6 +58,7 @@ class TaskStatus(BaseModel):
     message: str
     result: Optional[Dict] = None
     error: Optional[str] = None
+    video_id: Optional[str] = None  # Add video_id for Appwrite subscriptions
     created_at: str
 
 class HealthResponse(BaseModel):
@@ -225,7 +227,7 @@ def simulate_video_generation(topic: str, context: str, max_scenes: int, task_id
     return demo_content
 
 async def generate_video_async(topic: str, context: str, max_scenes: int, task_id: str):
-    """Generate video asynchronously - handles both real and demo modes."""
+    """Generate video asynchronously - delegates to GitHub Actions for rendering."""
     global video_generator
     
     try:
@@ -238,31 +240,116 @@ async def generate_video_async(topic: str, context: str, max_scenes: int, task_i
         if not topic.strip():
             raise ValueError("Please provide an educational topic")
         
-        # Always use demo mode if dependencies not available
-        if DEMO_MODE or not CAN_IMPORT_DEPENDENCIES or video_generator is None:
+        # Use demo mode if dependencies not available
+        if DEMO_MODE or not CAN_IMPORT_DEPENDENCIES:
             logger.info(f"Running demo generation for topic: {topic}")
             return simulate_video_generation(topic, context, max_scenes, task_id)
-        
-        # This code would run with full dependencies (local setup)
-        if task_id in task_storage:
-            task_storage[task_id]["progress"] = 10
-            task_storage[task_id]["message"] = "🚀 Starting video generation..."
-        
-        result = await video_generator.generate_video_pipeline(
-            topic=topic,
-            description=context or f"Educational video about {topic}",
-            max_retries=3,
-            only_plan=False,
-            specific_scenes=list(range(1, max_scenes + 1)) if max_scenes > 0 else None
-        )
-        
-        if task_id in task_storage:
-            task_storage[task_id]["progress"] = 100
-            task_storage[task_id]["message"] = "✅ Video generation completed!"
-            task_storage[task_id]["status"] = "completed"
-            task_storage[task_id]["result"] = result
-        
-        return result
+
+        # Initialize Appwrite manager if not available
+        if not video_generator or not hasattr(video_generator, 'appwrite_manager') or not video_generator.appwrite_manager:
+            from src.core.appwrite_integration import AppwriteVideoManager
+            appwrite_manager = AppwriteVideoManager()
+            if not appwrite_manager.enabled:
+                logger.warning("Appwrite not available - falling back to demo mode")
+                return simulate_video_generation(topic, context, max_scenes, task_id)
+        else:
+            appwrite_manager = video_generator.appwrite_manager
+
+        # Create Appwrite video record for GitHub Actions to process
+        try:
+            video_id = await appwrite_manager.create_video_record(
+                topic=topic,
+                description=context or f"Educational video about {topic}",
+                scene_count=max_scenes,
+                session_id=str(task_id)
+            )
+            
+            if not video_id:
+                raise Exception("Failed to create video record in Appwrite")
+            
+            # Update task storage with video ID for frontend tracking
+            if task_id in task_storage:
+                task_storage[task_id]["video_id"] = video_id
+                task_storage[task_id]["progress"] = 20
+                task_storage[task_id]["message"] = "Created video record - queuing for GitHub Actions..."
+            
+            logger.info(f"✅ Created Appwrite video record: {video_id}")
+            
+            # Update video status to trigger GitHub Actions
+            await appwrite_manager.update_video_status(video_id, "ready_for_render")
+            
+            # Try to trigger GitHub Actions workflow directly
+            github_token = os.getenv('GITHUB_TOKEN')
+            github_repo = os.getenv('GITHUB_REPO')
+            
+            if github_token and github_repo:
+                try:
+                    import requests
+                    
+                    url = f"https://api.github.com/repos/{github_repo}/dispatches"
+                    headers = {
+                        "Authorization": f"Bearer {github_token}",
+                        "Accept": "application/vnd.github.v3+json",
+                        "Content-Type": "application/json"
+                    }
+                    data = {
+                        "event_type": "render_video",
+                        "client_payload": {
+                            "video_id": video_id
+                        }
+                    }
+                    
+                    response = requests.post(url, headers=headers, json=data, timeout=30)
+                    
+                    if response.status_code == 204:
+                        await appwrite_manager.update_video_status(video_id, "queued_for_render")
+                        logger.info(f"✅ Triggered GitHub Actions workflow for video {video_id}")
+                        
+                        if task_id in task_storage:
+                            task_storage[task_id]["progress"] = 100
+                            task_storage[task_id]["status"] = "completed"
+                            task_storage[task_id]["message"] = "✅ Video queued for GitHub Actions rendering!"
+                            task_storage[task_id]["result"] = {
+                                "video_id": video_id,
+                                "status": "queued_for_render",
+                                "message": "Video processing delegated to GitHub Actions"
+                            }
+                        
+                        return {
+                            "success": True,
+                            "video_id": video_id,
+                            "status": "queued_for_render",
+                            "message": "Video queued for GitHub Actions rendering"
+                        }
+                    else:
+                        logger.warning(f"Failed to trigger GitHub workflow: {response.status_code}")
+                        
+                except Exception as e:
+                    logger.warning(f"Failed to trigger GitHub workflow: {e}")
+            
+            # Fallback - video will be picked up by scheduled GitHub Actions workflow
+            await appwrite_manager.update_video_status(video_id, "queued_for_render")
+            
+            if task_id in task_storage:
+                task_storage[task_id]["progress"] = 100
+                task_storage[task_id]["status"] = "completed"
+                task_storage[task_id]["message"] = "✅ Video queued for scheduled GitHub Actions processing!"
+                task_storage[task_id]["result"] = {
+                    "video_id": video_id,
+                    "status": "queued_for_render",
+                    "message": "Video will be processed by GitHub Actions within 5 minutes"
+                }
+            
+            return {
+                "success": True,
+                "video_id": video_id,
+                "status": "queued_for_render",
+                "message": "Video queued for GitHub Actions processing"
+            }
+            
+        except Exception as e:
+            logger.error(f"Failed to create/queue video record: {e}")
+            raise e
         
     except Exception as e:
         logger.error(f"Error in video generation: {e}")
@@ -323,6 +410,7 @@ async def generate_video_api(request: VideoGenerationRequest, background_tasks: 
         "message": "Task queued",
         "result": None,
         "error": None,
+        "video_id": None,  # Will be set when Appwrite record is created
         "created_at": datetime.now().isoformat(),
         "request": request.dict()
     }

@@ -1,0 +1,174 @@
+M:\100 agent\manimAnimationAgent\.venv\Lib\site-packages\manim_voiceover\__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+
+Animation 0: Create(Rectangle):   0%|          | 0/781 [00:00<?, ?it/s]
+Animation 0: Create(Rectangle):   1%|1         | 11/781 [00:00<00:07, 101.82it/s]
+Animation 0: Create(Rectangle):   3%|2         | 22/781 [00:00<00:07, 103.66it/s]
+Animation 0: Create(Rectangle):   4%|4         | 33/781 [00:00<00:08, 90.99it/s] 
+Animation 0: Create(Rectangle):   6%|5         | 43/781 [00:00<00:07, 93.25it/s]
+Animation 0: Create(Rectangle):   7%|6         | 53/781 [00:00<00:07, 91.35it/s]
+Animation 0: Create(Rectangle):   8%|8         | 63/781 [00:00<00:08, 84.06it/s]
+Animation 0: Create(Rectangle):   9%|9         | 73/781 [00:00<00:08, 88.12it/s]
+Animation 0: Create(Rectangle):  11%|#         | 84/781 [00:00<00:07, 92.79it/s]
+Animation 0: Create(Rectangle):  12%|#2        | 94/781 [00:01<00:08, 81.44it/s]
+Animation 0: Create(Rectangle):  13%|#3        | 103/781 [00:01<00:08, 75.98it/s]
+Animation 0: Create(Rectangle):  14%|#4        | 111/781 [00:01<00:09, 70.56it/s]
+Animation 0: Create(Rectangle):  15%|#5        | 119/781 [00:01<00:09, 71.51it/s]
+Animation 0: Create(Rectangle):  16%|#6        | 127/781 [00:01<00:10, 64.52it/s]
+Animation 0: Create(Rectangle):  17%|#7        | 134/781 [00:01<00:10, 62.50it/s]
+Animation 0: Create(Rectangle):  18%|#8        | 142/781 [00:01<00:09, 65.87it/s]
+Animation 0: Create(Rectangle):  19%|#9        | 149/781 [00:01<00:10, 58.17it/s]
+Animation 0: Create(Rectangle):  20%|#9        | 156/781 [00:02<00:10, 57.01it/s]
+Animation 0: Create(Rectangle):  21%|##        | 163/781 [00:02<00:10, 57.35it/s]
+Animation 0: Create(Rectangle):  22%|##1       | 169/781 [00:02<00:10, 56.57it/s]
+Animation 0: Create(Rectangle):  23%|##2       | 176/781 [00:02<00:10, 59.26it/s]
+Animation 0: Create(Rectangle):  23%|##3       | 183/781 [00:02<00:10, 59.50it/s]
+Animation 0: Create(Rectangle):  24%|##4       | 190/781 [00:02<00:09, 61.18it/s]
+Animation 0: Create(Rectangle):  25%|##5       | 197/781 [00:02<00:10, 56.25it/s]
+Animation 0: Create(Rectangle):  26%|##5       | 203/781 [00:02<00:11, 51.95it/s]
+Animation 0: Create(Rectangle):  27%|##6       | 209/781 [00:03<00:11, 51.09it/s]
+Animation 0: Create(Rectangle):  28%|##7       | 215/781 [00:03<00:10, 52.02it/s]
+Animation 0: Create(Rectangle):  28%|##8       | 221/781 [00:03<00:11, 47.27it/s]
+Animation 0: Create(Rectangle):  29%|##9       | 227/781 [00:03<00:11, 49.19it/s]
+Animation 0: Create(Rectangle):  30%|##9       | 233/781 [00:03<00:13, 40.40it/s]
+Animation 0: Create(Rectangle):  31%|###       | 239/781 [00:03<00:12, 44.57it/s]
+Animation 0: Create(Rectangle):  31%|###1      | 246/781 [00:03<00:10, 50.49it/s]
+Animation 0: Create(Rectangle):  32%|###2      | 253/781 [00:03<00:09, 54.90it/s]
+Animation 0: Create(Rectangle):  34%|###3      | 262/781 [00:04<00:08, 61.40it/s]
+Animation 0: Create(Rectangle):  35%|###4      | 271/781 [00:04<00:07, 67.12it/s]
+Animation 0: Create(Rectangle):  36%|###5      | 280/781 [00:04<00:06, 72.07it/s]
+Animation 0: Create(Rectangle):  37%|###7      | 289/781 [00:04<00:06, 75.83it/s]
+Animation 0: Create(Rectangle):  38%|###8      | 297/781 [00:04<00:06, 75.57it/s]
+Animation 0: Create(Rectangle):  39%|###9      | 305/781 [00:04<00:07, 60.05it/s]
+Animation 0: Create(Rectangle):  40%|###9      | 312/781 [00:05<00:14, 32.10it/s]
+Animation 0: Create(Rectangle):  41%|####      | 318/781 [00:05<00:13, 34.94it/s]
+Animation 0: Create(Rectangle):  41%|####1     | 324/781 [00:05<00:11, 38.46it/s]
+Animation 0: Create(Rectangle):  42%|####2     | 330/781 [00:05<00:10, 41.66it/s]
+Animation 0: Create(Rectangle):  43%|####3     | 336/781 [00:05<00:10, 44.07it/s]
+Animation 0: Create(Rectangle):  44%|####3     | 342/781 [00:05<00:10, 43.54it/s]
+Animation 0: Create(Rectangle):  44%|####4     | 347/781 [00:06<00:11, 37.04it/s]
+Animation 0: Create(Rectangle):  45%|####5     | 352/781 [00:06<00:11, 38.27it/s]
+Animation 0: Create(Rectangle):  46%|####5     | 357/781 [00:06<00:10, 39.00it/s]
+Animation 0: Create(Rectangle):  46%|####6     | 362/781 [00:06<00:10, 39.50it/s]
+Animation 0: Create(Rectangle):  47%|####7     | 369/781 [00:06<00:08, 46.29it/s]
+Animation 0: Create(Rectangle):  48%|####8     | 375/781 [00:06<00:08, 46.54it/s]
+Animation 0: Create(Rectangle):  49%|####8     | 382/781 [00:06<00:07, 50.27it/s]
+Animation 0: Create(Rectangle):  50%|####9     | 389/781 [00:06<00:07, 54.62it/s]
+Animation 0: Create(Rectangle):  51%|#####     | 395/781 [00:07<00:08, 47.77it/s]
+Animation 0: Create(Rectangle):  51%|#####1    | 401/781 [00:07<00:08, 43.53it/s]
+Animation 0: Create(Rectangle):  52%|#####2    | 409/781 [00:07<00:07, 50.92it/s]
+Animation 0: Create(Rectangle):  53%|#####3    | 417/781 [00:07<00:06, 56.89it/s]
+Animation 0: Create(Rectangle):  54%|#####4    | 424/781 [00:07<00:06, 57.80it/s]
+Animation 0: Create(Rectangle):  55%|#####5    | 431/781 [00:07<00:06, 56.18it/s]
+Animation 0: Create(Rectangle):  56%|#####5    | 437/781 [00:07<00:06, 53.88it/s]
+Animation 0: Create(Rectangle):  57%|#####6    | 443/781 [00:07<00:06, 54.38it/s]
+Animation 0: Create(Rectangle):  58%|#####7    | 450/781 [00:07<00:05, 56.52it/s]
+Animation 0: Create(Rectangle):  58%|#####8    | 456/781 [00:08<00:05, 54.34it/s]
+Animation 0: Create(Rectangle):  59%|#####9    | 462/781 [00:08<00:05, 55.24it/s]
+Animation 0: Create(Rectangle):  60%|#####9    | 468/781 [00:08<00:06, 47.86it/s]
+Animation 0: Create(Rectangle):  61%|######    | 473/781 [00:08<00:06, 46.37it/s]
+Animation 0: Create(Rectangle):  61%|######1   | 478/781 [00:08<00:06, 47.12it/s]
+Animation 0: Create(Rectangle):  62%|######1   | 483/781 [00:08<00:07, 41.40it/s]
+Animation 0: Create(Rectangle):  62%|######2   | 488/781 [00:08<00:08, 33.55it/s]
+Animation 0: Create(Rectangle):  63%|######3   | 493/781 [00:09<00:07, 36.27it/s]
+Animation 0: Create(Rectangle):  64%|######3   | 498/781 [00:09<00:07, 38.88it/s]
+Animation 0: Create(Rectangle):  64%|######4   | 503/781 [00:09<00:06, 41.53it/s]
+Animation 0: Create(Rectangle):  65%|######5   | 509/781 [00:09<00:05, 45.78it/s]
+Animation 0: Create(Rectangle):  66%|######5   | 514/781 [00:09<00:06, 41.24it/s]
+Animation 0: Create(Rectangle):  66%|######6   | 519/781 [00:09<00:07, 36.81it/s]
+Animation 0: Create(Rectangle):  67%|######6   | 523/781 [00:09<00:07, 32.36it/s]
+Animation 0: Create(Rectangle):  68%|######7   | 529/781 [00:09<00:06, 38.50it/s]
+Animation 0: Create(Rectangle):  68%|######8   | 534/781 [00:10<00:06, 41.01it/s]
+Animation 0: Create(Rectangle):  69%|######9   | 542/781 [00:10<00:04, 48.99it/s]
+Animation 0: Create(Rectangle):  70%|#######   | 549/781 [00:10<00:04, 52.97it/s]
+Animation 0: Create(Rectangle):  71%|#######1  | 556/781 [00:10<00:03, 57.11it/s]
+Animation 0: Create(Rectangle):  72%|#######2  | 563/781 [00:10<00:03, 60.27it/s]
+Animation 0: Create(Rectangle):  73%|#######2  | 570/781 [00:10<00:03, 62.98it/s]
+Animation 0: Create(Rectangle):  74%|#######3  | 577/781 [00:10<00:03, 62.49it/s]
+Animation 0: Create(Rectangle):  75%|#######4  | 584/781 [00:10<00:03, 64.43it/s]
+Animation 0: Create(Rectangle):  76%|#######5  | 591/781 [00:10<00:02, 65.81it/s]
+Animation 0: Create(Rectangle):  77%|#######6  | 598/781 [00:11<00:02, 65.55it/s]
+Animation 0: Create(Rectangle):  77%|#######7  | 605/781 [00:11<00:03, 51.13it/s]
+Animation 0: Create(Rectangle):  78%|#######8  | 611/781 [00:11<00:03, 45.15it/s]
+Animation 0: Create(Rectangle):  79%|#######8  | 616/781 [00:11<00:03, 43.69it/s]
+Animation 0: Create(Rectangle):  80%|#######9  | 621/781 [00:11<00:03, 42.80it/s]
+Animation 0: Create(Rectangle):  80%|########  | 626/781 [00:11<00:03, 41.76it/s]
+Animation 0: Create(Rectangle):  81%|########  | 631/781 [00:11<00:03, 37.95it/s]
+Animation 0: Create(Rectangle):  82%|########1 | 637/781 [00:12<00:03, 42.37it/s]
+Animation 0: Create(Rectangle):  82%|########2 | 643/781 [00:12<00:03, 45.14it/s]
+Animation 0: Create(Rectangle):  83%|########3 | 650/781 [00:12<00:02, 51.22it/s]
+Animation 0: Create(Rectangle):  84%|########3 | 656/781 [00:12<00:02, 52.88it/s]
+Animation 0: Create(Rectangle):  85%|########4 | 663/781 [00:12<00:02, 55.11it/s]
+Animation 0: Create(Rectangle):  86%|########5 | 670/781 [00:12<00:01, 58.05it/s]
+Animation 0: Create(Rectangle):  87%|########6 | 677/781 [00:12<00:01, 60.97it/s]
+Animation 0: Create(Rectangle):  88%|########7 | 684/781 [00:12<00:01, 62.48it/s]
+Animation 0: Create(Rectangle):  88%|########8 | 691/781 [00:12<00:01, 63.23it/s]
+Animation 0: Create(Rectangle):  89%|########9 | 698/781 [00:13<00:01, 62.60it/s]
+Animation 0: Create(Rectangle):  90%|######### | 705/781 [00:13<00:01, 59.64it/s]
+Animation 0: Create(Rectangle):  91%|#########1| 712/781 [00:13<00:01, 47.78it/s]
+Animation 0: Create(Rectangle):  92%|#########1| 718/781 [00:13<00:02, 26.59it/s]
+Animation 0: Create(Rectangle):  93%|#########2| 723/781 [00:14<00:02, 28.50it/s]
+Animation 0: Create(Rectangle):  93%|#########3| 727/781 [00:14<00:01, 29.22it/s]
+Animation 0: Create(Rectangle):  94%|#########3| 731/781 [00:14<00:01, 30.39it/s]
+Animation 0: Create(Rectangle):  94%|#########4| 736/781 [00:14<00:01, 31.86it/s]
+Animation 0: Create(Rectangle):  95%|#########4| 740/781 [00:14<00:01, 33.22it/s]
+Animation 0: Create(Rectangle):  95%|#########5| 745/781 [00:14<00:01, 33.08it/s]
+Animation 0: Create(Rectangle):  96%|#########5| 749/781 [00:14<00:01, 30.98it/s]
+Animation 0: Create(Rectangle):  97%|#########6| 755/781 [00:14<00:00, 35.08it/s]
+Animation 0: Create(Rectangle):  97%|#########7| 759/781 [00:15<00:00, 36.00it/s]
+Animation 0: Create(Rectangle):  98%|#########7| 764/781 [00:15<00:00, 34.74it/s]
+Animation 0: Create(Rectangle):  98%|#########8| 768/781 [00:15<00:00, 35.03it/s]
+Animation 0: Create(Rectangle):  99%|#########8| 773/781 [00:15<00:00, 34.91it/s]
+Animation 0: Create(Rectangle): 100%|#########9| 778/781 [00:15<00:00, 37.40it/s]
+                                                                                 
++--------------------- Traceback (most recent call last) ---------------------+
+| M:\100                                                                      |
+| agent\manimAnimationAgent\.venv\Lib\site-packages\manim\cli\render\commands |
+| .py:125 in render                                                           |
+|                                                                             |
+|   122             try:                                                      |
+|   123                 with tempconfig({}):                                  |
+|   124                     scene = SceneClass()                              |
+| > 125                     scene.render()                                    |
+|   126             except Exception:                                         |
+|   127                 error_console.print_exception()                       |
+|   128                 sys.exit(1)                                           |
+|                                                                             |
+| M:\100                                                                      |
+| agent\manimAnimationAgent\.venv\Lib\site-packages\manim\scene\scene.py:237  |
+| in render                                                                   |
+|                                                                             |
+|    234         """                                                          |
+|    235         self.setup()                                                 |
+|    236         try:                                                         |
+| >  237             self.construct()                                         |
+|    238         except EndSceneEarlyException:                               |
+|    239             pass                                                     |
+|    240         except RerunSceneException:                                  |
+|                                                                             |
+| M:\100                                                                      |
+| agent\manimAnimationAgent\api_outputs\photosynthesis_process\scene2\code\ph |
+| otosynthesis_process_scene2_v0.py:106 in construct                          |
+|                                                                             |
+|   103             # Constraint check: Soil is within safe area.             |
+|   104                                                                       |
+|   105         with self.voiceover(text="Think of photosynthesis like a reci |
+| > 106             root_system = helper.create_root_system(soil)             |
+|   107             root_system.next_to(soil, UP, buff=0.3)                   |
+|   108             self.play(Create(root_system), run_time=tracker.duration) |
+|   109             # Constraint check: Root system is within safe area and h |
+|                                                                             |
+| M:\100                                                                      |
+| agent\manimAnimationAgent\api_outputs\photosynthesis_process\scene2\code\ph |
+| otosynthesis_process_scene2_v0.py:34 in create_root_system                  |
+|                                                                             |
+|    31                                                                       |
+|    32     def create_root_system(self, soil):                               |
+|    33         # Creates the root system as a VGroup of lines.               |
+| >  34         root_line_1 = Line(start=soil.get_edge(UP) + LEFT*0.3, end=so |
+|    35         root_line_2 = Line(start=soil.get_edge(UP), end=soil.get_edge |
+|    36         root_line_3 = Line(start=soil.get_edge(UP) + RIGHT*0.3, end=s |
+|    37         root_system = VGroup(root_line_1, root_line_2, root_line_3)   |
++-----------------------------------------------------------------------------+
+TypeError: Mobject.__getattr__.<locals>.getter() takes 1 positional argument 
+but 2 were given

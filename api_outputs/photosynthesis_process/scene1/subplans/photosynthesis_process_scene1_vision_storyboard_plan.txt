@@ -1,0 +1,78 @@
+<SCENE_VISION_STORYBOARD_PLAN>
+[SCENE_VISION]
+1.  **Scene Overview**:
+    - Scene story: This scene introduces photosynthesis as the foundation of life's energy. It sets the stage for explaining the process in detail in subsequent scenes. The video will show the overall importance of plants.
+    - **Visual learning objectives for viewers:**
+        - Visualize a vibrant ecosystem (forest or ocean).
+        - Understand that plants are a crucial part of the ecosystem.
+        - Recognize that plants create their own food through photosynthesis.
+        - See that photosynthesis occurs within plant cells.
+    - How Manim visuals & animations support learning?
+        - Start with a wide shot of an ecosystem (e.g., forest) using `ImageMobject` or `Rectangle` with a background fill.
+        - Zoom in to a plant using `camera.frame.animate.scale()` and `camera.frame.animate.move_to()`.
+        - Zoom into a plant cell (represented as a `Circle` or `Ellipse`) using `camera.frame.animate.scale()` and `camera.frame.animate.move_to()`.
+        - Use `Tex` to introduce the term "Photosynthesis" and briefly explain its purpose.
+        - All objects will adhere to the safe area margins and minimum spacing requirements.
+    - Key concepts to emphasize visually:
+        - Ecosystem, plant, cell, photosynthesis.
+        - The flow of energy from the sun to plants.
+        - Photosynthesis as the plant's way of making food.
+
+[STORYBOARD]
+1.  **Visual Flow & Pacing (Manim Animation Sequence)**:
+    - Start with a wide shot of a forest ecosystem.
+    - Gradually zoom in to a plant.
+    - Zoom into a plant cell.
+    - Introduce the term "Photosynthesis" with a brief explanation.
+    - Use `Wait()` for pauses between sub-scenes.
+    - Use `FadeIn` and `FadeOut` animations for visual transitions.
+
+    - **Sub-scene Breakdown**:
+        - **Sub-scene 1: Ecosystem Overview**
+            - **Visual Element**: `ImageMobject` or `Rectangle` filled with a forest image.
+            - **Animation Sequence**:
+                - Create an `ImageMobject` of a vibrant forest ecosystem. Alternatively, create a `Rectangle` and fill it with a suitable image.
+                - `image = ImageMobject("forest_ecosystem.jpg")`
+                - `image.height = 7 # Adjust height as necessary`
+                - `image.width = 12 # Adjust width as necessary`
+                - `image.move_to(ORIGIN)`
+                - `self.play(FadeIn(image))`
+                - `self.wait(2)`
+                - Ensure the image fits within the safe area margins.
+
+        - **Sub-scene 2: Zooming into a Plant**
+            - **Visual Element**: The forest image with a marked plant.
+            - **Animation Sequence**:
+                - Identify a plant within the image to focus on.
+                - `plant_location = [-2, -1, 0] # Example location. Adjust as needed.`
+                - `self.play(
+                    camera.frame.animate.move_to(plant_location).scale(0.5)
+                )`
+                - `self.wait(2)`
+
+        - **Sub-scene 3: Zooming into a Cell**
+            - **Visual Element**: A `Circle` representing a plant cell.
+            - **Animation Sequence**:
+                - Create a `Circle` to represent a plant cell.
+                - `cell = Circle(radius=1, color=GREEN)`
+                - `self.play(Transform(image, cell.move_to(ORIGIN)))`
+                - `self.play(
+                    camera.frame.animate.move_to(ORIGIN).scale(0.2)
+                )` # Zoom further into the cell.
+                - `self.wait(2)`
+                - Ensure the cell is within the safe area margins.
+
+        - **Sub-scene 4: Introducing Photosynthesis**
+            - **Visual Element**: `Tex` object displaying "Photosynthesis".
+            - **Animation Sequence**:
+                - Create a `Tex` object to introduce photosynthesis.
+                - `photosynthesis_text = Tex("Photosynthesis", color=BLUE)`
+                - `photosynthesis_text.to_edge(UP, buff=0.7)` # Position at top, respecting margin
+                - `self.play(FadeIn(photosynthesis_text))`
+                - Create a `Tex` object to briefly explain photosynthesis.
+                - `explanation_text = Tex("Plants make their own food!", color=YELLOW)`
+                - `explanation_text.next_to(photosynthesis_text, DOWN, buff=0.3)` # Respect spacing.
+                - `self.play(Write(explanation_text))`
+                - `self.wait(3)`
+                - `self.play(FadeOut(photosynthesis_text, explanation_text))`
+</SCENE_VISION_STORYBOARD_PLAN>

@@ -1,0 +1,48 @@
+<SCENE_1>
+    Scene Title: Introduction: Life's Energy
+    Scene Purpose: Introduce photosynthesis as the foundation of most food chains and energy source for life. Setting the stage for the detailed process.
+    Scene Description: Show a vibrant ecosystem (forest, ocean) and gradually zoom in to a plant cell. Briefly mention the plant's need for energy. Introduce Photosynthesis as the process that plants use to create their own food.
+    Scene Layout: Start with a wide shot of an ecosystem occupying the full screen. Gradually zoom in to a plant in the ecosystem. The plant should be centrally located. Then zoom into a single cell of the plant. The cell should be in the center of the screen.
+    </SCENE_1>
+
+    <SCENE_2>
+    Scene Title: Reactants: Ingredients for Life
+    Scene Purpose: Introduce the reactants (water, carbon dioxide, sunlight) needed for photosynthesis.
+    Scene Description: Illustrate how water is absorbed through the roots, carbon dioxide enters through the leaves (stomata), and sunlight is captured by the leaves. Emphasize these are the "ingredients" for the process. Show simplified chemical formulas for each reactant (H2O, CO2).
+    Scene Layout: Split the screen into three sections. The left side shows the roots absorbing water. The middle shows the stomata taking in carbon dioxide. The right side shows the leaves absorbing sunlight. Chemical formulas are displayed near each reactant. All elements must be within the safe area.
+    </SCENE_2>
+
+    <SCENE_3>
+    Scene Title: Chloroplast: The Photosynthesis Factory
+    Scene Purpose: Explain the role of chloroplasts as the site of photosynthesis within plant cells.
+    Scene Description: Zoom in on a plant cell. Highlight the chloroplasts inside. Show a detailed diagram of a chloroplast, labeling the thylakoids, grana, stroma, and inner/outer membranes. Explain that photosynthesis occurs within these structures.
+    Scene Layout: Start with the plant cell from the previous scene. Zoom in to a single chloroplast located in the center of the screen. Display the chloroplast diagram around it, labeling its different parts.
+    </SCENE_3>
+
+    <SCENE_4>
+    Scene Title: Light-Dependent Reactions: Capturing Energy
+    Scene Purpose: Explain the light-dependent reactions and their role in converting light energy into chemical energy.
+    Scene Description: Focus on the thylakoid membrane within the chloroplast. Show how chlorophyll absorbs sunlight. Explain the electron transport chain, the splitting of water molecules (photolysis), and the production of ATP and NADPH. Use animations to show the flow of electrons and the formation of ATP and NADPH.
+    Scene Layout: Zoom in on the thylakoid membrane. Show the chlorophyll molecules absorbing photons. Illustrate the electron transport chain as a series of interconnected proteins. Display the ATP and NADPH molecules forming near the end of the chain.
+    </SCENE_4>
+
+    <SCENE_5>
+    Scene Title: Calvin Cycle: Sugar Synthesis
+    Scene Purpose: Describe the Calvin cycle (light-independent reactions) and its role in converting carbon dioxide into glucose.
+    Scene Description: Focus on the stroma of the chloroplast. Explain the three main stages of the Calvin cycle: carbon fixation, reduction, and regeneration. Show how carbon dioxide is combined with RuBP, how ATP and NADPH are used to produce G3P (a precursor to glucose), and how RuBP is regenerated. Use animations to show the cyclical nature of the process.
+    Scene Layout: Display a diagram of the Calvin cycle in the stroma. Use arrows to show the flow of molecules between the different stages. Label the key enzymes involved in each stage (RuBisCO).
+    </SCENE_5>
+
+    <SCENE_6>
+    Scene Title: Products: Glucose and Oxygen
+    Scene Purpose: Highlight the products of photosynthesis: glucose and oxygen.
+    Scene Description: Show the glucose molecule being formed from G3P. Explain that glucose is used as the plant's food source for energy and growth. Show oxygen being released as a byproduct. Emphasize the importance of oxygen for respiration in other organisms.
+    Scene Layout: Show the G3P molecules combining to form glucose. Illustrate the oxygen molecule being released from the chloroplast and exiting the cell. Show the glucose molecule being transported to other parts of the plant.
+    </SCENE_6>
+
+    <SCENE_7>
+    Scene Title: Photosynthesis Summary: Life's Engine
+    Scene Purpose: Summarize the entire photosynthesis process and reiterate its importance for life on Earth.
+    Scene Description: Show a simplified animation of the entire process, from reactants to products. Briefly reiterate the importance of photosynthesis for energy production, food chains, and oxygen production.
+    Scene Layout: Show a simplified diagram of the whole photosynthesis process, from the reactants entering the plant to the release of oxygen and storage of glucose. This could be a visual summary connecting all the previous scenes.
+    </SCENE_7>

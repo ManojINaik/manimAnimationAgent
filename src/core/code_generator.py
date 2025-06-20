@@ -313,8 +313,9 @@ class CodeGenerator:
         # Add preventive examples from agent memory to avoid common errors
         if self.use_agent_memory and self.agent_memory:
             scene_type = self._infer_scene_type(scene_implementation)
+            task_description = scene_implementation[:200] if scene_implementation else "No description"
             preventive_examples = self.agent_memory.get_preventive_examples(
-                task_description=scene_implementation[:200],  # First 200 chars as task description
+                task_description=task_description,  # First 200 chars as task description
                 topic=topic,
                 scene_type=scene_type,
                 limit=3
@@ -403,6 +404,9 @@ class CodeGenerator:
         Returns:
             str: Inferred scene type
         """
+        if scene_implementation is None:
+            return 'general'
+        
         text = scene_implementation.lower()
         
         # Check for common scene types

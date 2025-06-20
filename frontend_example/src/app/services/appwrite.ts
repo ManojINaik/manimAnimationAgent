@@ -26,7 +26,7 @@ export interface VideoDocument {
     $id: string;
     topic: string;
     description?: string;
-    status: 'queued' | 'planning' | 'rendering' | 'completed' | 'failed';
+    status: 'queued' | 'planning' | 'rendering' | 'completed' | 'failed' | 'queued_for_render';
     progress?: number;
     current_scene?: number;
     scene_count: number;
@@ -95,84 +95,61 @@ export async function generateVideo(topic: string, description: string): Promise
     videoId?: string;
     error?: string;
 }> {
-    // 1. Try hitting the internal Next.js API route – this handles
-    // longer timeouts and avoids CORS issues when the FastAPI backend
-    // runs locally.
     try {
-        const apiRes = await fetch('/api/generate', {
+        const response = await fetch('/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topic, description })
+            body: JSON.stringify({ topic, description }),
         });
 
-        const apiJson = await apiRes.json();
-        if (apiRes.ok && apiJson.success) {
-            return {
-                success: true,
-                videoId: apiJson.task_id || apiJson.videoId,
-            };
-        }
+        const json = await response.json();
 
-        // If the internal API returns an error, continue to fallback
-        console.warn('Internal API call failed; attempting Appwrite function:', apiJson.error);
-    } catch (err) {
-        console.warn('Internal API call error; attempting Appwrite function:', err);
-    }
-
-    // 2. If internal API not working, and BACKEND URL is explicitly defined,
-    // attempt direct backend call (useful for production deployments with
-    // public FastAPI endpoint).
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-    if (backendUrl) {
-        try {
-            const res = await fetch(`${backendUrl}/api/generate`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ topic, context: description })
-            });
-
-            const json = await res.json();
-            if (!res.ok) throw new Error(json.message || 'Request failed');
-
-            return {
-                success: json.success,
-                videoId: json.task_id || json.videoId,
-                error: json.error
-            };
-        } catch (err) {
-            console.warn('Direct backend call failed, falling back to Appwrite Function:', err);
-            // fall through to function call
-        }
-    }
-
-    // 3. Fallback: invoke the Appwrite cloud function
-    try {
-        const response = await functions.createExecution(
-            VIDEO_FUNCTION_ID,
-            JSON.stringify({ topic, description }),
-            false // async execution
-        );
-
-        const rawResponse = (response as any).response; // response type from SDK is any
-
-        let parsed: any = { success: false };
-        try {
-            parsed = rawResponse ? JSON.parse(rawResponse) : {};
-        } catch (e) {
-            console.warn('Unable to parse Appwrite function response, returning raw execution object');
+        if (!response.ok || !json.success) {
+            throw new Error(json.error || 'Failed to queue video generation.');
         }
 
         return {
-            success: parsed.success ?? false,
-            videoId: parsed.videoId || parsed.task_id,
-            error: parsed.error
+            success: true,
+            videoId: json.videoId,
         };
     } catch (error) {
-        console.error('Failed to generate video:', error);
+        console.error('Error in generateVideo service:', error);
         return {
             success: false,
-            error: error instanceof Error ? error.message : 'Failed to generate video'
+            error: error instanceof Error ? error.message : 'An unknown error occurred.',
+        };
+    }
+}
+
+// Poll for task status and extract video_id when available
+export async function getTaskStatus(taskId: string): Promise<{
+    success: boolean;
+    status?: string;
+    progress?: number;
+    message?: string;
+    video_id?: string;
+    error?: string;
+}> {
+    try {
+        const response = await fetch(`/api/status/${taskId}`);
+        if (!response.ok) {
+            throw new Error('Failed to get task status');
+        }
+        
+        const data = await response.json();
+        return {
+            success: true,
+            status: data.status,
+            progress: data.progress,
+            message: data.message,
+            video_id: data.video_id,
+            error: data.error
+        };
+    } catch (error) {
+        console.error('Failed to get task status:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to get task status'
         };
     }
 }

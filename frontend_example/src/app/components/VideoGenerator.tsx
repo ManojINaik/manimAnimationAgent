@@ -132,14 +132,11 @@ export default function VideoGenerator() {
 
         try {
             const result = await generateVideo(topic, description);
-            
+
             if (result.success && result.videoId) {
-                // Get the initial video document
                 const video = await getVideo(result.videoId);
                 if (video) {
                     setCurrentVideo(video);
-                } else {
-                    throw new Error('Failed to retrieve video information');
                 }
             } else {
                 throw new Error(result.error || 'Failed to start video generation');
@@ -152,7 +149,8 @@ export default function VideoGenerator() {
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'queued': return 'from-gray-400 to-gray-600';
+            case 'queued':
+            case 'queued_for_render': return 'from-gray-400 to-gray-600';
             case 'planning': return 'from-blue-400 to-blue-600';
             case 'rendering': return 'from-yellow-400 to-orange-500';
             case 'completed': return 'from-green-400 to-green-600';
@@ -164,6 +162,7 @@ export default function VideoGenerator() {
     const getStatusIcon = (status: string) => {
         switch (status) {
             case 'queued': return '⏳';
+            case 'queued_for_render': return '⏳';
             case 'planning': return '🧠';
             case 'rendering': return '🎬';
             case 'completed': return '✅';

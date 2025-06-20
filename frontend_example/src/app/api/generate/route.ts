@@ -1,4 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Client, Databases, ID } from 'appwrite';
+
+// Initialize Appwrite client with server-side API key (never exposed to the browser)
+const client = new Client()
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
+  .setKey(process.env.APPWRITE_API_KEY!);
+
+const databases = new Databases(client);
+
+// Database and collection identifiers
+const DATABASE_ID = 'video_metadata';
+const VIDEOS_COLLECTION_ID = 'videos';
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,48 +21,39 @@ export async function POST(request: NextRequest) {
     if (!topic) {
       return NextResponse.json(
         { success: false, error: 'Topic is required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Get backend URL from environment or use default
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-    
-    // Video generation can take several minutes. Increase the default
-    // timeout (Node fetch defaults to 5 min = 300 000 ms) so we don't run
-    // into UND_ERR_HEADERS_TIMEOUT errors on long-running requests.
-    // We use AbortController instead of relying on Node's internal limit.
-
-    const controller = new AbortController();
-    // 10 minutes should be enough for most educational videos. Adjust via
-    // NEXT_PUBLIC_GENERATE_TIMEOUT_MS env var if you need more.
-    const timeoutMs = Number(process.env.NEXT_PUBLIC_GENERATE_TIMEOUT_MS ?? 600_000);
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    const response = await fetch(`${backendUrl}/api/generate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    // Create a new video document with status queued_for_render for the worker to pick up
+    const videoDocument = await databases.createDocument(
+      DATABASE_ID,
+      VIDEOS_COLLECTION_ID,
+      ID.unique(),
+      {
+        topic,
+        description: description || `Educational video about ${topic}`,
+        status: 'queued_for_render',
+        progress: 5,
+        scene_count: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
-      body: JSON.stringify({ topic, description }),
-      signal: controller.signal,
-    }).finally(() => clearTimeout(timeoutId));
+    );
 
-    if (!response.ok) {
-      throw new Error(`Backend responded with status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    return NextResponse.json(result);
-
-  } catch (error) {
-    console.error('Error in API route:', error);
+    return NextResponse.json({
+      success: true,
+      videoId: (videoDocument as any).$id,
+      message: 'Video generation task has been successfully queued.',
+    });
+  } catch (error: any) {
+    console.error('Error creating video document in Appwrite:', error);
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Internal server error' 
+      {
+        success: false,
+        error: error?.message || 'Failed to create video task in the database.',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 } 

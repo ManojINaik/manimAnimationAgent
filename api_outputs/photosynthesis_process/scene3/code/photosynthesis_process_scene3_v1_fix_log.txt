@@ -1,0 +1,133 @@
+M:\100 agent\manimAnimationAgent\.venv\Lib\site-packages\manim_voiceover\__init__.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+
+Animation 1: Create(Circle):   0%|          | 0/734 [00:00<?, ?it/s]
+Animation 1: Create(Circle):   2%|1         | 14/734 [00:00<00:05, 139.66it/s]
+Animation 1: Create(Circle):   4%|3         | 29/734 [00:00<00:04, 141.17it/s]
+Animation 1: Create(Circle):   6%|5         | 44/734 [00:00<00:04, 141.36it/s]
+Animation 1: Create(Circle):   8%|8         | 59/734 [00:00<00:04, 143.89it/s]
+Animation 1: Create(Circle):  10%|#         | 74/734 [00:00<00:04, 140.62it/s]
+Animation 1: Create(Circle):  12%|#2        | 89/734 [00:00<00:04, 142.75it/s]
+Animation 1: Create(Circle):  14%|#4        | 104/734 [00:00<00:04, 142.62it/s]
+Animation 1: Create(Circle):  16%|#6        | 119/734 [00:00<00:04, 135.91it/s]
+Animation 1: Create(Circle):  18%|#8        | 133/734 [00:00<00:04, 132.32it/s]
+Animation 1: Create(Circle):  20%|##        | 147/734 [00:01<00:04, 122.23it/s]
+Animation 1: Create(Circle):  22%|##1       | 160/734 [00:01<00:05, 111.76it/s]
+Animation 1: Create(Circle):  23%|##3       | 172/734 [00:01<00:05, 106.80it/s]
+Animation 1: Create(Circle):  25%|##4       | 183/734 [00:01<00:05, 103.35it/s]
+Animation 1: Create(Circle):  26%|##6       | 194/734 [00:01<00:05, 95.88it/s] 
+Animation 1: Create(Circle):  28%|##7       | 205/734 [00:01<00:05, 96.61it/s]
+Animation 1: Create(Circle):  29%|##9       | 215/734 [00:01<00:05, 95.01it/s]
+Animation 1: Create(Circle):  31%|###       | 225/734 [00:01<00:05, 92.52it/s]
+Animation 1: Create(Circle):  32%|###2      | 235/734 [00:02<00:05, 92.43it/s]
+Animation 1: Create(Circle):  33%|###3      | 245/734 [00:02<00:05, 86.24it/s]
+Animation 1: Create(Circle):  35%|###4      | 254/734 [00:02<00:05, 85.35it/s]
+Animation 1: Create(Circle):  36%|###5      | 264/734 [00:02<00:05, 87.76it/s]
+Animation 1: Create(Circle):  37%|###7      | 273/734 [00:02<00:05, 85.93it/s]
+Animation 1: Create(Circle):  38%|###8      | 282/734 [00:02<00:05, 84.58it/s]
+Animation 1: Create(Circle):  40%|###9      | 292/734 [00:02<00:05, 87.42it/s]
+Animation 1: Create(Circle):  41%|####1     | 301/734 [00:02<00:05, 83.68it/s]
+Animation 1: Create(Circle):  42%|####2     | 310/734 [00:02<00:05, 81.06it/s]
+Animation 1: Create(Circle):  43%|####3     | 319/734 [00:03<00:05, 76.49it/s]
+Animation 1: Create(Circle):  45%|####4     | 327/734 [00:03<00:05, 74.04it/s]
+Animation 1: Create(Circle):  46%|####5     | 336/734 [00:03<00:05, 75.37it/s]
+Animation 1: Create(Circle):  47%|####6     | 344/734 [00:03<00:06, 60.50it/s]
+Animation 1: Create(Circle):  48%|####7     | 351/734 [00:03<00:06, 55.17it/s]
+Animation 1: Create(Circle):  49%|####8     | 357/734 [00:03<00:09, 40.72it/s]
+Animation 1: Create(Circle):  49%|####9     | 362/734 [00:04<00:10, 36.27it/s]
+Animation 1: Create(Circle):  50%|#####     | 367/734 [00:04<00:10, 34.59it/s]
+Animation 1: Create(Circle):  51%|#####1    | 375/734 [00:04<00:08, 42.46it/s]
+Animation 1: Create(Circle):  52%|#####2    | 383/734 [00:04<00:07, 49.81it/s]
+Animation 1: Create(Circle):  53%|#####3    | 391/734 [00:04<00:06, 56.29it/s]
+Animation 1: Create(Circle):  54%|#####4    | 399/734 [00:04<00:05, 59.69it/s]
+Animation 1: Create(Circle):  56%|#####5    | 408/734 [00:04<00:05, 63.31it/s]
+Animation 1: Create(Circle):  57%|#####6    | 415/734 [00:05<00:06, 46.06it/s]
+Animation 1: Create(Circle):  58%|#####7    | 423/734 [00:05<00:05, 52.28it/s]
+Animation 1: Create(Circle):  59%|#####8    | 430/734 [00:05<00:06, 46.87it/s]
+Animation 1: Create(Circle):  59%|#####9    | 436/734 [00:05<00:07, 40.56it/s]
+Animation 1: Create(Circle):  60%|######    | 441/734 [00:05<00:07, 38.69it/s]
+Animation 1: Create(Circle):  61%|######    | 447/734 [00:05<00:07, 38.69it/s]
+Animation 1: Create(Circle):  62%|######1   | 452/734 [00:06<00:07, 39.04it/s]
+Animation 1: Create(Circle):  62%|######2   | 457/734 [00:06<00:07, 35.40it/s]
+Animation 1: Create(Circle):  63%|######2   | 461/734 [00:06<00:08, 33.13it/s]
+Animation 1: Create(Circle):  64%|######3   | 467/734 [00:06<00:06, 38.42it/s]
+Animation 1: Create(Circle):  64%|######4   | 472/734 [00:06<00:07, 35.83it/s]
+Animation 1: Create(Circle):  65%|######4   | 476/734 [00:06<00:08, 32.18it/s]
+Animation 1: Create(Circle):  66%|######5   | 481/734 [00:07<00:07, 31.68it/s]
+Animation 1: Create(Circle):  67%|######6   | 489/734 [00:07<00:05, 41.16it/s]
+Animation 1: Create(Circle):  68%|######7   | 497/734 [00:07<00:04, 49.32it/s]
+Animation 1: Create(Circle):  69%|######8   | 506/734 [00:07<00:03, 58.34it/s]
+Animation 1: Create(Circle):  70%|######9   | 513/734 [00:07<00:03, 59.81it/s]
+Animation 1: Create(Circle):  71%|#######   | 520/734 [00:07<00:03, 62.43it/s]
+Animation 1: Create(Circle):  72%|#######1  | 527/734 [00:07<00:03, 64.14it/s]
+Animation 1: Create(Circle):  73%|#######2  | 535/734 [00:07<00:02, 67.15it/s]
+Animation 1: Create(Circle):  74%|#######3  | 542/734 [00:07<00:02, 67.36it/s]
+Animation 1: Create(Circle):  75%|#######4  | 549/734 [00:07<00:02, 67.11it/s]
+Animation 1: Create(Circle):  76%|#######5  | 557/734 [00:08<00:02, 69.68it/s]
+Animation 1: Create(Circle):  77%|#######6  | 565/734 [00:08<00:02, 68.24it/s]
+Animation 1: Create(Circle):  78%|#######8  | 573/734 [00:08<00:02, 69.67it/s]
+Animation 1: Create(Circle):  79%|#######9  | 581/734 [00:08<00:02, 63.34it/s]
+Animation 1: Create(Circle):  80%|########  | 588/734 [00:08<00:03, 45.98it/s]
+Animation 1: Create(Circle):  81%|########  | 594/734 [00:08<00:03, 39.09it/s]
+Animation 1: Create(Circle):  82%|########1 | 599/734 [00:09<00:03, 36.63it/s]
+Animation 1: Create(Circle):  82%|########2 | 604/734 [00:09<00:03, 35.06it/s]
+Animation 1: Create(Circle):  83%|########3 | 612/734 [00:09<00:02, 43.03it/s]
+Animation 1: Create(Circle):  85%|########4 | 621/734 [00:09<00:02, 51.10it/s]
+Animation 1: Create(Circle):  86%|########5 | 630/734 [00:09<00:01, 57.83it/s]
+Animation 1: Create(Circle):  87%|########6 | 638/734 [00:09<00:01, 62.85it/s]
+Animation 1: Create(Circle):  88%|########8 | 646/734 [00:09<00:01, 65.87it/s]
+Animation 1: Create(Circle):  89%|########8 | 653/734 [00:10<00:01, 46.88it/s]
+Animation 1: Create(Circle):  90%|########9 | 659/734 [00:10<00:01, 44.47it/s]
+Animation 1: Create(Circle):  91%|######### | 665/734 [00:10<00:01, 41.18it/s]
+Animation 1: Create(Circle):  91%|#########1| 670/734 [00:10<00:01, 35.91it/s]
+Animation 1: Create(Circle):  92%|#########1| 675/734 [00:10<00:01, 35.35it/s]
+Animation 1: Create(Circle):  93%|#########2| 680/734 [00:10<00:01, 35.03it/s]
+Animation 1: Create(Circle):  93%|#########3| 686/734 [00:11<00:01, 39.72it/s]
+Animation 1: Create(Circle):  94%|#########4| 692/734 [00:11<00:01, 38.20it/s]
+Animation 1: Create(Circle):  95%|#########4| 697/734 [00:11<00:01, 34.15it/s]
+Animation 1: Create(Circle):  96%|#########5| 701/734 [00:11<00:00, 35.11it/s]
+Animation 1: Create(Circle):  96%|#########6| 705/734 [00:11<00:00, 31.59it/s]
+Animation 1: Create(Circle):  97%|#########6| 709/734 [00:11<00:00, 30.33it/s]
+Animation 1: Create(Circle):  97%|#########7| 713/734 [00:11<00:00, 31.57it/s]
+Animation 1: Create(Circle):  98%|#########7| 717/734 [00:12<00:00, 30.37it/s]
+Animation 1: Create(Circle):  99%|#########8| 725/734 [00:12<00:00, 41.96it/s]
+Animation 1: Create(Circle): 100%|#########9| 733/734 [00:12<00:00, 51.18it/s]
+                                                                              
++--------------------- Traceback (most recent call last) ---------------------+
+| M:\100                                                                      |
+| agent\manimAnimationAgent\.venv\Lib\site-packages\manim\cli\render\commands |
+| .py:125 in render                                                           |
+|                                                                             |
+|   122             try:                                                      |
+|   123                 with tempconfig({}):                                  |
+|   124                     scene = SceneClass()                              |
+| > 125                     scene.render()                                    |
+|   126             except Exception:                                         |
+|   127                 error_console.print_exception()                       |
+|   128                 sys.exit(1)                                           |
+|                                                                             |
+| M:\100                                                                      |
+| agent\manimAnimationAgent\.venv\Lib\site-packages\manim\scene\scene.py:237  |
+| in render                                                                   |
+|                                                                             |
+|    234         """                                                          |
+|    235         self.setup()                                                 |
+|    236         try:                                                         |
+| >  237             self.construct()                                         |
+|    238         except EndSceneEarlyException:                               |
+|    239             pass                                                     |
+|    240         except RerunSceneException:                                  |
+|                                                                             |
+| M:\100                                                                      |
+| agent\manimAnimationAgent\api_outputs\photosynthesis_process\scene3\code\ph |
+| otosynthesis_process_scene3_v0.py:55 in construct                           |
+|                                                                             |
+|    52             self.wait(0.5)                                            |
+|    53                                                                       |
+|    54         with self.voiceover(text="In Scene 3, we'll explore the inner |
+| >  55             self.play(camera.frame.animate.scale(0.2).move_to(chlorop |
+|    56             self.play(FadeOut(highlight_circle))                      |
+|    57             self.wait(1)                                              |
+|    58                                                                       |
++-----------------------------------------------------------------------------+
+AttributeError: module 'manim.camera' has no attribute 'frame'

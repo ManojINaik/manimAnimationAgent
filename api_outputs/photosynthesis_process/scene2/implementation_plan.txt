@@ -1,0 +1,323 @@
+# Scene 2 Implementation Plan
+
+<SCENE_VISION_STORYBOARD_PLAN>
+[SCENE_VISION]
+1.  **Scene Overview**:
+    - Scene story: This scene introduces the reactants needed for photosynthesis, portraying them as the "ingredients" of the process. It sets the stage for explaining how these reactants contribute to the overall reaction.
+    - Key takeaway: Photosynthesis requires water, carbon dioxide, and sunlight.
+    - Video role: This scene is the second in a series explaining photosynthesis, building upon the introduction and leading into the process explanation.
+    - **Visual learning objectives for viewers:**
+        - Visualize water absorption through roots as animated `Arrow` objects pointing from soil (`Rectangle` objects) to a root system (`VGroup` of `Line` objects). Display the chemical formula for water (`MathTex`) nearby.
+        - Visualize carbon dioxide intake through stomata as animated `Arrow` objects entering a leaf (`Polygon` object). Display the chemical formula for carbon dioxide (`MathTex`) nearby.
+        - Visualize sunlight absorption by leaves as animated `Arrow` objects pointing from the sun (`Circle` object) to leaves (`Polygon` object). Display a simplified symbol for sunlight (`MathTex`, e.g., h\nu) nearby.
+    - How Manim visuals & animations support learning?
+        - The split-screen layout allows for simultaneous presentation of the three reactants.
+        - Arrows indicate the direction of movement (absorption/intake).
+        - Chemical formulas provide a concise representation of the reactants.
+        - Animations make the process more engaging and easier to understand.
+        - `VGroup` will be used to group related elements (e.g., root system) for easier manipulation and spacing. Ensure a minimum spacing of 0.3 units between VGroups and other scene elements.
+    - Key concepts to emphasize visually:
+        - Reactants as "ingredients" for photosynthesis.
+        - Water absorption by roots.
+        - Carbon dioxide intake by leaves through stomata.
+        - Sunlight absorption by leaves.
+        - Chemical formulas of the reactants (H2O, CO2, h\nu).
+
+[STORYBOARD]
+1.  **Visual Flow & Pacing (Manim Animation Sequence)**:
+    - The scene begins with a blank screen, then the three sections (water, carbon dioxide, sunlight) are gradually introduced.
+    - Each section will animate to illustrate the absorption or intake process.
+    - Chemical formulas will appear near each reactant.
+    - The scene will end with all three reactants displayed, emphasizing they are the "ingredients" for photosynthesis.
+    - Use `Wait()` commands to pause between sub-scenes and animation steps.
+    - **Sub-scene Breakdown**:
+        - **Sub-scene 1: Water Absorption**
+            - **Visual Element**: Root system absorbing water.
+            - **Animation Sequence**:
+                1.  Create soil (`Rectangle` objects) at the bottom-left of the screen, within the safe area. Positioned using `.to_corner(DL)` and `.shift(UP*0.5 + RIGHT*0.5)`.
+                2.  Create a root system (`VGroup` of `Line` objects) extending from the soil upwards, within the safe area, using `.next_to(soil, UP, buff=0.3)`. Ensure root system is within the left 1/3 of the screen.
+                3.  Create animated `Arrow` objects pointing from the soil to the root system, simulating water absorption, using `Create` animation (run_time=1.5). Ensure arrows are within the safe area and maintain 0.3 unit spacing. Use a `VGroup` to manage the arrows.
+                4.  Create `MathTex("H_2O")` and position it above the root system, within the safe area, using `.next_to(root_system, UP, buff=0.3)`. Animate using `Write` (run_time=1).
+                5.  `Wait(1)`
+        - **Sub-scene 2: Carbon Dioxide Intake**
+            - **Visual Element**: Leaf with stomata taking in carbon dioxide.
+            - **Animation Sequence**:
+                1.  Create a leaf (`Polygon` object, roughly triangular) in the middle of the screen, within the safe area. Positioned using `.move_to(ORIGIN)` and `.shift(LEFT*1.5)`.
+                2.  Create small openings (stomata, `Circle` objects) on the leaf surface. These circles will be very small and numerous. Ensure stomata are within the safe area and maintain 0.3 unit spacing from each other.
+                3.  Create animated `Arrow` objects pointing from the air towards the stomata, simulating carbon dioxide intake, using `Create` animation (run_time=1.5). Ensure arrows are within the safe area and maintain 0.3 unit spacing. Use a `VGroup` to manage the arrows.
+                4.  Create `MathTex("CO_2")` and position it above the leaf, within the safe area, using `.next_to(leaf, UP, buff=0.3)`. Animate using `Write` (run_time=1).
+                5.  `Wait(1)`
+        - **Sub-scene 3: Sunlight Absorption**
+            - **Visual Element**: Leaf absorbing sunlight.
+            - **Animation Sequence**:
+                1.  Create another leaf (`Polygon` object, roughly triangular) on the right side of the screen, within the safe area. Position using `.to_corner(UR)` and `.shift(DOWN*1.5 + LEFT*0.5)`.
+                2.  Create a sun (`Circle` object) above the leaf, within the safe area. Position using `.next_to(leaf, UP, buff=2)`.
+                3.  Create animated `Arrow` objects pointing from the sun to the leaf, simulating sunlight absorption, using `Create` animation (run_time=1.5). Ensure arrows are within the safe area and maintain 0.3 unit spacing. Use a `VGroup` to manage the arrows.
+                4.  Create `MathTex("h\\nu")` and position it above the sun, within the safe area, using `.next_to(sun, UP, buff=0.3)`. Animate using `Write` (run_time=1).
+                5.  `Wait(1)`
+        - **Sub-scene 4: Emphasize Ingredients**
+            - **Visual Element**: All three reactants displayed together.
+            - **Animation Sequence**:
+                1.  Create a `Tex("Ingredients for Photosynthesis")` and position it at the top center of the screen, within the safe area, using `.to_edge(UP, buff=0.5)`. Animate using `Write` (run_time=2).
+                2.  `Wait(2)`
+                3.  Fade out the "Ingredients for Photosynthesis" text using `FadeOut` (run_time=1).
+                4. `Wait(1)`
+</SCENE_VISION_STORYBOARD_PLAN>
+
+<SCENE_TECHNICAL_IMPLEMENTATION_PLAN>
+0. **Dependencies**:
+    - **Manim API Version**: Latest stable Manim release.
+    - **Allowed Imports**: `manim`, `numpy`.
+
+1. **Manim Object Selection & Configuration (Text and Shapes)**:
+    - `soil`: `Rectangle`, represents the soil.
+        - `width`: 2.0
+        - `height`: 1.0
+        - `fill_color`: "#8B4513" (brown)
+        - `fill_opacity`: 0.8
+        - `stroke_color`: BLACK
+    - `root_line_1`, `root_line_2`, `root_line_3`: `Line`, represents individual root segments.
+        - `start`: Determined dynamically based on `soil` position.
+        - `end`: Determined dynamically based on `soil` position.
+        - `stroke_color`: WHITE
+        - `stroke_width`: 2
+    - `water_formula`: `MathTex`, chemical formula for water.
+        - `tex_string`: "H_2O"
+        - `color`: BLUE
+        - `font_size`: 24
+    - `water_arrows`: `VGroup` of `Arrow` objects.
+        - `color`: BLUE
+    - `leaf_1`: `Polygon`, represents the leaf for carbon dioxide intake.
+        - `vertices`: Determined to create a roughly triangular shape.
+        - `fill_color`: GREEN
+        - `fill_opacity`: 0.7
+        - `stroke_color`: BLACK
+    - `stomata_1`, `stomata_2`: `Circle`, represent stomata on the leaf.
+        - `radius`: 0.05
+        - `fill_color`: WHITE
+        - `fill_opacity`: 1.0
+        - `stroke_color`: BLACK
+    - `co2_formula`: `MathTex`, chemical formula for carbon dioxide.
+        - `tex_string`: "CO_2"
+        - `color`: RED
+        - `font_size`: 24
+    - `co2_arrows`: `VGroup` of `Arrow` objects.
+        - `color`: RED
+    - `leaf_2`: `Polygon`, represents the leaf for sunlight absorption.
+        - `vertices`: Determined to create a roughly triangular shape.
+        - `fill_color`: GREEN
+        - `fill_opacity`: 0.7
+        - `stroke_color`: BLACK
+    - `sun`: `Circle`, represents the sun.
+        - `radius`: 0.7
+        - `fill_color`: YELLOW
+        - `fill_opacity`: 1.0
+        - `stroke_color`: BLACK
+    - `sunlight_formula`: `MathTex`, symbol for sunlight.
+        - `tex_string`: "h\\nu"
+        - `color`: YELLOW
+        - `font_size`: 24
+    - `sunlight_arrows`: `VGroup` of `Arrow` objects.
+        - `color`: YELLOW
+    - `ingredients_text`: `Tex`, title text.
+        - `tex_string`: "Ingredients for Photosynthesis"
+        - `color`: WHITE
+        - `font_size`: 28
+
+2. **VGroup Structure & Hierarchy**:
+    - `root_system`: `VGroup`, groups `root_line_1`, `root_line_2`, `root_line_3`. Purpose: Easy manipulation and spacing of the root system.
+    - `water_arrows`: `VGroup`, groups the arrows representing water absorption. Purpose: Allows simultaneous animation and positioning of multiple arrows.
+    - `co2_arrows`: `VGroup`, groups the arrows representing carbon dioxide intake. Purpose: Allows simultaneous animation and positioning of multiple arrows.
+    - `sunlight_arrows`: `VGroup`, groups the arrows representing sunlight absorption. Purpose: Allows simultaneous animation and positioning of multiple arrows.
+
+3. **Spatial Positioning Strategy**:
+    - **Sub-scene 1: Water Absorption**
+        - `soil`: `.to_corner(DL)` and `.shift(UP*0.5 + RIGHT*0.5)`. Places the soil in the bottom-left corner, shifted up and right to stay within the safe area.
+        - `root_system`: `.next_to(soil, UP, buff=0.3)`. Positions the root system above the soil with a buffer of 0.3 units.
+        - `root_line_1`: Start point is on top edge of `soil`, shifted slightly to the left and up. End point is further up and slightly to the left.
+        - `root_line_2`: Start point is on top edge of `soil`, directly above center. End point is further up.
+        - `root_line_3`: Start point is on top edge of `soil`, shifted slightly to the right and up. End point is further up and slightly to the right.
+        - `water_arrows`: Arrows will be created dynamically pointing from the `soil` to the `root_system`.  The starting points will be slightly offset from each other on the soil's top surface. The end points will be near the roots. `.arrange(DOWN, buff=0.3)` will be used if necessary to ensure a minimum spacing of 0.3 units between arrows.
+        - `water_formula`: `.next_to(root_system, UP, buff=0.3)`. Positions the water formula above the root system with a buffer of 0.3 units.
+
+    - **Sub-scene 2: Carbon Dioxide Intake**
+        - `leaf_1`: `.move_to(ORIGIN)` and `.shift(LEFT*1.5)`. Places the leaf in the middle of the screen, shifted left to stay within safe area.
+        - `stomata_1`: `.next_to(leaf_1, UP + RIGHT, buff=0.5)`. Positions a stoma on the upper-right part of the leaf.
+        - `stomata_2`: `.next_to(leaf_1, DOWN + LEFT, buff=0.5)`. Positions another stoma on the lower-left part of the leaf.
+        - `co2_arrows`: Arrows will be created dynamically pointing from the air towards the `stomata_1` and `stomata_2`. The starting points will be slightly offset from the stomata. `.arrange(DOWN, buff=0.3)` will be used if necessary to ensure a minimum spacing of 0.3 units between arrows.
+        - `co2_formula`: `.next_to(leaf_1, UP, buff=0.3)`. Positions the carbon dioxide formula above the leaf with a buffer of 0.3 units.
+
+    - **Sub-scene 3: Sunlight Absorption**
+        - `leaf_2`: `.to_corner(UR)` and `.shift(DOWN*1.5 + LEFT*0.5)`. Places the leaf in the upper-right corner, shifted down and left to stay within the safe area.
+        - `sun`: `.next_to(leaf_2, UP, buff=2)`. Positions the sun above the leaf with a buffer of 2 units.
+        - `sunlight_arrows`: Arrows will be created dynamically pointing from the `sun` to the `leaf_2`. The starting points will be on the bottom edge of the sun. The end points will be on the top surface of the leaf. `.arrange(DOWN, buff=0.3)` will be used if necessary to ensure a minimum spacing of 0.3 units between arrows.
+        - `sunlight_formula`: `.next_to(sun, UP, buff=0.3)`. Positions the sunlight formula above the sun with a buffer of 0.3 units.
+
+    - **Sub-scene 4: Emphasize Ingredients**
+        - `ingredients_text`: `.to_edge(UP, buff=0.5)`. Places the title text at the top edge of the screen, with a buffer of 0.5 units.
+
+4. **Animation Methods & Object Lifecycle Management**:
+    ```python
+    class PhotosynthesisReactants(Scene):
+        def construct(self):
+            # Sub-scene 1: Water Absorption
+            soil = Rectangle(width=2.0, height=1.0, fill_color="#8B4513", fill_opacity=0.8, stroke_color=BLACK)
+            soil.to_corner(DL).shift(UP*0.5 + RIGHT*0.5)
+            self.play(Create(soil))
+
+            root_line_1 = Line(start=soil.get_edge(UP) + LEFT*0.3, end=soil.get_edge(UP) + UP*1.5 + LEFT*0.5, stroke_color=WHITE, stroke_width=2)
+            root_line_2 = Line(start=soil.get_edge(UP), end=soil.get_edge(UP) + UP*1.8, stroke_color=WHITE, stroke_width=2)
+            root_line_3 = Line(start=soil.get_edge(UP) + RIGHT*0.3, end=soil.get_edge(UP) + UP*1.5 + RIGHT*0.5, stroke_color=WHITE, stroke_width=2)
+            root_system = VGroup(root_line_1, root_line_2, root_line_3)
+            root_system.next_to(soil, UP, buff=0.3)
+            self.play(Create(root_system))
+
+            water_arrows = VGroup()
+            for i in range(3):
+                arrow = Arrow(start=soil.get_edge(UP) + DOWN*0.1 + LEFT*0.4 + RIGHT*(i*0.4), end=root_line_2.get_start() + DOWN*0.2 + LEFT*0.1, color=BLUE)
+                water_arrows.add(arrow)
+            self.play(Create(water_arrows), run_time=1.5)
+
+            water_formula = MathTex("H_2O", color=BLUE, font_size=24)
+            water_formula.next_to(root_system, UP, buff=0.3)
+            self.play(Write(water_formula), run_time=1)
+            self.wait(1)
+
+            # Sub-scene 2: Carbon Dioxide Intake
+            leaf_1 = Polygon([0, 0, 0], [1, 2, 0], [2, 0, 0], fill_color=GREEN, fill_opacity=0.7, stroke_color=BLACK)
+            leaf_1.move_to(ORIGIN).shift(LEFT*1.5)
+            self.play(Create(leaf_1))
+
+            stomata_1 = Circle(radius=0.05, fill_color=WHITE, fill_opacity=1.0, stroke_color=BLACK)
+            stomata_1.next_to(leaf_1, UP + RIGHT, buff=0.5)
+            self.play(Create(stomata_1))
+
+            stomata_2 = Circle(radius=0.05, fill_color=WHITE, fill_opacity=1.0, stroke_color=BLACK)
+            stomata_2.next_to(leaf_1, DOWN + LEFT, buff=0.5)
+            self.play(Create(stomata_2))
+
+            co2_arrows = VGroup()
+            arrow1 = Arrow(start=stomata_1.get_center() + UP*0.5 + RIGHT*0.3, end=stomata_1.get_center(), color=RED)
+            arrow2 = Arrow(start=stomata_2.get_center() + DOWN*0.5 + LEFT*0.3, end=stomata_2.get_center(), color=RED)
+            co2_arrows.add(arrow1, arrow2)
+
+            self.play(Create(co2_arrows), run_time=1.5)
+
+            co2_formula = MathTex("CO_2", color=RED, font_size=24)
+            co2_formula.next_to(leaf_1, UP, buff=0.3)
+            self.play(Write(co2_formula), run_time=1)
+            self.wait(1)
+
+            # Sub-scene 3: Sunlight Absorption
+            leaf_2 = Polygon([0, 0, 0], [1, 2, 0], [2, 0, 0], fill_color=GREEN, fill_opacity=0.7, stroke_color=BLACK)
+            leaf_2.to_corner(UR).shift(DOWN*1.5 + LEFT*0.5)
+            self.play(Create(leaf_2))
+
+            sun = Circle(radius=0.7, fill_color=YELLOW, fill_opacity=1.0, stroke_color=BLACK)
+            sun.next_to(leaf_2, UP, buff=2)
+            self.play(Create(sun))
+
+            sunlight_arrows = VGroup()
+            arrow1 = Arrow(start=sun.get_edge(DOWN), end=leaf_2.get_edge(UP) + UP*0.1, color=YELLOW)
+            sunlight_arrows.add(arrow1)
+
+            self.play(Create(sunlight_arrows), run_time=1.5)
+
+            sunlight_formula = MathTex("h\\nu", color=YELLOW, font_size=24)
+            sunlight_formula.next_to(sun, UP, buff=0.3)
+            self.play(Write(sunlight_formula), run_time=1)
+            self.wait(1)
+
+            # Sub-scene 4: Emphasize Ingredients
+            ingredients_text = Tex("Ingredients for Photosynthesis", color=WHITE, font_size=28)
+            ingredients_text.to_edge(UP, buff=0.5)
+            self.play(Write(ingredients_text), run_time=2)
+            self.wait(2)
+            self.play(FadeOut(ingredients_text), run_time=1)
+            self.wait(1)
+    ```
+
+5. **Code Structure & Reusability**:
+    - The code is structured into a single `construct` method within the `PhotosynthesisReactants` class.
+    - Each sub-scene is clearly separated with comments.
+    - For reusability, the leaf creation could be moved to a separate function if needed in other scenes.
+
+***Mandatory Safety Checks***:
+    - **Safe Area Enforcement**: All objects are positioned using relative positioning and `shift` commands, ensuring they remain within the safe area. The initial positions are set using `.to_corner()` or `.move_to(ORIGIN)` and then shifted to fine-tune the placement within the safe area. Buffers are used in `next_to` to ensure the objects are within safe area.
+    - **Minimum Spacing Validation**: A `buff` value of 0.3 units is used in the `next_to` method to maintain a minimum spacing of 0.3 units between objects. The `arrange` method, if used, ensures that the arrows are spaced out appropriately. Spacing within the VGroups is implicitly handled.
+    - **Transition Buffers**: `Wait()` calls are used between animation steps and sub-scenes to create transition buffers.
+</SCENE_TECHNICAL_IMPLEMENTATION_PLAN>
+
+<SCENE_ANIMATION_NARRATION_PLAN>
+
+[ANIMATION_STRATEGY]
+1. **Pedagogical Animation Plan:**
+    - **Sub-scene 1: Water Absorption**
+        - `soil`: `Create` animation, target: `soil`, `run_time`: 1. The soil is created first to establish the foundation for the root system.
+            - **Pedagogical purpose:** Introduces the source of water for the plant.
+        - `root_system`: `Create` animation, target: `root_system`, `run_time`: 1.5. The root system is drawn extending from the soil.
+            - **Pedagogical purpose:** Visually represents how plants obtain water from the ground.
+        - `water_arrows`: `Create` animation, target: `water_arrows`, `run_time`: 1.5. Arrows animate from the soil to the roots, simulating water absorption.
+            - **Pedagogical purpose:** Illustrates the movement of water from the soil into the plant's roots. The animation emphasizes the active uptake of water.
+        - `water_formula`: `Write` animation, target: `water_formula`, `run_time`: 1.
+            - **Pedagogical purpose:** Introduces the chemical formula of water (H2O), connecting the visual representation of water with its chemical composition.
+    - **Sub-scene 2: Carbon Dioxide Intake**
+        - `leaf_1`: `Create` animation, target: `leaf_1`, `run_time`: 1. The leaf is created in the middle section.
+            - **Pedagogical purpose:** Introduces the location where carbon dioxide enters the plant.
+        - `stomata_1`, `stomata_2`: `Create` animation, targets: `stomata_1`, `stomata_2`, `run_time`: 0.75 each (using `Succession`).
+            - **Pedagogical purpose:** Highlights the stomata as the entry points for carbon dioxide. Animating them sequentially draws attention to these small openings.
+        - `co2_arrows`: `Create` animation, target: `co2_arrows`, `run_time`: 1.5. Arrows animate from the air towards the stomata, simulating carbon dioxide intake.
+            - **Pedagogical purpose:** Illustrates the movement of carbon dioxide into the leaf through the stomata. The animation emphasizes the intake process.
+        - `co2_formula`: `Write` animation, target: `co2_formula`, `run_time`: 1.
+            - **Pedagogical purpose:** Introduces the chemical formula of carbon dioxide (CO2), connecting the visual representation with its chemical composition.
+    - **Sub-scene 3: Sunlight Absorption**
+        - `leaf_2`: `Create` animation, target: `leaf_2`, `run_time`: 1. The second leaf is created in the right section.
+            - **Pedagogical purpose:** Reinforces the role of leaves in photosynthesis and sets the stage for sunlight absorption.
+        - `sun`: `Create` animation, target: `sun`, `run_time`: 1.
+            - **Pedagogical purpose:** Introduces the source of energy for photosynthesis.
+        - `sunlight_arrows`: `Create` animation, target: `sunlight_arrows`, `run_time`: 1.5. Arrows animate from the sun to the leaf, simulating sunlight absorption.
+            - **Pedagogical purpose:** Illustrates the absorption of sunlight by the leaf, emphasizing the energy input for the process.
+        - `sunlight_formula`: `Write` animation, target: `sunlight_formula`, `run_time`: 1.
+            - **Pedagogical purpose:** Introduces a simplified symbol for sunlight (h\nu), representing the energy from light.
+    - **Sub-scene 4: Emphasize Ingredients**
+        - `ingredients_text`: `Write` animation, target: `ingredients_text`, `run_time`: 2.
+            - **Pedagogical purpose:** Summarizes the scene by explicitly stating that the displayed elements are the "Ingredients for Photosynthesis." This reinforces the key takeaway.
+        - `FadeOut` animation, target: `ingredients_text`, `run_time`: 1.
+            - **Pedagogical purpose:** Removes the title to allow the viewer to focus on the three key ingredients.
+
+2. **Scene Flow - Pedagogical Pacing and Clarity:**
+    - **Overall animation sequence, spatial progression for learning:**
+        - The scene is divided into three spatial sections, each representing a reactant. The animation progresses from left to right: Water absorption (left), carbon dioxide intake (middle), and sunlight absorption (right). This spatial arrangement helps viewers compartmentalize and understand the different inputs required for photosynthesis. The final sub-scene brings all the elements together with the "Ingredients" title.
+    - **Transition buffers for pedagogical pauses:**
+        - `Wait(1)` after each sub-scene (water, carbon dioxide, sunlight) and after writing the chemical formulas.
+            - **Pedagogical reason:** Allows viewers time to process the information presented in each sub-scene before moving on to the next. It provides a moment for reflection and assimilation of the visuals and formulas.
+        - `Wait(2)` after writing the "Ingredients for Photosynthesis" text.
+            - **Pedagogical reason:** Provides a longer pause to emphasize the importance of these ingredients and allow viewers to consolidate their understanding.
+        - `Wait(1)` after fading out the "Ingredients for Photosynthesis" text.
+            - **Pedagogical reason:** A brief pause before transitioning to the next scene, leaving the viewer with a clear image of the three reactants.
+    - **Coordinate animation timing with narration for engagement and comprehension:**
+        - Narration begins by introducing the concept of "ingredients" for photosynthesis. As each reactant is introduced visually, the narration explains its source and role. The animation timings are synchronized with the narration to ensure that the visual representation of each reactant appears on the screen at the precise moment it is being discussed. This coordinated presentation maximizes viewer engagement and comprehension.
+
+[NARRATION]
+- **Pedagogical Narration Script:**
+    - **[0:00-0:03]** "Welcome back! Building on our introduction to photosynthesis, let's explore the essential ingredients this amazing process needs."
+    - **[0:03-0:06]** "Think of photosynthesis like a recipe. What are the key ingredients a plant requires to make its own food?"
+    - **[0:06-0:10]** "First, we have water. [Animation cue: `soil` and `root_system` appear, `water_arrows` animate]. Plants absorb water through their roots, drawing it up from the soil."
+    - **[0:10-0:13]** "Here, we see water moving from the soil, up into the root system. [Animation cue: `water_formula` appears]. And, of course, water is H2O."
+    - **[0:13-0:14]** "[Wait(1)]"
+    - **[0:14-0:18]** "Next, carbon dioxide. [Animation cue: `leaf_1` and `stomata` appear, `co2_arrows` animate]. This gas enters the plant through tiny openings on the leaves called stomata."
+    - **[0:18-0:22]** "The leaves essentially "breathe in" carbon dioxide from the air. [Animation cue: `co2_formula` appears]. Carbon dioxide is represented as CO2."
+    - **[0:22-0:23]** "[Wait(1)]"
+    - **[0:23-0:26]** "And finally, sunlight! [Animation cue: `leaf_2` and `sun` appear, `sunlight_arrows` animate]. The leaves capture the energy from sunlight."
+    - **[0:26-0:30]** "Just like solar panels, leaves are designed to absorb light. [Animation cue: `sunlight_formula` appears]. We can represent sunlight as h\nu, a symbol for light energy."
+    - **[0:30-0:31]** "[Wait(1)]"
+    - **[0:31-0:35]** "So, we have water, carbon dioxide, and sunlight. [Animation cue: `ingredients_text` appears]. These are the key ingredients for photosynthesis!"
+    - **[0:35-0:37]** "[Wait(2)]"
+    - **[0:37-0:38]** "[Animation cue: `ingredients_text` fades out]."
+    - **[0:38-0:39]** "[Wait(1)]"
+    - **[0:39-0:42]** "In the next scene, we will dive into how the plant uses these components to create energy. Stay tuned!"
+
+- **Narration Sync - Pedagogical Alignment:**
+    - The narration is carefully synchronized with the animations to guide the viewer's attention to the specific elements being discussed. For example, when the narration mentions "water," the animation of water arrows and the appearance of the H2O formula occur simultaneously. This creates a strong association between the spoken word, the visual representation, and the chemical formula, reinforcing learning. The wait times are strategically placed after each reactant is introduced to allow the viewer to process the information before moving on. The final narration summarizes the scene and previews the next, creating a smooth transition within the video.
+</SCENE_ANIMATION_NARRATION_PLAN>
+
