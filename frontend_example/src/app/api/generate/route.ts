@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
         topic,
         description: description || `Educational video about ${topic}`,
         status: 'queued_for_render',
+        scene_count: 0,
       },
     );
 
