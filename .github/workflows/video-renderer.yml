@@ -8,8 +8,8 @@ on:
         required: true
         type: string
   # Also run on a schedule to check for queued videos
-  schedule:
-    - cron: '*/5 * * * *'  # Every 5 minutes
+  # schedule:
+  #   - cron: '*/5 * * * *'  # Every 5 minutes
   
   # Trigger via repository dispatch (webhook)
   repository_dispatch:
@@ -83,7 +83,7 @@ jobs:
         source venv/bin/activate
         pip install --upgrade pip
         # Use GitHub Actions specific requirements (excludes problematic audio deps)
-        pip install -r requirements-github-actions.txt
+        pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
         
     - name: Activate virtual environment
       if: steps.cache-venv.outputs.cache-hit == 'true'
