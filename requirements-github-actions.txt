@@ -80,4 +80,6 @@ langfuse>=2.0.0
 # - PyAudio (requires system audio libraries)
 # - TTS libraries that need audio hardware
 # - Real-time audio processing libraries
-# - ElevenLabs (requires API keys + audio hardware) 
+# - ElevenLabs (requires API keys + audio hardware)
+
+manim-voiceover>=0.3.7 
