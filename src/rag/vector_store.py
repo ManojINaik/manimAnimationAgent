@@ -323,7 +323,12 @@ class RAGVectorStore:
         # Search in core manim docs
         for query in manim_core_queries:
             query_text = query["query"]
-            self.core_vector_store._embedding_function.parent_observation_id = span.id
+            if span is not None:
+                self.core_vector_store._embedding_function.parent_observation_id = span.id
+            else:
+                # Ensure the attribute exists; otherwise, skip attaching observation linkage
+                if hasattr(self.core_vector_store._embedding_function, 'parent_observation_id'):
+                    self.core_vector_store._embedding_function.parent_observation_id = None
             manim_core_results = self.core_vector_store.similarity_search_with_relevance_scores(
                 query=query_text,
                 k=k,
@@ -341,7 +346,12 @@ class RAGVectorStore:
         for query in manim_plugin_queries:
             plugin_name = query["type"]
             query_text = query["query"]
-            self.plugin_stores[plugin_name]._embedding_function.parent_observation_id = span.id
+            if span is not None:
+                self.plugin_stores[plugin_name]._embedding_function.parent_observation_id = span.id
+            else:
+                # Ensure the attribute exists; otherwise, skip attaching observation linkage
+                if hasattr(self.plugin_stores[plugin_name]._embedding_function, 'parent_observation_id'):
+                    self.plugin_stores[plugin_name]._embedding_function.parent_observation_id = None
             if plugin_name in self.plugin_stores:
                 plugin_results = self.plugin_stores[plugin_name].similarity_search_with_relevance_scores(
                     query=query_text,
