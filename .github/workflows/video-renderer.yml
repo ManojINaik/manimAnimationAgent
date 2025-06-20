@@ -55,7 +55,7 @@ jobs:
           libfftw3-dev \
           libatlas-base-dev \
           sox \
-          texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk dvisvgm
+          texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk dvisvgm ghostscript
           
     # Cache Python dependencies
     - name: Cache Python dependencies
