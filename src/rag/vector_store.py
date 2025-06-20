@@ -291,17 +291,27 @@ class RAGVectorStore:
         manim_plugin_formatted_results = []
         
         # Create a Langfuse span if enabled
+        span = None  # Default span to None
         if self.use_langfuse:
-            langfuse = Langfuse()
-            span = langfuse.span(
-                trace_id=trace_id,  # Use the passed trace_id
-                name=f"RAG search for {topic} - scene {scene_number}",
-                metadata={
-                    "topic": topic,
-                    "scene_number": scene_number,
-                    "session_id": self.session_id
-                }
-            )
+            try:
+                langfuse = Langfuse()
+                if hasattr(langfuse, "span"):
+                    span = langfuse.span(
+                        trace_id=trace_id,  # Use the passed trace_id
+                        name=f"RAG search for {topic} - scene {scene_number}",
+                        metadata={
+                            "topic": topic,
+                            "scene_number": scene_number,
+                            "session_id": self.session_id
+                        }
+                    )
+                else:
+                    # Fallback: Langfuse version without span API, disable logging
+                    print("Langfuse client lacks 'span' method. Disabling Langfuse logging for this run.")
+                    self.use_langfuse = False
+            except Exception as e:
+                print(f"Warning: Failed to initialize Langfuse span: {e}. Disabling Langfuse logging.")
+                self.use_langfuse = False
         
         # Separate queries by type
         manim_core_queries = [query for query in queries if query["type"] == "manim-core"]
@@ -368,17 +378,31 @@ class RAGVectorStore:
         total_tokens = sum(len(self.enc.encode(res['content'])) for res in manim_core_unique_results + manim_plugin_unique_results)
         print(f"Total tokens for the RAG search: {total_tokens}")
         
-        # Update Langfuse with the deduplicated results
-        if self.use_langfuse:
-            filtered_results_markdown = json.dumps(manim_core_unique_results + manim_plugin_unique_results, indent=2)
-            span.update( # Use span.update, not span.end
-                output=filtered_results_markdown,
-                metadata={
-                    "total_tokens": total_tokens,
-                    "initial_results_count": len(manim_core_formatted_results) + len(manim_plugin_formatted_results),
-                    "filtered_results_count": len(manim_core_unique_results) + len(manim_plugin_unique_results)
-                }
-            )
+        # Update Langfuse with the deduplicated results if logging is enabled and span exists
+        if self.use_langfuse and span is not None:
+            try:
+                filtered_results_markdown = json.dumps(manim_core_unique_results + manim_plugin_unique_results, indent=2)
+                # Some Langfuse versions use span.update, others may require different API; guard accordingly
+                if hasattr(span, "update"):
+                    span.update(
+                        output=filtered_results_markdown,
+                        metadata={
+                            "total_tokens": total_tokens,
+                            "initial_results_count": len(manim_core_formatted_results) + len(manim_plugin_formatted_results),
+                            "filtered_results_count": len(manim_core_unique_results) + len(manim_plugin_unique_results)
+                        }
+                    )
+                elif hasattr(span, "end"):
+                    span.end(
+                        output=filtered_results_markdown,
+                        metadata={
+                            "total_tokens": total_tokens,
+                            "initial_results_count": len(manim_core_formatted_results) + len(manim_plugin_formatted_results),
+                            "filtered_results_count": len(manim_core_unique_results) + len(manim_plugin_unique_results)
+                        }
+                    )
+            except Exception as e:
+                print(f"Warning: Failed to update Langfuse span: {e}. Continuing without logging.")
 
         manim_core_results = "Please refer to the following Manim core documentation that may be helpful for the code generation:\n\n" + "\n\n".join([f"Content:\n````text\n{res['content']}\n````\nScore: {res['score']}" for res in manim_core_unique_results])
         manim_plugin_results = "Please refer to the following Manim plugin documentation that may be helpful for the code generation:\n\n" + "\n\n".join([f"Content:\n````text\n{res['content']}\n````\nScore: {res['score']}" for res in manim_plugin_unique_results])
