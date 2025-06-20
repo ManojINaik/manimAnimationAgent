@@ -29,7 +29,18 @@ jobs:
       with:
         python-version: '3.11'
         
+    # Cache system dependencies
+    - name: Cache system dependencies
+      id: cache-system-deps
+      uses: actions/cache@v3
+      with:
+        path: /var/cache/apt
+        key: system-deps-${{ runner.os }}-${{ hashFiles('.github/workflows/main.yml') }}
+        restore-keys: |
+          system-deps-${{ runner.os }}-
+        
     - name: Install system dependencies
+      if: steps.cache-system-deps.outputs.cache-hit != 'true'
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -44,14 +55,45 @@ jobs:
           libfftw3-dev \
           libatlas-base-dev
           
-    - name: Install Python dependencies
+    # Cache Python dependencies
+    - name: Cache Python dependencies
+      uses: actions/cache@v3
+      id: cache-python-deps
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ runner.os }}-python3.11-${{ hashFiles('requirements-github-actions.txt') }}
+        restore-keys: |
+          pip-${{ runner.os }}-python3.11-
+          pip-${{ runner.os }}-
+          
+    # Cache installed packages in virtual environment
+    - name: Cache virtual environment
+      uses: actions/cache@v3
+      id: cache-venv
+      with:
+        path: venv
+        key: venv-${{ runner.os }}-python3.11-${{ hashFiles('requirements-github-actions.txt') }}
+        restore-keys: |
+          venv-${{ runner.os }}-python3.11-
+          
+    - name: Create virtual environment and install Python dependencies
+      if: steps.cache-venv.outputs.cache-hit != 'true'
       run: |
+        python -m venv venv
+        source venv/bin/activate
         pip install --upgrade pip
         # Use GitHub Actions specific requirements (excludes problematic audio deps)
         pip install -r requirements-github-actions.txt
         
+    - name: Activate virtual environment
+      if: steps.cache-venv.outputs.cache-hit == 'true'
+      run: |
+        source venv/bin/activate
+        echo "PATH=$PWD/venv/bin:$PATH" >> $GITHUB_ENV
+        
     - name: Test dependencies
       run: |
+        source venv/bin/activate
         python test_github_actions_fix.py
         
     - name: Set up environment variables
@@ -71,6 +113,7 @@ jobs:
         APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
         APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
       run: |
+        source venv/bin/activate
         python scripts/check_video_queue.py
         
     - name: Render videos
@@ -83,6 +126,7 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         VIDEO_ID: ${{ github.event.inputs.video_id || github.event.client_payload.video_id }}
       run: |
+        source venv/bin/activate
         python scripts/github_video_renderer.py
         
     - name: Upload artifacts (for debugging)

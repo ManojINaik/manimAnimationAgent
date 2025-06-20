@@ -158,10 +158,18 @@ class VideoPlanner:
             prompt += f"\n\nHere are some example scene plans for reference:\n{self.scene_plan_examples}"
 
         # Generate plan using planner model
-        response_text = self.planner_model(
-            _prepare_text_inputs(prompt),
-            metadata={"generation_name": "scene_outline", "tags": [topic, "scene-outline"], "session_id": session_id}
-        )
+        try:
+            response_text = self.planner_model(
+                _prepare_text_inputs(prompt),
+                metadata={"generation_name": "scene_outline", "tags": [topic, "scene-outline"], "session_id": session_id}
+            )
+            if response_text is None:
+                raise ValueError("Planner model returned None for scene outline generation")
+        except Exception as e:
+            print(f"Error in planner_model call for scene outline: {e}")
+            print(f"Planner model type: {type(self.planner_model)}")
+            print(f"Planner model: {self.planner_model}")
+            raise
         
         # Extract scene outline <SCENE_OUTLINE> ... </SCENE_OUTLINE>
         scene_outline = extract_xml_tag(response_text, "SCENE_OUTLINE")
@@ -247,10 +255,18 @@ class VideoPlanner:
             # Add documentation to prompt
             prompt_vision_storyboard += f"\n\n{retrieved_docs}"
 
-        vision_storyboard_plan = self.planner_model(
-            _prepare_text_inputs(prompt_vision_storyboard),
-            metadata={"generation_name": "scene_vision_storyboard", "trace_id": scene_trace_id, "tags": [topic, f"scene{i}"], "session_id": session_id}
-        )
+        try:
+            vision_storyboard_plan = self.planner_model(
+                _prepare_text_inputs(prompt_vision_storyboard),
+                metadata={"generation_name": "scene_vision_storyboard", "trace_id": scene_trace_id, "tags": [topic, f"scene{i}"], "session_id": session_id}
+            )
+            if vision_storyboard_plan is None:
+                raise ValueError(f"Planner model returned None for scene {i} vision storyboard generation")
+        except Exception as e:
+            print(f"Error in planner_model call for scene {i} vision storyboard: {e}")
+            print(f"Planner model type: {type(self.planner_model)}")
+            print(f"Planner model: {self.planner_model}")
+            raise
         # extract vision storyboard plan <SCENE_VISION_STORYBOARD_PLAN> ... </SCENE_VISION_STORYBOARD_PLAN>
         vision_match = re.search(r'(<SCENE_VISION_STORYBOARD_PLAN>.*?</SCENE_VISION_STORYBOARD_PLAN>)', vision_storyboard_plan, re.DOTALL)
         vision_storyboard_plan = vision_match.group(1) if vision_match else vision_storyboard_plan
@@ -294,10 +310,17 @@ class VideoPlanner:
             # Add documentation to prompt
             prompt_technical_implementation += f"\n\n{retrieved_docs}"
 
-        technical_implementation_plan = self.planner_model(
-            _prepare_text_inputs(prompt_technical_implementation),
-            metadata={"generation_name": "scene_technical_implementation", "trace_id": scene_trace_id, "tags": [topic, f"scene{i}"], "session_id": session_id}
-        )
+        try:
+            technical_implementation_plan = self.planner_model(
+                _prepare_text_inputs(prompt_technical_implementation),
+                metadata={"generation_name": "scene_technical_implementation", "trace_id": scene_trace_id, "tags": [topic, f"scene{i}"], "session_id": session_id}
+            )
+            if technical_implementation_plan is None:
+                raise ValueError(f"Planner model returned None for scene {i} technical implementation generation")
+        except Exception as e:
+            print(f"Error in planner_model call for scene {i} technical implementation: {e}")
+            print(f"Planner model type: {type(self.planner_model)}")
+            raise
         # extract technical implementation plan <SCENE_TECHNICAL_IMPLEMENTATION_PLAN> ... </SCENE_TECHNICAL_IMPLEMENTATION_PLAN>
         technical_match = re.search(r'(<SCENE_TECHNICAL_IMPLEMENTATION_PLAN>.*?</SCENE_TECHNICAL_IMPLEMENTATION_PLAN>)', technical_implementation_plan, re.DOTALL)
         technical_implementation_plan = technical_match.group(1) if technical_match else technical_implementation_plan
@@ -333,10 +356,17 @@ class VideoPlanner:
             )
             prompt_animation_narration += f"\n\n{retrieved_docs}"
 
-        animation_narration_plan = self.planner_model(
-            _prepare_text_inputs(prompt_animation_narration),
-            metadata={"generation_name": "scene_animation_narration", "trace_id": scene_trace_id, "tags": [topic, f"scene{i}"], "session_id": session_id}
-        )
+        try:
+            animation_narration_plan = self.planner_model(
+                _prepare_text_inputs(prompt_animation_narration),
+                metadata={"generation_name": "scene_animation_narration", "trace_id": scene_trace_id, "tags": [topic, f"scene{i}"], "session_id": session_id}
+            )
+            if animation_narration_plan is None:
+                raise ValueError(f"Planner model returned None for scene {i} animation narration generation")
+        except Exception as e:
+            print(f"Error in planner_model call for scene {i} animation narration: {e}")
+            print(f"Planner model type: {type(self.planner_model)}")
+            raise
         # extract animation narration plan <SCENE_ANIMATION_NARRATION_PLAN> ... </SCENE_ANIMATION_NARRATION_PLAN>
         animation_match = re.search(r'(<SCENE_ANIMATION_NARRATION_PLAN>.*?</SCENE_ANIMATION_NARRATION_PLAN>)', animation_narration_plan, re.DOTALL)
         animation_narration_plan = animation_match.group(1) if animation_match else animation_narration_plan
