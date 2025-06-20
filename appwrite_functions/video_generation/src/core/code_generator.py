@@ -690,8 +690,32 @@ class CodeGenerator:
         if "invalid syntax" in error and "import" in error:
             import re
             # Fix malformed import statements
-            fixed_code = re.sub(r'from manim import \*, (\w+)', r'from manim import *', fixed_code)
-            fixed_code = re.sub(r'from manim import \*,', 'from manim import *', fixed_code)
+            fixed_code = re.sub(r'from manim import \\*, (\\w+)', r'from manim import *', fixed_code)
+            fixed_code = re.sub(r'from manim import \\*,', 'from manim import *', fixed_code)
+        
+        # Fix 11: Missing Manim color constants (e.g., LIGHT_BLUE)
+        if "is not defined" in error:
+            import re
+            missing_const_match = re.search(r"name '([A-Z_]+)' is not defined", error)
+            if missing_const_match:
+                missing_const = missing_const_match.group(1)
+                # Common Manim light color constants
+                light_colors = [
+                    "LIGHT_BLUE", "LIGHT_BROWN", "LIGHT_GREY", "LIGHT_GRAY", "LIGHT_PINK",
+                    "LIGHT_PURPLE", "LIGHT_YELLOW", "LIGHT_RED", "LIGHT_GREEN", "LIGHT_ORANGE"
+                ]
+                if missing_const in light_colors:
+                    # Ensure wildcard import is present to bring in all color constants
+                    if 'from manim import *' not in fixed_code:
+                        # Insert after the first import block if possible, otherwise prepend
+                        lines = fixed_code.splitlines()
+                        insert_idx = 0
+                        for idx, line in enumerate(lines):
+                            if line.startswith('from manim import') or line.startswith('import manim'):
+                                insert_idx = idx + 1
+                                break
+                        lines.insert(insert_idx, 'from manim import *  # Added by auto-fix to include color constants')
+                        fixed_code = "\n".join(lines)
         
         return fixed_code
 
