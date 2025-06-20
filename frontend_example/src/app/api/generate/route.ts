@@ -60,6 +60,9 @@ export async function POST(request: NextRequest) {
         description: description || `Educational video about ${topic}`,
         status: 'queued_for_render',
         scene_count: 0,
+        progress: 0,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       },
     );
 
