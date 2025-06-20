@@ -4,6 +4,7 @@ import json
 from typing import Union, List, Dict
 from PIL import Image
 import glob
+import math
 
 from mllm_tools.utils import _prepare_text_inputs, _extract_code
 from mllm_tools.gemini import GeminiWrapper
@@ -788,6 +789,25 @@ class CodeGenerator:
             fixed_code
         )
         
+        # Fix 14: replace nonexistent get_length() calls
+        if "object has no attribute 'length'" in error and ".get_length(" in error:
+            import re
+            # Attempt to replace c_len calculation using a_len and b_len if present
+            pattern = r'(\w+)\s*=\s*triangle\.get_length\(\)'
+            match = re.search(pattern, fixed_code)
+            if match:
+                var_name = match.group(1)
+                # Use math.hypot(a_len, b_len) if variables exist
+                if re.search(r'\ba_len\b', fixed_code) and re.search(r'\bb_len\b', fixed_code):
+                    replacement = f"{var_name} = math.hypot(a_len, b_len)  # Auto-fixed"
+                    # Ensure math is imported
+                    if 'import math' not in fixed_code:
+                        fixed_code = 'import math\n' + fixed_code
+                else:
+                    # Fallback to width of triangle
+                    replacement = f"{var_name} = triangle.get_width()  # Auto-fixed from get_length()"
+                fixed_code = re.sub(pattern, replacement, fixed_code)
+
         return fixed_code
 
     def visual_self_reflection(self, code: str, media_path: Union[str, Image.Image], scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> str:
