@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Client, Databases, ID } from 'appwrite';
+import { Client, Databases, ID } from 'node-appwrite';
 
 // Initialize Appwrite client with server-side API key (never exposed to the browser)
 const client = new Client()
