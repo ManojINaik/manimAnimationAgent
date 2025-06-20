@@ -59,7 +59,7 @@ class VideoPlanner:
         self.rag_integration = None
         if use_rag:
             self.rag_integration = RAGIntegration(
-                helper_model=helper_model,
+                helper_model=self.helper_model,
                 output_dir=output_dir,
                 chroma_db_path=chroma_db_path,
                 manim_docs_path=manim_docs_path,
