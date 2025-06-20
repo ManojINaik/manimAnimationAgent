@@ -82,7 +82,13 @@ export default function VideoGenerator() {
 
     // Subscribe to real-time updates when video is being generated
     useEffect(() => {
-        if (!currentVideo || currentVideo.status === 'completed' || currentVideo.status === 'failed') {
+        if (!currentVideo) {
+            return;
+        }
+        
+        console.log('Setting up real-time subscription for video:', currentVideo.$id, 'status:', currentVideo.status);
+        
+        if (currentVideo.status === 'completed' || currentVideo.status === 'failed') {
             return;
         }
 
@@ -132,9 +138,11 @@ export default function VideoGenerator() {
 
         try {
             const result = await generateVideo(topic, description);
+            console.log('generateVideo result:', result);
 
             if (result.success && result.videoId) {
                 const video = await getVideo(result.videoId);
+                console.log('Fetched video:', video);
                 if (video) {
                     setCurrentVideo(video);
                 }
