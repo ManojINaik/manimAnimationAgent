@@ -8,8 +8,15 @@ async function triggerGithubWorkflow(videoId: string) {
   const workflow = process.env.GITHUB_WORKFLOW_FILENAME || 'video-renderer.yml';
   const ghPat = process.env.GH_PAT!; // Personal Access Token with 'workflow' permission
 
+  console.log('Triggering GitHub workflow:', { owner, repo, workflow, videoId });
+  console.log('GitHub PAT available:', !!ghPat);
+
   try {
-    await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
+    // Add timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
       method: 'POST',
       headers: {
         Authorization: `token ${ghPat}`,
@@ -20,9 +27,21 @@ async function triggerGithubWorkflow(videoId: string) {
         ref: 'main',
         inputs: { video_id: videoId },
       }),
-    });
+      signal: controller.signal,
+    }).finally(() => clearTimeout(timeoutId));
+    
+    console.log('GitHub API response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('GitHub API error:', errorText);
+      throw new Error(`GitHub API failed: ${response.status} - ${errorText}`);
+    }
+    
+    console.log('✅ Successfully triggered GitHub workflow');
   } catch (err) {
-    console.error('Failed to dispatch GitHub workflow', err);
+    console.error('❌ Failed to dispatch GitHub workflow:', err);
+    // Don't throw - just log the error so document creation succeeds
   }
 }
 
@@ -39,6 +58,14 @@ const DATABASE_ID = 'video_metadata';
 const VIDEOS_COLLECTION_ID = 'videos';
 
 export async function POST(request: NextRequest) {
+  // Check required environment variables
+  const requiredEnvVars = ['GITHUB_REPO_OWNER', 'GITHUB_REPO_NAME', 'GH_PAT'];
+  const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+  
+  if (missingVars.length > 0) {
+    console.error('Missing environment variables:', missingVars);
+  }
+
   try {
     const body = await request.json();
     const { topic, description } = body;
@@ -65,8 +92,10 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    // Fire GitHub Actions workflow asynchronously (do not await)
-    triggerGithubWorkflow((videoDocument as any).$id);
+    // Fire GitHub Actions workflow asynchronously (do not await to avoid blocking response)
+    triggerGithubWorkflow((videoDocument as any).$id).catch(err => {
+      console.error('GitHub workflow trigger failed:', err);
+    });
 
     return NextResponse.json({
       success: true,
