@@ -22,7 +22,7 @@ class LiteLLMWrapper:
         temperature: float = 0.7,
         print_cost: bool = False,
         verbose: bool = False,
-        use_langfuse: bool = True,
+        use_langfuse: bool = False,
     ):
         """
         Initialize the LiteLLM wrapper
@@ -47,10 +47,14 @@ class LiteLLMWrapper:
         if self.verbose:
             os.environ['LITELLM_LOG'] = 'DEBUG'
         
-        # Set langfuse callback only if enabled
+        # Set langfuse callback only if enabled and handle errors gracefully
         if use_langfuse:
-            litellm.success_callback = ["langfuse"]
-            litellm.failure_callback = ["langfuse"]
+            try:
+                litellm.success_callback = ["langfuse"]
+                litellm.failure_callback = ["langfuse"]
+            except Exception as e:
+                print(f"Warning: Failed to initialize Langfuse logging: {e}")
+                print("Continuing without Langfuse logging...")
     
     def _setup_gemini_api_key(self):
         """Setup Gemini API key with fallback mechanism for multiple keys."""

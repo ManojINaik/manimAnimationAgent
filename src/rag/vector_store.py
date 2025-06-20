@@ -135,28 +135,40 @@ class RAGVectorStore:
                 self.embedding_model = embedding_model
 
             def embed_documents(self, texts: list[str]) -> list[list[float]]:
+                # Temporarily disable callbacks for embeddings to avoid conflicts
+                original_success = litellm.success_callback
+                original_failure = litellm.failure_callback
                 litellm.success_callback = []
                 litellm.failure_callback = []
-                response = embedding(
-                    model=self.embedding_model,
-                    input=texts,
-                    task_type="CODE_RETRIEVAL_QUERY" if self.embedding_model == "vertex_ai/text-embedding-005" else None
-                )
-                litellm.success_callback = ["langfuse"]
-                litellm.failure_callback = ["langfuse"]
-                return [r["embedding"] for r in response["data"]]
+                try:
+                    response = embedding(
+                        model=self.embedding_model,
+                        input=texts,
+                        task_type="CODE_RETRIEVAL_QUERY" if self.embedding_model == "vertex_ai/text-embedding-005" else None
+                    )
+                    return [r["embedding"] for r in response["data"]]
+                finally:
+                    # Restore original callbacks
+                    litellm.success_callback = original_success
+                    litellm.failure_callback = original_failure
             
             def embed_query(self, text: str) -> list[float]:
+                # Temporarily disable callbacks for embeddings to avoid conflicts
+                original_success = litellm.success_callback
+                original_failure = litellm.failure_callback
                 litellm.success_callback = []
                 litellm.failure_callback = []
-                response = embedding(
-                    model=self.embedding_model,
-                    input=[text],
-                    task_type="CODE_RETRIEVAL_QUERY" if self.embedding_model == "vertex_ai/text-embedding-005" else None
-                )
-                litellm.success_callback = ["langfuse"]
-                litellm.failure_callback = ["langfuse"]
-                return response["data"][0]["embedding"]
+                try:
+                    response = embedding(
+                        model=self.embedding_model,
+                        input=[text],
+                        task_type="CODE_RETRIEVAL_QUERY" if self.embedding_model == "vertex_ai/text-embedding-005" else None
+                    )
+                    return response["data"][0]["embedding"]
+                finally:
+                    # Restore original callbacks
+                    litellm.success_callback = original_success
+                    litellm.failure_callback = original_failure
         
         return LiteLLMEmbeddings(self.embedding_model)
 
