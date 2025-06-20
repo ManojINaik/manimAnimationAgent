@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sdk from 'node-appwrite';
+import { Client, Databases, ID } from 'node-appwrite';
 
 // GitHub dispatch helper
 async function triggerGithubWorkflow(videoId: string) {
@@ -27,12 +27,12 @@ async function triggerGithubWorkflow(videoId: string) {
 }
 
 // Initialize Appwrite client with server-side API key (never exposed to the browser)
-const client = new sdk.Client()
+const client = new Client()
   .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!)
   .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID!)
   .setKey(process.env.APPWRITE_API_KEY!);
 
-const databases = new sdk.Databases(client);
+const databases = new Databases(client);
 
 // Database and collection identifiers
 const DATABASE_ID = 'video_metadata';
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     const videoDocument = await databases.createDocument(
       DATABASE_ID,
       VIDEOS_COLLECTION_ID,
-      sdk.ID.unique(),
+      ID.unique(),
       {
         topic,
         description: description || `Educational video about ${topic}`,
