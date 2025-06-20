@@ -216,7 +216,7 @@ class VideoPlanner:
 
         # ===== Step 1: Generate Scene Vision and Storyboard =====
         # ===================================================
-        prompt_vision_storyboard = get_prompt_scene_vision_storyboard(i, topic, description, scene_outline_i, self.relevant_plugins)
+        prompt_vision_storyboard = get_prompt_scene_vision_storyboard(i, topic, description, scene_outline_i, self.relevant_plugins or [])
 
         # Add vision storyboard examples only for this stage if available
         if self.use_context_learning and self.vision_storyboard_examples:
@@ -234,7 +234,7 @@ class VideoPlanner:
                 topic=topic,
                 scene_number=i,
                 session_id=session_id,
-                relevant_plugins=self.relevant_plugins # Use self.relevant_plugins directly
+                relevant_plugins=self.relevant_plugins or [] # Use self.relevant_plugins directly
             )
 
             retrieved_docs = self.rag_integration.get_relevant_docs(
@@ -263,7 +263,7 @@ class VideoPlanner:
 
         # ===== Step 2: Generate Technical Implementation Plan =====
         # =========================================================
-        prompt_technical_implementation = get_prompt_scene_technical_implementation(i, topic, description, scene_outline_i, vision_storyboard_plan, self.relevant_plugins)
+        prompt_technical_implementation = get_prompt_scene_technical_implementation(i, topic, description, scene_outline_i, vision_storyboard_plan, self.relevant_plugins or [])
 
         # Add technical implementation examples only for this stage if available
         if self.use_context_learning and self.technical_implementation_examples:
@@ -281,7 +281,7 @@ class VideoPlanner:
                 topic=topic,
                 scene_number=i,
                 session_id=session_id,
-                relevant_plugins=self.relevant_plugins # Use self.relevant_plugins directly
+                relevant_plugins=self.relevant_plugins or [] # Use self.relevant_plugins directly
             )
 
             retrieved_docs = self.rag_integration.get_relevant_docs(
@@ -310,7 +310,7 @@ class VideoPlanner:
        
         # ===== Step 3: Generate Animation and Narration Plan =====
         # =========================================================
-        prompt_animation_narration = get_prompt_scene_animation_narration(i, topic, description, scene_outline_i, vision_storyboard_plan, technical_implementation_plan, self.relevant_plugins)
+        prompt_animation_narration = get_prompt_scene_animation_narration(i, topic, description, scene_outline_i, vision_storyboard_plan, technical_implementation_plan, self.relevant_plugins or [])
         
         # Add animation narration examples only for this stage if available
         if self.use_context_learning and self.animation_narration_examples:
@@ -323,7 +323,7 @@ class VideoPlanner:
                 topic=topic,
                 scene_number=i,
                 session_id=session_id,
-                relevant_plugins=self.relevant_plugins # Use self.relevant_plugins directly
+                relevant_plugins=self.relevant_plugins or [] # Use self.relevant_plugins directly
             )
             retrieved_docs = self.rag_integration.get_relevant_docs(
                 rag_queries=rag_queries,
