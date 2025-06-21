@@ -808,6 +808,24 @@ class CodeGenerator:
                     replacement = f"{var_name} = triangle.get_width()  # Auto-fixed from get_length()"
                 fixed_code = re.sub(pattern, replacement, fixed_code)
 
+        # Fix 15: Line constructor with array instead of separate points
+        if "setting an array element with a sequence" in error and "Line" in code:
+            import re
+            # Fix Line([start, end]) to Line(start, end)
+            fixed_code = re.sub(
+                r'Line\(\[(.*?),\s*(.*?)\]\)',
+                r'Line(\1, \2)',
+                fixed_code,
+                flags=re.DOTALL
+            )
+            # Also fix Line(np.array([...]), np.array([...]))
+            fixed_code = re.sub(
+                r'Line\(np\.array\(\[(.*?)\]\),\s*np\.array\(\[(.*?)\]\)\)',
+                r'Line(\1, \2)',
+                fixed_code,
+                flags=re.DOTALL
+            )
+
         return fixed_code
 
     def visual_self_reflection(self, code: str, media_path: Union[str, Image.Image], scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> str:

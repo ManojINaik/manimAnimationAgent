@@ -1,0 +1,31 @@
+# Optional Requirements - Hardware-dependent packages
+# These packages require system audio/hardware and should be installed separately
+# Use: pip install -r requirements-optional.txt (after main requirements)
+
+# Audio capture and processing (requires system audio)
+PyAudio>=0.2.14
+
+# Premium TTS services (requires API keys and audio hardware)
+elevenlabs>=1.0.0
+azure-cognitiveservices-speech>=1.41.0
+
+# Real-time audio processing (requires audio drivers)
+# pyaudio-fork>=0.2.11  # Alternative PyAudio implementation
+
+# Machine Learning packages (large downloads, GPU support)
+torch>=2.7.0
+torchvision>=0.22.0
+transformers>=4.52.0
+timm>=1.0.15
+
+# Optional advanced features
+sentencepiece>=0.2.0  # Requires CMake build tools
+
+# Note: Install these only if you need:
+# - Real-time audio capture/playback
+# - Premium TTS services
+# - Advanced ML features
+# - GPU acceleration
+
+# For GitHub Actions/CI environments, these are automatically excluded
+# For local development, install with: pip install -r requirements-optional.txt 

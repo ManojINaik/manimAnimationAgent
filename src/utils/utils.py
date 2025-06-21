@@ -2,8 +2,8 @@ import json
 import re
 try:
     from pylatexenc.latexencode import utf8tolatex, UnicodeToLatexEncoder
-except:
-    print("Warning: Missing pylatexenc, please do pip install pylatexenc")
+except ImportError as e:
+    print(f"Warning: Missing pylatexenc, please do pip install pylatexenc. Error: {e}")
 
 def _print_response(response_type: str, theorem_name: str, content: str, separator: str = "=" * 50) -> None:
     """Print formatted responses from the video generation process.
@@ -124,7 +124,8 @@ def extract_xml(response: str) -> str:
     """
     try:
         return re.search(r'```xml\n(.*?)\n```', response, re.DOTALL).group(1)
-    except:
+    except (AttributeError, TypeError) as e:
+        print(f"Warning: Failed to extract XML content: {e}")
         return response
 
 def extract_xml_tag(response: str, tag_name: str) -> str:

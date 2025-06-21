@@ -342,7 +342,8 @@ class VideoRenderer:
                 # Clean up temp file
                 try:
                     os.unlink(temp_file_list.name)
-                except:
+                except OSError as e:
+                    print(f"Warning: Could not delete temporary file {temp_file_list.name}: {e}")
                     pass
 
             # Handle subtitle combination (existing subtitle code remains the same)
