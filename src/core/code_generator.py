@@ -853,6 +853,45 @@ class CodeGenerator:
                 fixed_code
             )
 
+        # Fix 18: FadeOutAndShift animation not defined
+        if "name 'FadeOutAndShift' is not defined" in error:
+            # Replace FadeOutAndShift with separate FadeOut and shift
+            fixed_code = re.sub(
+                r'FadeOutAndShift\(([^,]+),\s*([^)]+)\)',
+                r'FadeOut(\1)',  # Just use FadeOut for simplicity
+                fixed_code
+            )
+
+        # Fix 19: Shift animation not defined  
+        if "name 'Shift' is not defined" in error:
+            # Replace Shift with proper Transform or position change
+            fixed_code = re.sub(
+                r'Shift\(([^,]+),\s*([^)]+)\)',
+                r'\1.shift(\2)',  # Use shift method instead
+                fixed_code
+            )
+            # Fix play calls with Shift
+            fixed_code = re.sub(
+                r'self\.play\(FadeOut\(([^)]+)\),\s*Shift\(([^,]+),\s*([^)]+)\)\)',
+                r'self.play(FadeOut(\1))',  # Remove problematic Shift
+                fixed_code
+            )
+
+        # Fix 20: Arrow3D with numpy array dimension issues
+        if "operands could not be broadcast together with shapes" in error and "Arrow3D" in code:
+            # Fix Arrow3D direction vectors to ensure proper 3D coordinates
+            fixed_code = re.sub(
+                r'Arrow3D\(([^,]+),\s*\[([^]]+)\]',
+                r'Arrow3D(\1, [\2, 0]',  # Ensure 3D coordinate
+                fixed_code
+            )
+            # Fix np.array with 2D being used in 3D context
+            fixed_code = re.sub(
+                r'Arrow3D\(([^,]+),\s*([^,]+)\s*\+\s*np\.array\(\[([^]]+)\]\)',
+                r'Arrow3D(\1, \2 + np.array([\3, 0])',  # Add z-component
+                fixed_code
+            )
+
         return fixed_code
 
     def visual_self_reflection(self, code: str, media_path: Union[str, Image.Image], scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> str:
