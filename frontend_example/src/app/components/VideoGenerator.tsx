@@ -131,6 +131,13 @@ export default function VideoGenerator() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Prevent double submission
+        if (isGenerating) {
+            console.log('Already generating, ignoring duplicate request');
+            return;
+        }
+        
         setError(null);
         setIsGenerating(true);
         setCurrentVideo(null);

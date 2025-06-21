@@ -96,6 +96,8 @@ export async function generateVideo(topic: string, description: string): Promise
     error?: string;
 }> {
     try {
+        console.log('🚀 generateVideo called with:', { topic, description, timestamp: new Date().toISOString() });
+        
         const response = await fetch('/api/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

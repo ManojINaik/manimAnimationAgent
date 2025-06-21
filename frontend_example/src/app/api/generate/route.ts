@@ -86,6 +86,8 @@ const DATABASE_ID = 'video_metadata';
 const VIDEOS_COLLECTION_ID = 'videos';
 
 export async function POST(request: NextRequest) {
+  console.log('📥 API /generate POST request received at:', new Date().toISOString());
+  
   // Check required environment variables
   const requiredEnvVars = ['GITHUB_REPO_OWNER', 'GITHUB_REPO_NAME', 'GH_PAT'];
   const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -97,6 +99,8 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { topic, description } = body;
+    
+    console.log('📋 Request payload:', { topic, description });
 
     if (!topic) {
       return NextResponse.json(
