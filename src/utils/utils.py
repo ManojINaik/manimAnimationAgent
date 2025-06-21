@@ -123,9 +123,16 @@ def extract_xml(response: str) -> str:
         str: The extracted XML content, or the full response if no XML blocks found
     """
     try:
-        return re.search(r'```xml\n(.*?)\n```', response, re.DOTALL).group(1)
+        match = re.search(r'```xml\n(.*?)\n```', response, re.DOTALL)
+        if match:
+            return match.group(1)
+        else:
+            # No XML blocks found - this is normal, return full response
+            return response
     except (AttributeError, TypeError) as e:
-        print(f"Warning: Failed to extract XML content: {e}")
+        # Only warn on actual errors, not missing XML blocks
+        if "```xml" in response:
+            print(f"Warning: Failed to extract XML content: {e}")
         return response
 
 def extract_xml_tag(response: str, tag_name: str) -> str:

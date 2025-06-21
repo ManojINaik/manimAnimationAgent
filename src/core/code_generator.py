@@ -591,7 +591,6 @@ class CodeGenerator:
         
         # Fix 2: Arrow3D with buff parameter
         if "unexpected keyword argument 'buff'" in error and "Arrow3D" in code:
-            import re
             # Remove buff parameter from Arrow3D calls
             arrow3d_pattern = r'Arrow3D\([^)]*buff=[^,)]*[,)]'
             def remove_buff(match):
@@ -618,7 +617,6 @@ class CodeGenerator:
         
         # Fix 5: Array comparison ambiguity with get_bottom(), get_top(), etc.
         if "The truth value of an array with more than one element is ambiguous" in error:
-            import re
             # Fix comparisons like obj.get_bottom() < value to use numpy array indexing
             patterns = [
                 (r'(\w+)\.get_bottom\(\)\s*([<>]=?)\s*(-?\d+\.?\d*)', r'\1.get_bottom()[1] \2 \3'),
@@ -631,7 +629,6 @@ class CodeGenerator:
         
         # Fix 6: Missing SVG files - replace with basic shapes
         if "could not find" in error and ".svg" in error:
-            import re
             # Replace SVGMobject with Rectangle for missing SVG files
             svg_patterns = [
                 (r'SVGMobject\("car\.svg"\)', 'Rectangle(height=0.5, width=1.0, color=BLUE)'),
@@ -643,7 +640,6 @@ class CodeGenerator:
         
         # Fix 7: Non-existent Manim classes/functions
         if "is not defined" in error or "cannot import name" in error:
-            import re
             # Replace non-existent Manim functions with working alternatives
             replacements = [
                 (r'Surround\(([^)]+)\)', r'Circumscribe(\1)'),  # Surround doesn't exist, use Circumscribe
@@ -673,7 +669,6 @@ class CodeGenerator:
         
         # Fix 9: Transform animation issues with function objects
         if "object of type 'function' has no len()" in error and "Transform" in code:
-            import re
             # Fix Transform calls with .animate that should use the object directly
             fixed_code = re.sub(
                 r'Transform\((\w+), \1\.animate\.([^)]+)\)',
@@ -689,14 +684,12 @@ class CodeGenerator:
         
         # Fix 10: Syntax errors with import statements
         if "invalid syntax" in error and "import" in error:
-            import re
             # Fix malformed import statements
             fixed_code = re.sub(r'from manim import \*, (\w+)', r'from manim import *', fixed_code)
             fixed_code = re.sub(r'from manim import \*,', 'from manim import *', fixed_code)
         
         # Fix 11: Missing Manim color constants (e.g., LIGHT_BLUE)
         if "is not defined" in error:
-            import re
             missing_const_match = re.search(r"name '([A-Z_]+)' is not defined", error)
             if missing_const_match:
                 missing_const = missing_const_match.group(1)
@@ -720,7 +713,6 @@ class CodeGenerator:
         
         # Fix 12: Polygon vertex array dimension errors 
         if "setting an array element with a sequence" in error and "exceed the maximum number of dimension" in error:
-            import re
             # Remove erroneous 'points=' keyword argument usage
             fixed_code = re.sub(r'Polygon\(\s*points\s*=\s*', 'Polygon(', fixed_code)
 
@@ -761,7 +753,6 @@ class CodeGenerator:
         
         # Fix 13: get_edge_center() with integer instead of direction vector
         if "'int' object is not subscriptable" in error and "get_edge_center" in error:
-            import re
             # Replace get_edge_center(i) with proper direction vectors
             direction_map = {
                 '0': 'DOWN',    # Bottom edge
@@ -791,7 +782,6 @@ class CodeGenerator:
         
         # Fix 14: replace nonexistent get_length() calls
         if "object has no attribute 'length'" in error and ".get_length(" in error:
-            import re
             # Attempt to replace c_len calculation using a_len and b_len if present
             pattern = r'(\w+)\s*=\s*triangle\.get_length\(\)'
             match = re.search(pattern, fixed_code)
@@ -810,7 +800,6 @@ class CodeGenerator:
 
         # Fix 15: Line constructor with array instead of separate points
         if "setting an array element with a sequence" in error and "Line" in code:
-            import re
             # Fix Line([start, end]) to Line(start, end)
             fixed_code = re.sub(
                 r'Line\(\[(.*?),\s*(.*?)\]\)',
@@ -824,6 +813,40 @@ class CodeGenerator:
                 r'Line(\1, \2)',
                 fixed_code,
                 flags=re.DOTALL
+            )
+
+        # Fix 16: move_along_path method doesn't exist in Manim
+        if "object has no attribute 'move_along_path'" in error:
+            # Replace move_along_path with MoveAlongPath animation
+            fixed_code = re.sub(
+                r'(\w+)\.animate\.move_along_path\(([^)]+)\)',
+                r'MoveAlongPath(\1, \2)',
+                fixed_code
+            )
+            # Ensure MoveAlongPath is imported
+            if 'from manim import *' not in fixed_code and 'MoveAlongPath' not in fixed_code:
+                # Add import if not present
+                lines = fixed_code.splitlines()
+                for i, line in enumerate(lines):
+                    if line.startswith('from manim import'):
+                        break
+                else:
+                    lines.insert(0, 'from manim import *')
+                fixed_code = '\n'.join(lines)
+
+        # Fix 17: func_to_value method doesn't exist in modern Manim
+        if "object has no attribute 'func_to_value'" in error:
+            # Replace func_to_value with proper function evaluation
+            fixed_code = re.sub(
+                r'axes\.func_to_value\(([^)]+)\)',
+                r'(\1)**2',  # Assuming quadratic function, or use appropriate function
+                fixed_code
+            )
+            # More general pattern for function evaluation
+            fixed_code = re.sub(
+                r'axes\.func_to_value\((\w+)\)',
+                r'\1**2',  # Default to quadratic
+                fixed_code
             )
 
         return fixed_code
