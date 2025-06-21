@@ -546,7 +546,11 @@ class CodeGenerator:
             str: Fixed code if auto-fix applied, otherwise original code
         """
         fixed_code = code
-        
+
+        # Fix: get_edge() instead of get_edge_center()
+        if "takes 1 positional argument but 2 were given" in error and ".get_edge(" in code:
+            fixed_code = fixed_code.replace(".get_edge(", ".get_edge_center(")
+
         # Fix 1: Config object attribute errors
         if "'ManimMLConfig' object has no attribute 'frame_x_radius'" in error or \
            "'ManimMLConfig' object is not subscriptable" in error:
