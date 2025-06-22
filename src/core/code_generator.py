@@ -1,7 +1,7 @@
 import os
 import re
 import json
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Optional
 from PIL import Image
 import glob
 import math
@@ -19,7 +19,9 @@ from task_generator import (
     get_banned_reasonings,
     get_prompt_rag_query_generation_fix_error,
     get_prompt_context_learning_code,
-    get_prompt_rag_query_generation_code
+    get_prompt_rag_query_generation_code,
+    get_prompt_tavily_search_query_generation,
+    get_prompt_tavily_assisted_fix_error
 )
 from task_generator.prompts_raw import (
     _code_font_size,
@@ -40,6 +42,9 @@ try:
 except ImportError:
     AgentMemory = None
     HAS_AGENT_MEMORY = False
+
+# Import Tavily search functionality
+from src.utils.tavily_search import TavilyErrorSearchEngine, search_error_solution
 
 class CodeGenerator:
     """A class for generating and managing Manim code."""
@@ -435,7 +440,7 @@ class CodeGenerator:
 
     def fix_code_errors(self, implementation_plan: str, code: str, error: str, scene_trace_id: str, topic: str, scene_number: int, session_id: str, rag_queries_cache: Dict = None) -> str:
         """
-        Fix errors in the generated code using the helper model.
+        Fix errors in the generated code using the enhanced two-step Tavily strategy.
 
         Args:
             implementation_plan (str): The implementation plan for context
@@ -452,6 +457,8 @@ class CodeGenerator:
         """
         scene_type = self._infer_scene_type(implementation_plan)
         original_code = code  # Store original for memory
+        
+        print("🔧 Starting advanced error-driven development with Tavily integration...")
         
         # Check agent memory for similar errors first
         similar_fixes = []
@@ -472,6 +479,7 @@ class CodeGenerator:
         auto_fix_applied = fixed_code != code
         
         if auto_fix_applied:
+            print("✅ Auto-fix applied successfully")
             # Store the auto-fix in memory for future reference
             if self.use_agent_memory and self.agent_memory:
                 self.agent_memory.store_error_fix(
@@ -484,7 +492,38 @@ class CodeGenerator:
                 )
             return fixed_code
         
-        # If auto-fix didn't help, use LLM to fix the error
+        # Step 1: Try Tavily-enhanced error resolution (Two-step strategy)
+        try:
+            print("🌐 Attempting Tavily-enhanced error resolution...")
+            tavily_result = self._fix_error_with_tavily(
+                implementation_plan=implementation_plan,
+                code=code,
+                error=error,
+                scene_trace_id=scene_trace_id,
+                topic=topic,
+                scene_number=scene_number,
+                session_id=session_id
+            )
+            
+            if tavily_result and tavily_result != code:
+                print("✅ Tavily-enhanced fix applied successfully")
+                # Store the Tavily-based fix in memory for future reference
+                if self.use_agent_memory and self.agent_memory:
+                    self.agent_memory.store_error_fix(
+                        error_message=error,
+                        original_code=original_code,
+                        fixed_code=tavily_result,
+                        topic=topic,
+                        scene_type=scene_type,
+                        fix_method="tavily"
+                    )
+                return tavily_result
+                
+        except Exception as e:
+            print(f"⚠️ Tavily error resolution failed: {e}")
+            print("📚 Falling back to traditional RAG-based fix...")
+        
+        # Fallback: Use traditional RAG-based error fixing
         context = ""
         
         # Add similar fixes from memory to context
@@ -953,3 +992,195 @@ class CodeGenerator:
             session_id=session_id
         )
         return fixed_code, response_text
+
+    def _fix_error_with_tavily(self, implementation_plan: str, code: str, error: str, 
+                              scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> Optional[str]:
+        """
+        Implement the two-step Tavily-enhanced error resolution strategy.
+        
+        Step 1: Generate a concise search query from the full traceback
+        Step 2: Use Tavily to search for solutions and apply them with LLM assistance
+        
+        Args:
+            implementation_plan: The implementation plan for context
+            code: The original code with errors
+            error: The error message/traceback to fix
+            scene_trace_id: Trace ID for the scene
+            topic: Topic of the scene
+            scene_number: Scene number
+            session_id: Session identifier
+            
+        Returns:
+            Fixed code string or None if Tavily fix failed
+        """
+        try:
+            # Step 1: Generate concise search query from the full traceback
+            print("📋 Step 1: Analyzing error and generating search query...")
+            query_prompt = get_prompt_tavily_search_query_generation(
+                traceback=error,
+                code_context=code[:500],  # First 500 chars for context
+                implementation_plan=implementation_plan[:300]  # First 300 chars
+            )
+            
+            # Use LLM to generate the search query
+            query_response = self.scene_model(
+                _prepare_text_inputs(query_prompt),
+                metadata={
+                    "generation_name": "tavily-query-generation", 
+                    "trace_id": scene_trace_id, 
+                    "tags": [topic, f"scene{scene_number}"], 
+                    "session_id": session_id
+                }
+            )
+            
+            # Extract the search query from the response
+            search_query = self._extract_search_query_from_response(query_response)
+            if not search_query:
+                print("⚠️ Failed to extract search query from LLM response")
+                return None
+                
+            print(f"🔍 Generated search query: {search_query}")
+            
+            # Step 2: Use Tavily to search for solutions
+            print("🌐 Step 2: Searching for solutions with Tavily...")
+            tavily_engine = TavilyErrorSearchEngine(verbose=True)
+            
+            if not tavily_engine.is_available():
+                print("⚠️ Tavily not available - skipping Tavily-enhanced fix")
+                return None
+                
+            # Perform the search using the generated query
+            error_analysis = tavily_engine.analyze_error_for_search(error, code[:500])
+            error_analysis.search_query = search_query  # Use LLM-generated query
+            
+            search_results = tavily_engine.search_for_solution(error_analysis, max_results=5)
+            
+            if not search_results.get("available", False):
+                print("⚠️ Tavily search failed or not available")
+                return None
+                
+            # Format search results for the LLM
+            formatted_results = self._format_tavily_results_for_llm(search_results)
+            
+            print(f"✅ Found {len(search_results.get('solutions', []))} potential solutions")
+            
+            # Step 3: Use LLM with Tavily results to fix the code
+            print("🛠️ Step 3: Applying Tavily insights to fix the code...")
+            fix_prompt = get_prompt_tavily_assisted_fix_error(
+                implementation_plan=implementation_plan,
+                manim_code=code,
+                error_message=error,
+                tavily_search_results=formatted_results,
+                search_query=search_query
+            )
+            
+            # Generate fixed code using LLM with Tavily insights
+            fix_response = self.scene_model(
+                _prepare_text_inputs(fix_prompt),
+                metadata={
+                    "generation_name": "tavily-assisted-fix", 
+                    "trace_id": scene_trace_id, 
+                    "tags": [topic, f"scene{scene_number}"], 
+                    "session_id": session_id
+                }
+            )
+            
+            # Extract the fixed code
+            fixed_code = self._extract_code_with_retries(
+                fix_response,
+                pattern=r'```python\n(.*?)\n```',
+                generation_name="tavily-assisted-fix",
+                trace_id=scene_trace_id,
+                session_id=session_id
+            )
+            
+            if fixed_code and fixed_code != code:
+                print("✅ Tavily-assisted fix completed successfully")
+                return fixed_code
+            else:
+                print("⚠️ Tavily-assisted fix did not produce different code")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Error in Tavily-enhanced fix: {e}")
+            return None
+
+    def _extract_search_query_from_response(self, response: str) -> Optional[str]:
+        """
+        Extract the search query from the LLM response.
+        
+        Args:
+            response: The LLM response containing the search query
+            
+        Returns:
+            The extracted search query or None if extraction failed
+        """
+        try:
+            # Look for "Search Query:" pattern
+            query_pattern = r'Search Query:\s*([^\n]+)'
+            match = re.search(query_pattern, response, re.IGNORECASE)
+            
+            if match:
+                query = match.group(1).strip()
+                # Remove quotes if present
+                query = query.strip('"\'')
+                # Ensure it's under 400 characters
+                if len(query) <= 400:
+                    return query
+                else:
+                    return query[:397] + "..."
+                    
+            # Fallback: look for any line that looks like a search query
+            lines = response.split('\n')
+            for line in lines:
+                line = line.strip()
+                if (line.startswith('manim') or 'manim' in line.lower()) and len(line) <= 400:
+                    return line
+                    
+            return None
+            
+        except Exception as e:
+            print(f"⚠️ Error extracting search query: {e}")
+            return None
+
+    def _format_tavily_results_for_llm(self, search_results: dict) -> str:
+        """
+        Format Tavily search results for LLM consumption.
+        
+        Args:
+            search_results: Results from Tavily search
+            
+        Returns:
+            Formatted string for LLM input
+        """
+        formatted = "=== TAVILY SEARCH RESULTS ===\n\n"
+        
+        # Add quick answer if available
+        if search_results.get("answer"):
+            formatted += f"Quick Answer: {search_results['answer']}\n\n"
+        
+        # Add search solutions
+        solutions = search_results.get("solutions", [])
+        for i, solution in enumerate(solutions[:5], 1):  # Limit to top 5
+            formatted += f"--- Source {i} ---\n"
+            formatted += f"Title: {solution.get('title', 'N/A')}\n"
+            formatted += f"URL: {solution.get('url', 'N/A')}\n"
+            formatted += f"Type: {solution.get('source_type', 'N/A')}\n"
+            formatted += f"Relevance: {solution.get('relevance_score', 0):.2f}\n"
+            
+            content = solution.get('content', '')
+            if content:
+                # Truncate content to reasonable length
+                if len(content) > 500:
+                    content = content[:500] + "..."
+                formatted += f"Content: {content}\n"
+            
+            formatted += "\n"
+        
+        # Add actionable suggestions
+        if search_results.get("actionable_suggestions"):
+            formatted += "=== ACTIONABLE SUGGESTIONS ===\n"
+            for suggestion in search_results["actionable_suggestions"]:
+                formatted += f"• {suggestion}\n"
+                
+        return formatted

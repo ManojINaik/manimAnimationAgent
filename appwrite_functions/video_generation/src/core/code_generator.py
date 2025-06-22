@@ -19,7 +19,9 @@ from task_generator import (
     get_banned_reasonings,
     get_prompt_rag_query_generation_fix_error,
     get_prompt_context_learning_code,
-    get_prompt_rag_query_generation_code
+    get_prompt_rag_query_generation_code,
+    get_prompt_tavily_search_query_generation,
+    get_prompt_tavily_assisted_fix_error
 )
 from task_generator.prompts_raw import (
     _code_font_size,
@@ -40,6 +42,9 @@ try:
 except ImportError:
     AgentMemory = None
     HAS_AGENT_MEMORY = False
+
+# Import Tavily search functionality
+from src.utils.tavily_search import TavilyErrorSearchEngine, search_error_solution
 
 class CodeGenerator:
     """A class for generating and managing Manim code."""

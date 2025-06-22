@@ -69,6 +69,9 @@ mem0ai>=0.1.0
 # Additional Analysis/Monitoring
 langfuse>=2.0.0
 
+# Web search for error-driven development
+tavily-python>=0.3.0
+
 # Audio dubbing strategy for GitHub Actions:
 # 1. Use gTTS (Google Text-to-Speech) - free, no hardware needed
 # 2. Use pyttsx3 as fallback - offline TTS

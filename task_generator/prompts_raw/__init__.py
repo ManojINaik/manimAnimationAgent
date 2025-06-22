@@ -1877,3 +1877,135 @@ You MUST only output the queries in the following JSON format (with json triple 
 ]
 ```"""
 
+# Tavily-related prompts for advanced error-driven development
+_prompt_tavily_search_query_generation = """You are an expert in analyzing Python error tracebacks, specifically for Manim (Community Edition) errors. Your task is to analyze a full, potentially verbose traceback and generate a concise, effective search query under 400 characters that will help find solutions online.
+
+<CONTEXT>
+Full Error Traceback:
+{traceback}
+
+Original Code Context:
+{code_context}
+
+Implementation Plan Context:
+{implementation_plan}
+</CONTEXT>
+
+<TASK>
+Analyze the provided traceback and generate the most effective search query to find a solution. Focus on:
+
+1. **Error Type**: Identify the specific exception (AttributeError, TypeError, etc.)
+2. **Key Components**: Extract the most important Manim classes, methods, or concepts
+3. **Root Cause**: Determine what specifically went wrong
+4. **Search Strategy**: Create a query that will find relevant documentation or solutions
+
+**Important Constraints:**
+- Query MUST be under 400 characters
+- Focus on the most specific, actionable parts of the error
+- Include "manim" as a keyword
+- Prioritize technical terms over generic descriptions
+</TASK>
+
+<OUTPUT_FORMAT>
+Search Query: [Your concise search query here - under 400 characters]
+
+Query Rationale: [Brief explanation of why this query will be effective]
+
+Key Error Components:
+- Error Type: [The main exception type]
+- Failed Component: [The specific Manim object/method that failed]
+- Context: [Brief context about what was being attempted]
+</OUTPUT_FORMAT>
+
+**Examples of Good Queries:**
+- "manim AttributeError SurroundingRectangle animate wiggle method"
+- "manim TypeError Transform function object len"
+- "manim ImportError missing manim community edition"
+
+Generate your response following the OUTPUT_FORMAT exactly."""
+
+_prompt_tavily_assisted_fix_error = """You are an expert Manim developer specializing in debugging and error resolution using web search insights. You have access to search results from Tavily that contain relevant information about the error. Use this information to provide a comprehensive fix.
+
+<CONTEXT>
+Implementation Plan:
+{implementation_plan}
+
+Original Manim Code:
+```python
+{manim_code}
+```
+
+Error Message:
+{error_message}
+
+Tavily Search Results:
+{tavily_search_results}
+
+Search Query Used: {search_query}
+</CONTEXT>
+
+<INSTRUCTIONS>
+Using the Tavily search results and your expertise, analyze the error and provide a complete fix. The search results contain real-world solutions and documentation that should guide your fix approach.
+
+**Priority Order for Solutions:**
+1. Official Manim documentation insights
+2. GitHub issues and solutions
+3. Stack Overflow community solutions
+4. Reddit/Discord community fixes
+5. Your expert knowledge as fallback
+
+**Key Requirements:**
+- Extract actionable insights from the search results
+- Apply modern Manim best practices
+- Provide complete, executable code
+- Explain the fix with reference to sources found
+</INSTRUCTIONS>
+
+You MUST output in the following format:
+
+<TAVILY_INSIGHTS>
+Key Findings from Search:
+- [Insight 1 from search results]
+- [Insight 2 from search results]
+- [Insight 3 from search results]
+
+Most Relevant Source: [URL or source that best addresses this error]
+</TAVILY_INSIGHTS>
+
+<ERROR_ANALYSIS>
+Error Type: [Syntax/Runtime/Logic/Other]
+Error Location: [File/Line number/Component]
+Root Cause: [Brief explanation based on search insights]
+Search-Informed Solution: [How the search results inform the fix]
+</ERROR_ANALYSIS>
+
+<SOLUTION>
+[FIXES_APPLIED]
+- Fix 1: [Description with reference to search source]
+  - Source: [Which search result provided this insight]
+  - Change: [What to modify]
+- Fix 2: [If applicable]
+  ...
+
+[CORRECTED_CODE]
+```python
+# Complete corrected code based on Tavily search insights
+# Comments explaining fixes with source references
+```
+
+[VERIFICATION_STEPS]
+1. [Step to verify the fix works]
+2. [Additional verification if needed]
+
+[PREVENTION_TIPS]
+- [How to avoid this error in future, based on search insights]
+- [Best practices learned from search results]
+</SOLUTION>
+
+**Requirements:**
+1. Reference specific search results when explaining fixes
+2. Include source URLs when applicable
+3. Ensure corrected code is complete and executable
+4. Prioritize solutions from authoritative sources (official docs, maintainers)
+5. If search results are insufficient, clearly state limitations"""
+

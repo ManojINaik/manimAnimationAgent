@@ -21,7 +21,9 @@ from .prompts_raw import (
     _prompt_rag_query_generation_vision_storyboard,
     _prompt_rag_query_generation_technical,
     _prompt_rag_query_generation_narration,
-    _prompt_rag_query_generation_fix_error
+    _prompt_rag_query_generation_fix_error,
+    _prompt_tavily_search_query_generation,
+    _prompt_tavily_assisted_fix_error
 )
 from typing import Union, List
   
@@ -293,5 +295,49 @@ def get_prompt_animation_rag_query_generation_fix_error(text_explanation: str, e
         text_explanation=text_explanation,
         error=error,
         code=code
+    )
+    return prompt
+
+# Tavily-related prompt functions for advanced error-driven development
+def get_prompt_tavily_search_query_generation(traceback: str, code_context: str = "", implementation_plan: str = "") -> str:
+    """
+    Generate a prompt for creating concise search queries from error tracebacks.
+    
+    Args:
+        traceback: Full error traceback from Manim
+        code_context: Additional code context (optional)
+        implementation_plan: Implementation plan context (optional)
+        
+    Returns:
+        str: The formatted prompt for generating search queries
+    """
+    prompt = _prompt_tavily_search_query_generation.format(
+        traceback=traceback,
+        code_context=code_context,
+        implementation_plan=implementation_plan
+    )
+    return prompt
+
+def get_prompt_tavily_assisted_fix_error(implementation_plan: str, manim_code: str, error_message: str, 
+                                        tavily_search_results: str, search_query: str) -> str:
+    """
+    Generate a prompt for fixing errors using Tavily search results.
+    
+    Args:
+        implementation_plan: The implementation plan for context
+        manim_code: The original Manim code with errors
+        error_message: The error message encountered
+        tavily_search_results: Search results from Tavily API
+        search_query: The search query that was used
+        
+    Returns:
+        str: The formatted prompt for fixing errors with search insights
+    """
+    prompt = _prompt_tavily_assisted_fix_error.format(
+        implementation_plan=implementation_plan,
+        manim_code=manim_code,
+        error_message=error_message,
+        tavily_search_results=tavily_search_results,
+        search_query=search_query
     )
     return prompt

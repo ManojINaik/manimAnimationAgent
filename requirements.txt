@@ -376,3 +376,6 @@ hyperframe>=6.1.0
 # Note: For deployment on HF Spaces or environments with limited resources,
 # comment out the heavy dependencies (torch, transformers, opencv, etc.) above. 
 # The app will gracefully handle missing dependencies and show appropriate messages.
+
+# Web search for error-driven development
+tavily-python>=0.3.0
