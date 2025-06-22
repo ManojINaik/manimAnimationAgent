@@ -97,9 +97,9 @@ class GitHubVideoRenderer:
                 scene_model=scene_model,
                 output_dir=f"output/{video_id}",
                 verbose=True,
-                use_rag=False,  # Default to False for reliability
-                use_context_learning=False,
-                use_visual_fix_code=False,
+                use_rag=False,  # ✅ Enable RAG for context-aware error fixing
+                use_context_learning=True,  # ✅ Enable learning from examples
+                use_visual_fix_code=True,  # ✅ Enable visual feedback for code improvements
                 use_appwrite=True
             )
             
@@ -109,7 +109,7 @@ class GitHubVideoRenderer:
             await generator.generate_video_pipeline(
                 topic=topic,
                 description=description,
-                max_retries=3
+                max_retries=5  # ✅ Increased retries for better error recovery
             )
             
             # Update status to completed
