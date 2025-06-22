@@ -340,6 +340,9 @@ class VideoGenerator:
             max_retries (int, optional): Maximum number of code fix attempts. Defaults to 3.
             session_id (str, optional): Session identifier for tracking
             scene_ids (List[Optional[str]], optional): List of scene IDs for database tracking
+            
+        Raises:
+            Exception: When any scene fails after max retries, aborting the entire video generation
         """
         file_prefix = topic.lower()
         file_prefix = re.sub(r'[^a-z0-9_]+', '_', file_prefix)
@@ -373,8 +376,16 @@ class VideoGenerator:
             task = self.process_scene(i, scene_outline, implementation_plan, topic, description, max_retries, file_prefix, session_id, scene_trace_id, scene_id)
             tasks.append(task)
 
-        # Execute all tasks concurrently
-        await asyncio.gather(*tasks)
+        # Execute all tasks concurrently - if any scene fails after max retries, it will raise an exception
+        try:
+            await asyncio.gather(*tasks)
+        except Exception as e:
+            # If any scene failed after max retries, abort the entire video generation
+            error_msg = f"Video generation aborted: {str(e)}"
+            print(f"❌ {error_msg}")
+            
+            # Re-raise the exception to propagate the failure up the call stack
+            raise Exception(error_msg)
 
     async def process_scene(self, i: int, scene_outline: str, scene_implementation: str, topic: str, description: str, max_retries: int, file_prefix: str, session_id: str, scene_trace_id: str, scene_id: str = None): # added scene_trace_id and scene_id
         """
@@ -391,6 +402,9 @@ class VideoGenerator:
             session_id (str): Session identifier for tracking
             scene_trace_id (str): Trace identifier for this scene
             scene_id (str, optional): Scene ID for database tracking
+            
+        Raises:
+            Exception: When max retries are reached for this scene
         """
         curr_scene = i + 1
         curr_version = 0
@@ -523,8 +537,22 @@ class VideoGenerator:
                     break
 
                 if curr_version >= max_retries: # Max retries reached
-                    print(f"Max retries reached for scene {curr_scene}, error: {error_message}")
-                    break # Exit retry loop
+                    error_msg = f"Max retries ({max_retries}) reached for scene {curr_scene}, error: {error_message}"
+                    print(f"❌ {error_msg}")
+                    
+                    # Update scene record with failure status if using Appwrite
+                    if scene_id and self.use_appwrite and self.appwrite_manager:
+                        try:
+                            await self.update_scene_record(
+                                scene_id,
+                                status="failed",
+                                error_message=error_message
+                            )
+                        except Exception as e:
+                            print(f"⚠️ Failed to update scene record: {e}")
+                    
+                    # Raise exception to abort entire video generation process
+                    raise Exception(error_msg)
 
                 curr_version += 1
                 # if program runs this, it means that the code is not rendered successfully
@@ -853,8 +881,16 @@ class VideoGenerator:
                 else:
                     filtered_scene_ids.append(None)
             
-            await self.render_video_fix_code(topic, description, scene_outline, filtered_implementation_plans,
-                                           max_retries=max_retries, session_id=session_id, scene_ids=filtered_scene_ids)
+            try:
+                await self.render_video_fix_code(topic, description, scene_outline, filtered_implementation_plans,
+                                               max_retries=max_retries, session_id=session_id, scene_ids=filtered_scene_ids)
+            except Exception as e:
+                # Scene rendering failed after max retries - update video status and abort
+                if video_id:
+                    await self.update_video_status(video_id, "failed", str(e))
+                
+                # Re-raise the exception to abort the entire pipeline
+                raise e
         
         if not only_render:  # Skip video combination in only_render mode
             print(f"Video rendering completed for topic '{topic}'.")

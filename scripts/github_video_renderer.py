@@ -109,7 +109,7 @@ class GitHubVideoRenderer:
             await generator.generate_video_pipeline(
                 topic=topic,
                 description=description,
-                max_retries=5  # ✅ Increased retries for better error recovery
+                max_retries=10  # ✅ Increased retries for better error recovery
             )
             
             # Update status to completed
@@ -118,9 +118,19 @@ class GitHubVideoRenderer:
             return True
             
         except Exception as e:
-            print(f"Error rendering video {video_id}: {str(e)}")
-            await self.update_video_status(video_id, "failed", str(e))
-            return False
+            error_message = str(e)
+            print(f"❌ Error rendering video {video_id}: {error_message}")
+            
+            # Check if this is a scene max retry failure
+            if "Max retries" in error_message and "reached for scene" in error_message:
+                print(f"🛑 Scene reached maximum retries - aborting entire video generation")
+                await self.update_video_status(video_id, "failed", error_message)
+                # Re-raise the exception to fail the GitHub Actions workflow
+                raise Exception(f"Video generation aborted due to scene failure: {error_message}")
+            else:
+                # Handle other types of errors
+                await self.update_video_status(video_id, "failed", error_message)
+                return False
     
     async def process_queue(self):
         """Process all queued videos"""
@@ -141,7 +151,12 @@ class GitHubVideoRenderer:
                 if success:
                     success_count += 1
             except Exception as e:
-                print(f"Failed to process video {video['$id']}: {e}")
+                # If the exception was raised due to scene max retries, re-raise it to fail the workflow
+                if "Video generation aborted due to scene failure" in str(e):
+                    print(f"🛑 Aborting entire workflow due to scene failure: {e}")
+                    raise e
+                else:
+                    print(f"❌ Failed to process video {video['$id']}: {e}")
         
         print(f"Processed {success_count}/{len(videos)} videos successfully")
 
@@ -162,10 +177,29 @@ async def main():
             )
             await renderer.render_video(video_doc)
         except Exception as e:
-            print(f"Error processing video {video_id}: {e}")
+            error_message = str(e)
+            print(f"❌ Error processing video {video_id}: {error_message}")
+            
+            # If the exception was raised due to scene max retries, exit with error code
+            if "Video generation aborted due to scene failure" in error_message:
+                print(f"🛑 Exiting with error code due to scene failure")
+                sys.exit(1)
+            else:
+                print(f"⚠️ Video processing failed, but continuing workflow")
     else:
         # Process all queued videos
-        await renderer.process_queue()
+        try:
+            await renderer.process_queue()
+        except Exception as e:
+            error_message = str(e)
+            print(f"❌ Error processing video queue: {error_message}")
+            
+            # If the exception was raised due to scene max retries, exit with error code
+            if "Video generation aborted due to scene failure" in error_message:
+                print(f"🛑 Exiting with error code due to scene failure")
+                sys.exit(1)
+            else:
+                print(f"⚠️ Queue processing failed, but continuing workflow")
 
 if __name__ == "__main__":
     asyncio.run(main()) 
