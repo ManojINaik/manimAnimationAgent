@@ -203,6 +203,38 @@ class VideoRenderer:
         file_prefix = re.sub(r'[^a-z0-9_]+', '_', file_prefix)
         search_path = os.path.join(self.output_dir, file_prefix, "media", "videos")
 
+        # Debug: Print directory structure information
+        print(f"🔍 DEBUG: Looking for videos in: {search_path}")
+        print(f"🔍 DEBUG: Output directory: {self.output_dir}")
+        print(f"🔍 DEBUG: File prefix: {file_prefix}")
+        
+        # Check if output directory exists and list its contents
+        if os.path.exists(self.output_dir):
+            print(f"🔍 DEBUG: Output directory contents: {os.listdir(self.output_dir)}")
+            
+            # Check if topic directory exists
+            topic_dir = os.path.join(self.output_dir, file_prefix)
+            if os.path.exists(topic_dir):
+                print(f"🔍 DEBUG: Topic directory contents: {os.listdir(topic_dir)}")
+                
+                # Check media directory
+                media_dir = os.path.join(topic_dir, "media")
+                if os.path.exists(media_dir):
+                    print(f"🔍 DEBUG: Media directory contents: {os.listdir(media_dir)}")
+                    
+                    # Check videos directory
+                    videos_dir = os.path.join(media_dir, "videos")
+                    if os.path.exists(videos_dir):
+                        print(f"🔍 DEBUG: Videos directory contents: {os.listdir(videos_dir)}")
+                    else:
+                        print(f"🔍 DEBUG: Videos directory does not exist: {videos_dir}")
+                else:
+                    print(f"🔍 DEBUG: Media directory does not exist: {media_dir}")
+            else:
+                print(f"🔍 DEBUG: Topic directory does not exist: {topic_dir}")
+        else:
+            print(f"🔍 DEBUG: Output directory does not exist: {self.output_dir}")
+
         # Create output directory if it doesn't exist
         video_output_dir = os.path.join(self.output_dir, file_prefix)
         os.makedirs(video_output_dir, exist_ok=True)
@@ -239,10 +271,21 @@ class VideoRenderer:
 
         # Find all scene folders and videos
         scene_folders = []
-        for root, dirs, files in os.walk(search_path):
-            for dir in dirs:
-                if dir.startswith(file_prefix + "_scene"):
-                    scene_folders.append(os.path.join(root, dir))
+        print(f"🔍 DEBUG: Searching for scene folders in: {search_path}")
+        
+        if os.path.exists(search_path):
+            for root, dirs, files in os.walk(search_path):
+                print(f"🔍 DEBUG: Walking through: {root} with dirs: {dirs}")
+                for dir in dirs:
+                    if dir.startswith(file_prefix + "_scene"):
+                        scene_folders.append(os.path.join(root, dir))
+                        print(f"🔍 DEBUG: Found scene folder: {os.path.join(root, dir)}")
+        else:
+            print(f"🔍 DEBUG: Search path does not exist: {search_path}")
+
+        print(f"🔍 DEBUG: Total scene folders found: {len(scene_folders)}")
+        for folder in scene_folders:
+            print(f"🔍 DEBUG: Scene folder: {folder}")
 
         scene_videos = []
         scene_subtitles = []
@@ -255,22 +298,36 @@ class VideoRenderer:
 
             folders.sort(key=lambda f: int(f.split("_v")[-1]))
             folder = folders[-1]
+            
+            print(f"🔍 DEBUG: Processing scene {scene_num} folder: {folder}")
 
             video_found = False
             subtitles_found = False
-            for filename in os.listdir(os.path.join(folder, "1080p60")):
-                if filename.endswith('.mp4'):
-                    scene_videos.append(os.path.join(folder, "1080p60", filename))
-                    video_found = True
-                    print(f"Found video for scene {scene_num}: {filename}")
-                elif filename.endswith('.srt'):
-                    scene_subtitles.append(os.path.join(folder, "1080p60", filename))
-                    subtitles_found = True
+            
+            video_dir = os.path.join(folder, "1080p60")
+            print(f"🔍 DEBUG: Looking in video directory: {video_dir}")
+            
+            if os.path.exists(video_dir):
+                print(f"🔍 DEBUG: Video directory contents: {os.listdir(video_dir)}")
+                for filename in os.listdir(video_dir):
+                    if filename.endswith('.mp4'):
+                        scene_videos.append(os.path.join(video_dir, filename))
+                        video_found = True
+                        print(f"Found video for scene {scene_num}: {filename}")
+                    elif filename.endswith('.srt'):
+                        scene_subtitles.append(os.path.join(video_dir, filename))
+                        subtitles_found = True
+            else:
+                print(f"🔍 DEBUG: Video directory does not exist: {video_dir}")
 
             if not video_found:
                 print(f"Warning: Missing video for scene {scene_num}")
             if not subtitles_found:
                 scene_subtitles.append(None)
+
+        print(f"🔍 DEBUG: Total videos found: {len(scene_videos)}")
+        for video in scene_videos:
+            print(f"🔍 DEBUG: Video file: {video}")
 
         if len(scene_videos) == 0:
             print("No videos found for combination. Please ensure scenes are successfully rendered first.")
