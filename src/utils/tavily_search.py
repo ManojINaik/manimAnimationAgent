@@ -77,10 +77,9 @@ class TavilyErrorSearchEngine:
 
     def analyze_error_for_search(self, traceback: str, code_context: str = "") -> ErrorAnalysis:
         """
-        Step 1: Analyze the full traceback and generate a concise search query.
+        Step 1: Analyze the full traceback and generate a concise search query using Gemini.
         
-        This method implements intelligent error analysis to extract the most
-        important information from a potentially long traceback and create
+        This method uses Gemini to intelligently analyze the error and create
         an effective search query under 400 characters.
         
         Args:
@@ -91,13 +90,15 @@ class TavilyErrorSearchEngine:
             ErrorAnalysis object with structured error information
         """
         if self.verbose:
-            print("🔍 Analyzing error for search query generation...")
+            print("🔍 Analyzing error for search query generation using Gemini...")
             
-        # Extract key error components
+        # Extract key error components for Gemini analysis
         error_type = self._extract_error_type(traceback)
         key_components = self._extract_key_components(traceback, code_context)
-        search_query = self._generate_search_query(error_type, key_components, traceback)
         context_info = self._extract_context_info(traceback, code_context)
+        
+        # Use Gemini to generate optimal search query
+        search_query = self._generate_search_query_with_gemini(traceback, code_context, error_type, key_components)
         
         analysis = ErrorAnalysis(
             error_type=error_type,
@@ -219,12 +220,15 @@ class TavilyErrorSearchEngine:
         """Extract key components that should be included in search"""
         components = []
         
-        # Extract Manim-specific components
+        # Extract Manim-specific components with better patterns
         manim_patterns = [
             r'(manim\.\w+)',
             r'(\w+\.animate\.\w+)',
             r'(self\.play\([^)]+\))',
             r'(\w+(?:Mobject|Animation|Scene)\w*)',
+            r'(Polygon|Triangle|Square|Circle|Rectangle)', # Common shapes
+            r'(get_\w+)', # Common getter methods
+            r'(Angle|Line|Arrow|Text|MathTex)', # Common objects
         ]
         
         text_to_search = traceback + " " + code_context
@@ -239,39 +243,25 @@ class TavilyErrorSearchEngine:
         if method_match:
             obj_type, method_name = method_match.groups()
             components.extend([obj_type, method_name])
+            
+        # Extract specific TypeError patterns
+        type_error_pattern = r'TypeError: (\w+)\.(\w+)\(\) (.*)'
+        type_match = re.search(type_error_pattern, traceback)
+        if type_match:
+            class_name, method_name, error_detail = type_match.groups()
+            components.extend([class_name, method_name])
+            
+        # Extract specific method calls from code context
+        method_call_pattern = r'(\w+)\.(\w+)\('
+        method_calls = re.findall(method_call_pattern, code_context)
+        for obj_name, method_name in method_calls[-3:]:  # Last 3 method calls
+            components.extend([obj_name, method_name])
         
         # Remove duplicates and limit length
         unique_components = list(set(components))
         return unique_components[:5]  # Limit to avoid query length issues
 
-    def _generate_search_query(self, error_type: str, key_components: List[str], traceback: str) -> str:
-        """Generate an optimized search query under 400 characters"""
-        base_query = f"manim {error_type}"
-        
-        # Add key components in order of importance
-        query_parts = [base_query]
-        
-        # Add most relevant components
-        for component in key_components[:3]:  # Limit to top 3 components
-            test_query = " ".join(query_parts + [component])
-            if len(test_query) < 350:  # Leave room for additional context
-                query_parts.append(component)
-            else:
-                break
-        
-        # Add specific context if space allows
-        if "attribute" in traceback.lower() and len(" ".join(query_parts)) < 300:
-            query_parts.append("attribute error")
-        elif "import" in traceback.lower() and len(" ".join(query_parts)) < 300:
-            query_parts.append("import error")
-        
-        final_query = " ".join(query_parts)
-        
-        # Ensure we're under the limit
-        if len(final_query) > 400:
-            final_query = final_query[:397] + "..."
-            
-        return final_query
+
 
     def _extract_context_info(self, traceback: str, code_context: str) -> str:
         """Extract contextual information for better understanding"""
@@ -372,18 +362,154 @@ class TavilyErrorSearchEngine:
 
     def _get_fallback_suggestions(self, error_analysis: ErrorAnalysis) -> List[str]:
         """Get fallback suggestions when Tavily is not available"""
-        return [
+        suggestions = [
             f"Manual search recommended: {error_analysis.search_query}",
-            "Check Manim Community documentation at docs.manim.community",
-            "Search GitHub issues for similar problems",
-            "Ask on Manim Discord or Reddit community",
-            "Review Manim examples and tutorials"
+            "Check Manim Community documentation at docs.manim.community"
         ]
+        
+        # Add specific suggestions based on error type
+        if "get_side_length" in error_analysis.search_query:
+            suggestions.extend([
+                "Use: np.linalg.norm(vertex2 - vertex1) to calculate side length",
+                "Or use get_vertices() and calculate distances manually",
+                "Polygon objects don't have get_side_length() method"
+            ])
+        elif "Angle" in error_analysis.search_query and "radius" in error_analysis.search_query:
+            suggestions.extend([
+                "Use: Angle(line1, line2, radius=0.5) instead of Angle(vertex1, vertex2, vertex3)",
+                "Angle requires Line objects, not vertex coordinates",
+                "Check Angle documentation for correct parameters"
+            ])
+        elif "Point" in error_analysis.search_query:
+            suggestions.extend([
+                "Use numpy arrays: np.array([x, y, z]) instead of Point(x, y, z)",
+                "Manim uses numpy arrays for coordinates, not Point objects",
+                "Use [x, y, z] for vertex coordinates in Polygon"
+            ])
+        else:
+            suggestions.extend([
+                "Search GitHub issues for similar problems",
+                "Ask on Manim Discord or Reddit community",
+                "Review Manim examples and tutorials"
+            ])
+            
+        return suggestions
 
     def _get_timestamp(self) -> str:
         """Get current timestamp for logging"""
         from datetime import datetime
         return datetime.now().isoformat()
+
+    def _generate_search_query_with_gemini(self, traceback: str, code_context: str, error_type: str, key_components: List[str]) -> str:
+        """
+        Use Gemini to generate an optimal search query for the error.
+        
+        Args:
+            traceback: Full error traceback
+            code_context: Code context around the error
+            error_type: Type of error (e.g., TypeError, AttributeError)
+            key_components: Key components extracted from the error
+            
+        Returns:
+            Optimized search query under 400 characters
+        """
+        try:
+            # Import Gemini client
+            import google.generativeai as genai
+            import os
+            
+            # Configure Gemini
+            api_key = os.getenv('GEMINI_API_KEY')
+            if not api_key:
+                if self.verbose:
+                    print("⚠️ No Gemini API key found, using fallback query generation")
+                return self._generate_search_query_fallback(error_type, key_components, traceback)
+            
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            
+            # Create prompt for Gemini
+            prompt = f"""You are an expert in Manim (Python animation library) error analysis. Your task is to generate the most effective search query for finding solutions to this specific error.
+
+ERROR DETAILS:
+Error Type: {error_type}
+Key Components: {key_components}
+
+TRACEBACK:
+{traceback[:1000]}  # Limit traceback to avoid token limits
+
+CODE CONTEXT:
+{code_context[:500]}  # Limit context to avoid token limits
+
+REQUIREMENTS:
+1. Generate a search query that is EXACTLY under 400 characters
+2. Focus on the most important keywords for finding solutions
+3. Include "manim" as the first word
+4. Prioritize: error type, object names, method names, and the specific issue
+5. Avoid generic terms, focus on specific Manim terminology
+6. Consider common Manim documentation sources and community discussions
+
+EXAMPLES:
+- For Polygon vertex errors: "manim Polygon vertices numpy array coordinates"
+- For Angle constructor errors: "manim Angle Line objects constructor parameters"
+- For missing methods: "manim [ObjectType] [methodname] alternative solution"
+
+Generate ONLY the search query (no explanation):"""
+
+            # Generate query with Gemini
+            response = model.generate_content(prompt)
+            search_query = response.text.strip()
+            
+            # Ensure it's under 400 characters
+            if len(search_query) > 400:
+                search_query = search_query[:397] + "..."
+            
+            # Ensure it starts with "manim" for relevance
+            if not search_query.lower().startswith('manim'):
+                search_query = f"manim {search_query}"
+                if len(search_query) > 400:
+                    search_query = search_query[:397] + "..."
+            
+            if self.verbose:
+                print(f"🤖 Gemini generated search query: {search_query}")
+            
+            return search_query
+            
+        except Exception as e:
+            if self.verbose:
+                print(f"⚠️ Gemini query generation failed: {e}, using fallback")
+            return self._generate_search_query_fallback(error_type, key_components, traceback)
+
+    def _generate_search_query_fallback(self, error_type: str, key_components: List[str], traceback: str) -> str:
+        """Generate a fallback search query when Gemini is not available"""
+        base_query = f"manim {error_type}"
+        
+        # Add key components in order of importance
+        query_parts = [base_query]
+        
+        # Add most relevant components
+        for component in key_components[:3]:  # Limit to top 3 components
+            test_query = " ".join(query_parts + [component])
+            if len(test_query) < 350:  # Leave room for additional context
+                query_parts.append(component)
+            else:
+                break
+        
+        # Add specific context if space allows
+        if "attribute" in traceback.lower() and len(" ".join(query_parts)) < 300:
+            query_parts.append("method attribute")
+        elif "import" in traceback.lower() and len(" ".join(query_parts)) < 300:
+            query_parts.append("import error")
+        elif "argument" in traceback.lower() and len(" ".join(query_parts)) < 300:
+            query_parts.append("parameters arguments")
+        
+        final_query = " ".join(query_parts)
+        
+        # Ensure we're under the limit
+        if len(final_query) > 400:
+            final_query = final_query[:397] + "..."
+            
+        return final_query
 
 
 # Helper function for easy integration
