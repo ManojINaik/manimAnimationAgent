@@ -309,9 +309,19 @@ class VideoRenderer:
             
             if os.path.exists(video_dir):
                 print(f"🔍 DEBUG: Video directory contents: {os.listdir(video_dir)}")
-                for filename in os.listdir(video_dir):
+                
+                # Add super detailed logging for file discovery
+                all_files = os.listdir(video_dir)
+                mp4_files = [f for f in all_files if f.endswith('.mp4')]
+                print(f"🔍 DEBUG: All files in video dir: {all_files}")
+                print(f"🔍 DEBUG: MP4 files found: {mp4_files}")
+                
+                for filename in all_files:
+                    full_path = os.path.join(video_dir, filename)
+                    print(f"🔍 DEBUG: File '{filename}' -> Full path: {full_path} -> Exists: {os.path.exists(full_path)}")
                     if filename.endswith('.mp4'):
-                        scene_videos.append(os.path.join(video_dir, filename))
+                        print(f"🔍 DEBUG: FOUND MP4: {filename} at {full_path}")
+                        scene_videos.append(full_path)
                         video_found = True
                         print(f"Found video for scene {scene_num}: {filename}")
                     elif filename.endswith('.srt'):

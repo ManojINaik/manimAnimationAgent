@@ -90,15 +90,16 @@ class TavilyErrorSearchEngine:
             ErrorAnalysis object with structured error information
         """
         if self.verbose:
-            print("🔍 Analyzing error for search query generation using Gemini...")
+            # print("🔍 Analyzing error for search query generation using Gemini...")
+            pass  # Removed noisy Gemini analyzer log
             
         # Extract key error components for Gemini analysis
         error_type = self._extract_error_type(traceback)
         key_components = self._extract_key_components(traceback, code_context)
         context_info = self._extract_context_info(traceback, code_context)
         
-        # Use Gemini to generate optimal search query
-        search_query = self._generate_search_query_with_gemini(traceback, code_context, error_type, key_components)
+        # Use fallback method instead of Gemini to reduce noise and duplicated analysis
+        search_query = self._generate_search_query_fallback(error_type, key_components, traceback)
         
         analysis = ErrorAnalysis(
             error_type=error_type,
@@ -260,86 +261,6 @@ class TavilyErrorSearchEngine:
         # Remove duplicates and limit length
         unique_components = list(set(components))
         return unique_components[:5]  # Limit to avoid query length issues
-
-    def _generate_search_query_with_gemini(self, traceback: str, code_context: str, error_type: str, key_components: List[str]) -> str:
-        """
-        Use Gemini to generate an optimal search query for the error.
-        
-        Args:
-            traceback: Full error traceback
-            code_context: Code context around the error
-            error_type: Type of error (e.g., TypeError, AttributeError)
-            key_components: Key components extracted from the error
-            
-        Returns:
-            Optimized search query under 400 characters
-        """
-        try:
-            # Import Gemini client
-            import google.generativeai as genai
-            import os
-            
-            # Configure Gemini
-            api_key = os.getenv('GEMINI_API_KEY')
-            if not api_key:
-                if self.verbose:
-                    print("⚠️ No Gemini API key found, using fallback query generation")
-                return self._generate_search_query_fallback(error_type, key_components, traceback)
-            
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
-            
-            # Create prompt for Gemini
-            prompt = f"""You are an expert in Manim (Python animation library) error analysis. Your task is to generate the most effective search query for finding solutions to this specific error.
-
-ERROR DETAILS:
-Error Type: {error_type}
-Key Components: {key_components}
-
-TRACEBACK:
-{traceback[:1000]}  # Limit traceback to avoid token limits
-
-CODE CONTEXT:
-{code_context[:500]}  # Limit context to avoid token limits
-
-REQUIREMENTS:
-1. Generate a search query that is EXACTLY under 400 characters
-2. Focus on the most important keywords for finding solutions
-3. Include "manim" as the first word
-4. Prioritize: error type, object names, method names, and the specific issue
-5. Avoid generic terms, focus on specific Manim terminology
-6. Consider common Manim documentation sources and community discussions
-
-EXAMPLES:
-- For Polygon vertex errors: "manim Polygon vertices numpy array coordinates"
-- For Angle constructor errors: "manim Angle Line objects constructor parameters"
-- For missing methods: "manim [ObjectType] [methodname] alternative solution"
-
-Generate ONLY the search query (no explanation):"""
-
-            # Generate query with Gemini
-            response = model.generate_content(prompt)
-            search_query = response.text.strip()
-            
-            # Ensure it's under 400 characters
-            if len(search_query) > 400:
-                search_query = search_query[:397] + "..."
-            
-            # Ensure it starts with "manim" for relevance
-            if not search_query.lower().startswith('manim'):
-                search_query = f"manim {search_query}"
-                if len(search_query) > 400:
-                    search_query = search_query[:397] + "..."
-            
-            if self.verbose:
-                print(f"🤖 Gemini generated search query: {search_query}")
-            
-            return search_query
-            
-        except Exception as e:
-            if self.verbose:
-                print(f"⚠️ Gemini query generation failed: {e}, using fallback")
-            return self._generate_search_query_fallback(error_type, key_components, traceback)
 
     def _generate_search_query_fallback(self, error_type: str, key_components: List[str], traceback: str) -> str:
         """Generate a fallback search query when Gemini is not available"""

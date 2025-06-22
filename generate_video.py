@@ -467,15 +467,10 @@ class VideoGenerator:
                         )
                         print(f"✅ Scene {scene_num} uploaded successfully")
 
-                        # Clean up local copies now that they are stored remotely
-                        try:
-                            os.remove(video_path)
-                        except OSError:
-                            pass
-                        try:
-                            os.remove(file_path)
-                        except OSError:
-                            pass
+                        # NOTE: DO NOT DELETE LOCAL FILES - they are needed for video combination later
+                        # The combination step happens after all scenes are uploaded
+                        # Clean up will happen after final video is generated
+                        
                     else:
                         print(f"⚠️ Failed to upload scene {scene_num} video")
                 else:
@@ -892,44 +887,24 @@ class VideoGenerator:
                         except Exception as e:
                             print(f"⚠️ File upload failed: {e}")
                     
-                    # Get public URLs for uploaded files
-                    video_url = None
-                    subtitles_url = None
-                    
-                    if video_file_id and self.appwrite_manager:
-                        video_url = self.appwrite_manager._get_file_url(
-                            self.appwrite_manager.final_videos_bucket_id, 
-                            video_file_id
-                        )
-                    
-                    if subtitles_file_id and self.appwrite_manager:
-                        subtitles_url = self.appwrite_manager._get_file_url(
-                            self.appwrite_manager.subtitles_bucket_id, 
-                            subtitles_file_id
-                        )
-                    
-                    # Update video status with file URLs
-                    await self.update_video_status(
-                        video_id, 
-                        "completed", 
-                        combined_video_url=video_url or combined_video_path,
-                        subtitles_url=subtitles_url
-                    )
-
-                    # Remove local copies now that they are stored remotely
-                    try:
-                        os.remove(combined_video_path)
-                    except OSError:
-                        pass
-                    try:
-                        if os.path.exists(combined_srt_path):
-                            os.remove(combined_srt_path)
-                    except OSError:
-                        pass
-                    
-                    print(f"🎉 Video generation completed for '{topic}' - Files uploaded to storage!")
+                    # Now that combination is complete, we can clean up individual scene files
+                    print("🧹 Cleaning up individual scene files after successful combination...")
+                    media_base = os.path.join(self.output_dir, file_prefix, "media", "videos")
+                    if os.path.exists(media_base):
+                        for folder in os.listdir(media_base):
+                            if folder.startswith(f"{file_prefix}_scene"):
+                                folder_path = os.path.join(media_base, folder, "1080p60")
+                                if os.path.exists(folder_path):
+                                    for filename in os.listdir(folder_path):
+                                        if filename.endswith('.mp4'):
+                                            file_path = os.path.join(folder_path, filename)
+                                            try:
+                                                os.remove(file_path)
+                                                print(f"🗑️ Cleaned up: {filename}")
+                                            except OSError as e:
+                                                print(f"⚠️ Could not clean up {filename}: {e}")
                 else:
-                    await self.update_video_status(video_id, "failed", error_message="Failed to create combined video")
+                    print(f"⚠️ Combined video not found at {combined_video_path}")
 
     def check_theorem_status(self, theorem: Dict) -> Dict[str, bool]:
         """
