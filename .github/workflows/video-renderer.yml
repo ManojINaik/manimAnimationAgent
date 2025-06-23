@@ -22,7 +22,7 @@ jobs:
     
     # Use custom Docker container with pre-installed dependencies
     container:
-      image: ghcr.io/${{ github.repository }}/manim-animation-agent:latest
+      image: ghcr.io/${{ toLower(github.repository) }}/manim-animation-agent:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

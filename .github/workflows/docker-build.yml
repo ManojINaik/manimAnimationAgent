@@ -16,7 +16,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/manim-animation-agent
+  IMAGE_NAME: ${{ toLower(github.repository) }}/manim-animation-agent
 
 jobs:
   build-and-push:
