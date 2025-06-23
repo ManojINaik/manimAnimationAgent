@@ -152,7 +152,7 @@ python -c "from generate_video import VideoGenerator; print('✅ Imports work')"
 Edit `app.py` to modify:
 ```python
 planner_model = LiteLLMWrapper(
-    model_name="gemini/gemini-2.0-flash-exp",  # Model choice
+    model_name="gemini/gemini-2.5-flash-exp",  # Model choice
     temperature=0.7,  # Creativity level
     print_cost=True,  # Cost tracking
     verbose=True      # Debug output

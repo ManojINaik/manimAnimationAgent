@@ -94,7 +94,7 @@ def initialize_video_generator():
         
         # Initialize models with comma-separated API key support
         planner_model = LiteLLMWrapper(
-            model_name="gemini/gemini-2.0-flash-exp",
+            model_name="gemini/gemini-2.5-flash-exp",
             temperature=0.7,
             print_cost=True,
             verbose=False,

@@ -36,7 +36,7 @@ async def test_video_generation_with_appwrite():
             
         # Initialize models
         planner_model = LiteLLMWrapper(
-            model_name="gemini/gemini-2.0-flash-exp",
+            model_name="gemini/gemini-2.5-flash-exp",
             temperature=0.7,
             print_cost=True,
             verbose=False,

@@ -44,9 +44,9 @@ def initialize_video_generator():
         from generate_video import VideoGenerator
         
         video_generator = VideoGenerator(
-            planner_model="gemini/gemini-2.0-flash",
-            helper_model="gemini/gemini-2.0-flash",
-            scene_model="gemini/gemini-2.0-flash",
+            planner_model="gemini/gemini-2.5-flash",
+            helper_model="gemini/gemini-2.5-flash",
+            scene_model="gemini/gemini-2.5-flash",
             output_dir="output",
             use_rag=False,
             use_context_learning=False,

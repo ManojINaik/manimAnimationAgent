@@ -41,7 +41,7 @@ class VideoGenerationRequest(BaseModel):
     topic: str
     context: str = ""
     max_scenes: int = 3
-    ai_model: str = "gemini/gemini-2.0-flash-exp"  # Renamed to avoid conflict
+    ai_model: str = "gemini/gemini-2.5-flash-exp"  # Renamed to avoid conflict
     temperature: float = 0.7
 
 class VideoGenerationResponse(BaseModel):
@@ -144,7 +144,7 @@ def initialize_video_generator():
         
         # Initialize models with comma-separated API key support
         planner_model = LiteLLMWrapper(
-            model_name="gemini/gemini-2.0-flash-exp",
+            model_name="gemini/gemini-2.5-flash-exp",
             temperature=0.7,
             print_cost=True,
             verbose=False,

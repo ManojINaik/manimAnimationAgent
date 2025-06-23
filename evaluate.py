@@ -360,7 +360,7 @@ def main():
                        help='Select the AI model to use for text evaluation')
     parser.add_argument('--model_video', type=str,
                        choices=['gemini/gemini-1.5-pro-002',
-                                'gemini/gemini-2.0-flash-exp',
+                                'gemini/gemini-2.5-flash-exp',
                                 'gemini/gemini-2.0-pro-exp-02-05'],
                        default='gemini/gemini-1.5-pro-002',
                        help='Select the AI model to use for video evaluation')
