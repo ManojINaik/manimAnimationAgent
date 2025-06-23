@@ -39,6 +39,10 @@ RUN apt-get update && apt-get install -y \
     libgdk-pixbuf2.0-dev \
     libffi-dev \
     shared-mime-info \
+    # GraphViz dependencies for pygraphviz
+    graphviz \
+    libgraphviz-dev \
+    graphviz-dev \
     # FFmpeg and multimedia
     ffmpeg \
     libavcodec-dev \

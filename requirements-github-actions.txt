@@ -145,8 +145,10 @@ python-decouple>=3.8
 environs>=9.5.0
 
 # Additional Graphics and Visualization Libraries
-graphviz>=0.20.0
-pygraphviz>=1.10.0
+# Note: For pygraphviz to work, system packages 'graphviz' and 'libgraphviz-dev' must be installed
+# The pure Python 'graphviz' package is different from 'pygraphviz' (which wraps C library)
+graphviz>=0.20.0           # Pure Python interface to Graphviz - does not require C compilation
+pygraphviz>=1.10.0,<1.15.0  # Python interface with C bindings - requires system graphviz library
 
 # Web Search and Analysis
 tavily-python>=0.3.0
