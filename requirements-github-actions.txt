@@ -119,8 +119,7 @@ pylatexenc>=2.10
 
 # Network and Communication Libraries
 websockets>=11.0.0
-socketio>=5.8.0
-python-socketio>=5.8.0
+python-socketio>=5.8.0  # Note: Use python-socketio, not socketio (different packages)
 
 # Async and Concurrency Libraries
 asyncio>=3.4.3
