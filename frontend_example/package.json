@@ -11,8 +11,9 @@
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
     "appwrite": "^13.0.0",
-    "node-appwrite": "^13.0.0",
+    "gsap": "^3.13.0",
     "next": "^14.0.0",
+    "node-appwrite": "^13.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

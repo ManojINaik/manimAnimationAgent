@@ -1,17 +1,17 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { 
-    generateVideo, 
-    getVideo, 
+import {
+    generateVideo,
+    getVideo,
     getVideoScenes,
     subscribeToVideo,
     subscribeToVideoScenes,
     VideoDocument,
     SceneDocument,
-    FINAL_VIDEOS_BUCKET_ID,
-    getFileUrl
 } from '../services/appwrite';
+import { motion, AnimatePresence } from 'framer-motion';
+import clsx from 'clsx';
 
 export default function VideoGenerator() {
     const [topic, setTopic] = useState('');
@@ -21,84 +21,48 @@ export default function VideoGenerator() {
     const [scenes, setScenes] = useState<SceneDocument[]>([]);
     const [error, setError] = useState<string | null>(null);
 
-    // Example topics for quick start
     const exampleTopics = [
-        {
-            topic: "Newton's Laws of Motion",
-            description: "Explain the three fundamental laws of motion with visual demonstrations of objects in motion, forces, and acceleration.",
+        { 
+            topic: "Newton's Laws of Motion", 
+            description: "Explain the three fundamental laws of motion with visual demonstrations...", 
             icon: "🍎",
-            category: "Physics"
+            gradient: "from-red-400 to-orange-500"
         },
-        {
-            topic: "The Pythagorean Theorem",
-            description: "Visual proof and applications of a² + b² = c² with geometric animations and real-world examples.",
+        { 
+            topic: "The Pythagorean Theorem", 
+            description: "Visual proof and applications of a² + b² = c²...", 
             icon: "📐",
-            category: "Mathematics"
+            gradient: "from-blue-400 to-indigo-500"
         },
-        {
-            topic: "DNA Structure and Replication",
-            description: "Animated explanation of the double helix structure and the process of DNA replication at the molecular level.",
+        { 
+            topic: "DNA Structure", 
+            description: "Animated explanation of the double helix structure...", 
             icon: "🧬",
-            category: "Biology"
+            gradient: "from-green-400 to-emerald-500"
         },
-        {
-            topic: "How Neural Networks Learn",
-            description: "Visualize how artificial neurons process information, backpropagation, and gradient descent optimization.",
+        { 
+            topic: "How Neural Networks Learn", 
+            description: "Visualize how artificial neurons process information...", 
             icon: "🧠",
-            category: "Computer Science"
+            gradient: "from-purple-400 to-pink-500"
         },
-        {
-            topic: "The Water Cycle",
-            description: "Animated journey of water through evaporation, condensation, precipitation, and collection processes.",
-            icon: "💧",
-            category: "Earth Science"
-        },
-        {
-            topic: "Binary Number System",
-            description: "Convert between decimal and binary, show how computers represent numbers and perform basic arithmetic.",
-            icon: "💻",
-            category: "Computer Science"
-        },
-        {
-            topic: "Photosynthesis Process",
-            description: "Step-by-step animation of how plants convert sunlight, water, and CO2 into glucose and oxygen.",
-            icon: "🌱",
-            category: "Biology"
-        },
-        {
-            topic: "Calculus: Limits and Derivatives",
-            description: "Visual approach to understanding limits, instantaneous rate of change, and the derivative concept.",
-            icon: "📊",
-            category: "Mathematics"
-        }
     ];
 
     const handleExampleClick = (example: typeof exampleTopics[0]) => {
         setTopic(example.topic);
         setDescription(example.description);
-        // Smooth scroll to form
         document.getElementById('topic')?.focus();
     };
 
-    // Subscribe to real-time updates when video is being generated
     useEffect(() => {
-        if (!currentVideo) {
-            return;
-        }
-        
-        console.log('Setting up real-time subscription for video:', currentVideo.$id, 'status:', currentVideo.status);
-        
-        if (currentVideo.status === 'completed' || currentVideo.status === 'failed') {
+        if (!currentVideo || ['completed', 'failed'].includes(currentVideo.status)) {
             return;
         }
 
-        // Subscribe to video updates
         const unsubscribeVideo = subscribeToVideo(currentVideo.$id, (updatedVideo) => {
             console.log('Video update:', updatedVideo);
             setCurrentVideo(updatedVideo);
-            
-            // Stop generating if completed or failed
-            if (updatedVideo.status === 'completed' || updatedVideo.status === 'failed') {
+            if (['completed', 'failed'].includes(updatedVideo.status)) {
                 setIsGenerating(false);
                 if (updatedVideo.status === 'failed') {
                     setError(updatedVideo.error_message || 'Video generation failed');
@@ -106,9 +70,7 @@ export default function VideoGenerator() {
             }
         });
 
-        // Subscribe to scene updates
         const unsubscribeScenes = subscribeToVideoScenes(currentVideo.$id, (updatedScene) => {
-            console.log('Scene update:', updatedScene);
             setScenes(prev => {
                 const existingIndex = prev.findIndex(s => s.$id === updatedScene.$id);
                 if (existingIndex >= 0) {
@@ -120,7 +82,6 @@ export default function VideoGenerator() {
             });
         });
 
-        // Load initial scenes
         getVideoScenes(currentVideo.$id).then(setScenes);
 
         return () => {
@@ -131,13 +92,8 @@ export default function VideoGenerator() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        // Prevent double submission
-        if (isGenerating) {
-            console.log('Already generating, ignoring duplicate request');
-            return;
-        }
-        
+        if (isGenerating) return;
+
         setError(null);
         setIsGenerating(true);
         setCurrentVideo(null);
@@ -145,14 +101,9 @@ export default function VideoGenerator() {
 
         try {
             const result = await generateVideo(topic, description);
-            console.log('generateVideo result:', result);
-
             if (result.success && result.videoId) {
                 const video = await getVideo(result.videoId);
-                console.log('Fetched video:', video);
-                if (video) {
-                    setCurrentVideo(video);
-                }
+                if (video) setCurrentVideo(video);
             } else {
                 throw new Error(result.error || 'Failed to start video generation');
             }
@@ -161,261 +112,229 @@ export default function VideoGenerator() {
             setIsGenerating(false);
         }
     };
-
-    const getStatusColor = (status: string) => {
+    
+    const getStatusInfo = (status: string) => {
         switch (status) {
-            case 'queued':
-            case 'queued_for_render': return 'from-gray-400 to-gray-600';
-            case 'planning': return 'from-blue-400 to-blue-600';
-            case 'rendering': return 'from-yellow-400 to-orange-500';
-            case 'completed': return 'from-green-400 to-green-600';
-            case 'failed': return 'from-red-400 to-red-600';
-            default: return 'from-gray-300 to-gray-500';
+            case 'queued_for_render':
+            case 'queued': return { 
+                icon: (
+                    <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                ), 
+                color: 'bg-gray-500', 
+                text: 'Queued' 
+            };
+            case 'planning': return { 
+                icon: (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z" />
+                    </svg>
+                ), 
+                color: 'bg-blue-500', 
+                text: 'Planning' 
+            };
+            case 'rendering': return { 
+                icon: (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+                    </svg>
+                ), 
+                color: 'bg-yellow-500', 
+                text: 'Rendering' 
+            };
+            case 'completed': return { 
+                icon: (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                ), 
+                color: 'bg-green-500', 
+                text: 'Completed' 
+            };
+            case 'failed': return { 
+                icon: (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                ), 
+                color: 'bg-red-500', 
+                text: 'Failed' 
+            };
+            default: return { 
+                icon: (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M12 18.75H4.5a2.25 2.25 0 0 1-2.25-2.25v-9a2.25 2.25 0 0 1 2.25-2.25h4.372" />
+                    </svg>
+                ), 
+                color: 'bg-gray-400', 
+                text: status 
+            };
         }
-    };
-
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'queued':
-            case 'queued_for_render': return '⏳';
-            case 'planning': return '🧠';
-            case 'rendering': return '🎬';
-            case 'completed': return '✅';
-            case 'failed': return '❌';
-            default: return '📄';
-        }
-    };
-
-    const getStatusText = (video: VideoDocument) => {
-        if (video.status === 'rendering' && video.current_scene) {
-            return `Rendering Scene ${video.current_scene}/${video.scene_count}`;
-        }
-        return video.status.charAt(0).toUpperCase() + video.status.slice(1);
     };
 
     return (
-        <div className="min-h-screen">
-            <div className="container mx-auto px-4 py-8 max-w-6xl">
-                {/* Header */}
-                <div className="text-center mb-12">
-                    <div className="inline-flex items-center justify-center w-24 h-24 rounded-full mb-8 shadow-glow animate-float" style={{ background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)' }}>
-                        <span className="text-4xl">🎬</span>
-                    </div>
-                    <h1 className="text-6xl font-bold text-gradient mb-6">
-                        Manim Video Generator
-                    </h1>
-                    <p className="text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                        Transform your ideas into stunning educational animations powered by AI
-                    </p>
-                </div>
+        <div className="section-container">
+            <div className="mx-auto max-w-2xl text-center">
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Let's Create a Video</h2>
+                <p className="mt-6 text-lg leading-8 text-gray-600">
+                    Start with a topic and optional description. Our AI will handle the rest.
+                </p>
+            </div>
+            
+            <div className="mt-16 grid grid-cols-1 gap-4 md:grid-cols-4">
+                {exampleTopics.map((example, index) => (
+                    <button
+                        key={index}
+                        onClick={() => handleExampleClick(example)}
+                        disabled={isGenerating}
+                        className="example-card group"
+                    >
+                        <span className="text-2xl">{example.icon}</span>
+                        <h3 className="mt-2 font-semibold">{example.topic}</h3>
+                    </button>
+                ))}
+            </div>
 
-                {/* Example Topics */}
-                <div className="mb-12">
-                    <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-                        ✨ Quick Start Examples
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {exampleTopics.map((example, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleExampleClick(example)}
-                                disabled={isGenerating}
-                                className="example-card disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                <div className="flex items-center space-x-3 mb-4">
-                                    <span className="text-3xl transition-transform duration-300 group-hover:scale-110">
-                                        {example.icon}
-                                    </span>
-                                    <span className="text-xs font-bold text-white bg-gradient-to-r from-blue-500 to-purple-600 px-3 py-1 rounded-full">
-                                        {example.category}
-                                    </span>
-                                </div>
-                                <h3 className="font-bold text-gray-800 text-lg mb-3 text-left">
-                                    {example.topic}
-                                </h3>
-                                <p className="text-sm text-gray-600 text-left leading-relaxed line-clamp-3">
-                                    {example.description.substring(0, 100)}...
-                                </p>
-                            </button>
-                        ))}
+            <div className="mx-auto mt-8 max-w-2xl">
+                <form onSubmit={handleSubmit} className="glass-card space-y-6">
+                    <div>
+                        <label htmlFor="topic" className="block text-sm font-medium text-gray-700">Topic</label>
+                        <input
+                            id="topic"
+                            type="text"
+                            value={topic}
+                            onChange={(e) => setTopic(e.target.value)}
+                            placeholder="e.g., Newton's Laws of Motion"
+                            className="input-field"
+                            required
+                            disabled={isGenerating}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description (Optional)</label>
+                        <textarea
+                            id="description"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Provide additional context or requirements..."
+                            className="input-field"
+                            rows={3}
+                            disabled={isGenerating}
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={isGenerating || !topic}
+                        className="btn-primary w-full"
+                    >
+                        {isGenerating ? (
+                            <>
+                                <svg className="mr-3 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Generating Video...
+                            </>
+                        ) : (
+                            <>
+                                <svg className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                                </svg>
+                                Generate Video
+                            </>
+                        )}
+                    </button>
+                </form>
+            </div>
+
+            {error && (
+                <div className="mx-auto mt-8 max-w-2xl rounded-md bg-red-50 p-4">
+                    <div className="flex">
+                        <div className="flex-shrink-0">
+                            <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                            </svg>
+                        </div>
+                        <div className="ml-3">
+                            <h3 className="text-sm font-medium text-red-800">Error</h3>
+                            <p className="mt-2 text-sm text-red-700">{error}</p>
+                        </div>
                     </div>
                 </div>
-                
-                {/* Input Form */}
-                <div className="glass-card rounded-3xl p-10 mb-12">
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                        <div>
-                            <label htmlFor="topic" className="block text-xl font-bold text-gray-700 mb-4">
-                                📚 What would you like to animate?
-                            </label>
-                            <input
-                                id="topic"
-                                type="text"
-                                value={topic}
-                                onChange={(e) => setTopic(e.target.value)}
-                                placeholder="e.g., Newton's Laws of Motion, Quantum Mechanics, Calculus..."
-                                className="modern-input w-full text-lg"
-                                required
-                                disabled={isGenerating}
-                            />
-                        </div>
-                        
-                        <div>
-                            <label htmlFor="description" className="block text-xl font-bold text-gray-700 mb-4">
-                                ✨ Additional Details (Optional)
-                            </label>
-                            <textarea
-                                id="description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Provide additional context, specific concepts to cover, target audience, or any special requirements..."
-                                className="modern-input w-full text-lg resize-none"
-                                rows={4}
-                                disabled={isGenerating}
-                            />
-                        </div>
-                        
-                        <button
-                            type="submit"
-                            disabled={isGenerating || !topic}
-                            className={`btn-gradient w-full text-xl ${
-                                isGenerating || !topic
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'hover:shadow-glow'
-                            }`}
-                        >
-                            {isGenerating ? (
-                                <div className="flex items-center justify-center space-x-3">
-                                    <div className="spinner"></div>
-                                    <span>Creating Magic...</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center justify-center space-x-3">
-                                    <span>🚀</span>
-                                    <span>Generate Video</span>
-                                </div>
-                            )}
-                        </button>
-                    </form>
-                </div>
+            )}
 
-                {/* Error Display */}
-                {error && (
-                    <div className="mb-8 p-6 bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-200 rounded-2xl shadow-lg">
-                        <div className="flex items-center space-x-3">
-                            <span className="text-2xl">🚨</span>
-                            <div>
-                                <h3 className="text-lg font-semibold text-red-800">Something went wrong</h3>
-                                <p className="text-red-700">{error}</p>
+            {currentVideo && (
+                <div className="mx-auto mt-16 max-w-4xl space-y-8">
+                    <div className="rounded-xl border bg-white p-6 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-semibold">{currentVideo.topic}</h3>
+                            <div className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium text-white ${getStatusInfo(currentVideo.status).color}`}>
+                                {getStatusInfo(currentVideo.status).icon}
+                                <span>{getStatusInfo(currentVideo.status).text}</span>
                             </div>
                         </div>
-                    </div>
-                )}
-
-                {/* Video Status */}
-                {currentVideo && (
-                    <div className="space-y-8">
-                        {/* Main Status Card */}
-                        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20">
-                            <div className="flex items-center space-x-4 mb-6">
-                                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                    <span className="text-2xl">📊</span>
+                        {currentVideo.status === 'rendering' && currentVideo.progress !== undefined && (
+                            <div className="mt-4">
+                                <span className="text-sm text-gray-600">Overall Progress: {currentVideo.progress}%</span>
+                                <div className="progress-bar">
+                                    <div className="progress-fill" style={{ width: `${currentVideo.progress}%` }}></div>
                                 </div>
-                                <h2 className="text-3xl font-bold text-gray-800">Video Status</h2>
                             </div>
-                            
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="space-y-4">
-                                    <div className="flex flex-col space-y-2">
-                                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Topic</span>
-                                        <span className="text-xl font-semibold text-gray-800">{currentVideo.topic}</span>
-                                    </div>
-                                    
-                                    <div className="flex flex-col space-y-2">
-                                        <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Status</span>
-                                        <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-gradient-to-r ${getStatusColor(currentVideo.status)} text-white font-semibold w-fit`}>
-                                            <span className="text-lg">{getStatusIcon(currentVideo.status)}</span>
-                                            <span>{getStatusText(currentVideo)}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {currentVideo.progress !== undefined && (
-                                    <div className="space-y-3">
+                        )}
+                    </div>
+
+                    {scenes.length > 0 && (
+                        <div className="rounded-xl border bg-white p-6 shadow-sm">
+                            <h4 className="flex items-center gap-3 text-xl font-bold text-gray-900 mb-6">
+                                <svg className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75A1.125 1.125 0 0 1 2.25 18.375m0-12.75C2.25 4.004 2.754 3.5 3.375 3.5s1.125.504 1.125 1.125M3.375 18.375V5.625m18 12.75c.621 0 1.125-.504 1.125-1.125V5.625M21 18.375m0-12.75c0-.621-.504-1.125-1.125-1.125s-1.125.504-1.125 1.125m1.125 12.75V5.625m0 0H3.375" />
+                                </svg>
+                                Scenes ({scenes.length})
+                            </h4>
+                            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {scenes.map((scene) => (
+                                    <div key={scene.$id} className="rounded-lg border p-4">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm font-medium text-gray-500 uppercase tracking-wide">Progress</span>
-                                            <span className="text-2xl font-bold text-gray-800">{currentVideo.progress}%</span>
-                                        </div>
-                                        <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-                                            <div 
-                                                className="bg-gradient-to-r from-blue-500 to-purple-600 h-4 rounded-full transition-all duration-1000 ease-out"
-                                                style={{ width: `${currentVideo.progress}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Scenes Progress */}
-                        {scenes.length > 0 && (
-                            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20">
-                                <div className="flex items-center space-x-4 mb-6">
-                                    <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-                                        <span className="text-2xl">🎭</span>
-                                    </div>
-                                    <h2 className="text-3xl font-bold text-gray-800">Scene Progress</h2>
-                                </div>
-                                
-                                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                    {scenes.map((scene) => (
-                                        <div key={scene.$id} className="bg-gradient-to-br from-white to-gray-50 p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
-                                            <div className="flex items-center justify-between mb-3">
-                                                <span className="text-lg font-bold text-gray-800">Scene {scene.scene_number}</span>
-                                                <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${getStatusColor(scene.status)}`}></div>
-                                            </div>
-                                            <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gradient-to-r ${getStatusColor(scene.status)} text-white text-sm font-medium`}>
-                                                <span>{getStatusIcon(scene.status)}</span>
+                                            <span className="text-sm font-medium">Scene {scene.scene_number}</span>
+                                            <div className={clsx(
+                                                'flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium text-white',
+                                                getStatusInfo(scene.status).color
+                                            )}>
+                                                {getStatusInfo(scene.status).icon}
                                                 <span>{scene.status}</span>
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
+                                    </div>
+                                ))}
                             </div>
-                        )}
+                        </div>
+                    )}
 
-                        {/* Download Section */}
-                        {currentVideo.status === 'completed' && currentVideo.combined_video_url && (
-                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-8 rounded-3xl border-2 border-green-200 shadow-2xl">
-                                <div className="text-center">
-                                    <div className="w-20 h-20 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
-                                        <span className="text-4xl">🎉</span>
-                                    </div>
-                                    <h2 className="text-4xl font-bold text-green-800 mb-4">Your Video is Ready!</h2>
-                                    <p className="text-xl text-green-700 mb-8">Your educational animation has been generated successfully</p>
-                                    
-                                    <div className="space-y-4">
-                                        <a
-                                            href={currentVideo.combined_video_url}
-                                            download
-                                            className="inline-flex items-center space-x-3 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xl font-bold rounded-2xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-xl hover:shadow-2xl"
-                                        >
-                                            <span>⬇️</span>
-                                            <span>Download Video</span>
-                                        </a>
-                                        
-                                        {currentVideo.total_duration && (
-                                            <p className="text-lg text-green-600 font-semibold">
-                                                ⏱️ Duration: {Math.floor(currentVideo.total_duration / 60)}:{String(Math.floor(currentVideo.total_duration % 60)).padStart(2, '0')}
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
+                    {currentVideo.status === 'completed' && currentVideo.combined_video_url && (
+                        <div className="rounded-xl border-2 border-green-500 bg-green-50 p-8 text-center shadow-lg">
+                             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 mb-6">
+                                <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
                             </div>
-                        )}
-                    </div>
-                )}
-            </div>
+                            <h2 className="mt-4 text-2xl font-bold">Video Ready!</h2>
+                            <p className="mt-2 text-gray-600">Your video has been successfully generated.</p>
+                            <a
+                                href={currentVideo.combined_video_url}
+                                download
+                                className="btn-primary inline-flex items-center gap-3 text-lg"
+                            >
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                                Download Video
+                            </a>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 } 

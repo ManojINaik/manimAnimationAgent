@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@react-three/drei": "^10.3.0",
+    "@react-three/fiber": "^9.1.2",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.19.1",
+    "gsap": "^3.13.0",
+    "lucide-react": "^0.522.0",
+    "three": "^0.177.0"
+  }
+}
