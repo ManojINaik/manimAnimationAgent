@@ -49,12 +49,15 @@ jobs:
           libgirepository1.0-dev \
           ffmpeg \
           libpango1.0-dev \
+          libpangocairo-1.0-0 \
           portaudio19-dev \
           libasound2-dev \
           libsndfile1-dev \
           libfftw3-dev \
           libatlas-base-dev \
           sox \
+          inkscape \
+          imagemagick \
           texlive-latex-base texlive-latex-extra texlive-fonts-recommended latexmk dvisvgm ghostscript
           
     - name: Fix apt cache permissions
