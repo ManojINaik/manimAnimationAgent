@@ -34,11 +34,12 @@ jobs:
       
     # Clean up disk space to prevent space issues  
     - name: Free up disk space
+      shell: bash
       run: |
-        sudo apt-get clean
-        sudo rm -rf /var/lib/apt/lists/*
-        sudo rm -rf /tmp/*
-        sudo rm -rf /var/tmp/*
+        apt-get clean
+        rm -rf /var/lib/apt/lists/*
+        rm -rf /tmp/*
+        rm -rf /var/tmp/*
         df -h  # Show available disk space
       
     # No need for Python setup - already in container
@@ -57,9 +58,18 @@ jobs:
           
     # Install any additional or updated dependencies
     - name: Update dependencies if needed
+      shell: bash
       run: |
+        # Ensure Python path is set correctly
+        export PYTHONPATH="$PWD:$PYTHONPATH"
+        echo "PYTHONPATH=$PWD:$PYTHONPATH" >> $GITHUB_ENV
+        
         pip install --upgrade pip
         pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
+        
+        # Verify critical packages are installed
+        python -c "import appwrite; print('✅ Appwrite SDK installed')"
+        python -c "import manim; print('✅ Manim installed')"
         
     # Validate that all required environment variables are present before starting
     - name: Validate environment variables
@@ -72,6 +82,7 @@ jobs:
         MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      shell: bash  # Use bash for indirect variable expansion
       run: |
         echo "Validating required environment variables..."
         
@@ -111,14 +122,16 @@ jobs:
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         MANIMCE_USE_PROGRESS_BARS: "true"
+      shell: bash
       run: |
         echo "Environment variables set successfully"
         echo "Working directory: $(pwd)"
         echo "Available disk space:"
         df -h
         
-        # Create necessary directories
+        # Create necessary directories with proper permissions
         mkdir -p output api_outputs media temp_audio
+        chmod 755 output api_outputs media temp_audio
         
     - name: Check for queued videos
       id: check_queue
@@ -126,6 +139,7 @@ jobs:
         APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
         APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
         APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+      shell: bash
       run: |
         # Add timeout to prevent hanging
         timeout 300 python scripts/check_video_queue.py || {
@@ -135,7 +149,7 @@ jobs:
         }
         
     - name: Render videos
-      if: steps.check_queue.outputs.videos_found == 'true'
+      if: steps.check_queue.outputs.videos_found == 'true' || github.event.inputs.video_id != ''
       env:
         APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
         APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
@@ -193,6 +207,7 @@ jobs:
     # Clean up after job completion to free space for future runs
     - name: Cleanup
       if: always()
+      shell: bash
       run: |
         echo "🧹 Cleaning up workspace..."
         # Remove large temporary files but keep logs
