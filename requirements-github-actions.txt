@@ -1,72 +1,161 @@
 # GitHub Actions Requirements - Complete dependency list with audio support
 # Optimized for video rendering with ALL required dependencies including audio dubbing
 
-# Core Python Libraries
-python-dotenv>=1.0.1
-
-# AI/ML/LLM Dependencies
-google-generativeai>=0.4.0
-openai>=1.12.0
-litellm>=1.28.0
-anthropic>=0.18.0
-tiktoken>=0.4.0
+# Python Requirements for GitHub Actions Video Generation
+# Core Python Requirements
+python>=3.11
 
 # Video/Animation/Graphics Libraries
-manim>=0.19.0
-manim-physics
+manim>=0.18.1,<0.19.0    # Keep compatible with manim-physics
+manim-physics>=0.3.0,<0.5.0  # Use older version compatible with manim <0.19.0
 manim-chemistry
 manim-ml
-manim-dsa
+manim-dsa>=0.2.0,<0.4.0  # Use older version compatible with manim <0.19.0
 manim-circuit
-opencv-python>=4.9.0.80
-Pillow>=10.2.0
-imageio>=2.34.0
-imageio-ffmpeg>=0.4.9
-ffmpeg-python
-moviepy>=2.0.0
-numpy>=1.24.0,<2.3
-scipy>=1.12.0
-matplotlib>=3.8.0
+
+# Data Science and ML Libraries
+numpy>=1.24.0,<2.1       # Compatible with all packages
+scipy>=1.10.0
+scikit-learn>=1.2.0
+pandas>=1.5.0
+matplotlib>=3.6.0
+seaborn>=0.11.0
+plotly>=5.10.0
+
+# Deep Learning Libraries
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+tensorflow>=2.12.0
+keras>=2.12.0
+
+# Mathematical Libraries
+sympy>=1.12
+networkx>=3.0
+
+# Image Processing Libraries
+Pillow>=9.5.0
+opencv-python>=4.8.0
+scikit-image>=0.20.0
+
+# Web Framework and API Libraries
+fastapi>=0.104.0,<0.116.0  # Compatible with starlette <0.47.0
+starlette>=0.38.0,<0.47.0  # Compatible with fastapi
+uvicorn[standard]>=0.20.0
+requests>=2.31.0
+httpx>=0.25.0
+aiohttp>=3.8.0
+
+# Database and Storage Libraries
+chromadb>=1.0.0           # Latest version requires PyYAML>=6.0.0
+PyYAML>=6.0.0            # Required by chromadb 1.0.13
+sqlalchemy>=2.0.0
+asyncpg>=0.28.0
+psycopg2-binary>=2.9.0
+redis>=4.5.0
+
+# LLM and AI Libraries
+openai>=1.0.0
+anthropic>=0.20.0
+google-generativeai>=0.4.0
+litellm>=1.28.0
+langchain>=0.1.0,<0.3.0
+langchain-core>=0.1.0,<0.3.0
+langchain-community>=0.0.20,<0.3.0
+langfuse>=2.0.0,<3.0.0    # Avoid packaging<25.0 conflict
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+tiktoken>=0.5.0
+
+# Audio Processing Libraries
+gtts>=2.3.0,<2.5.0       # Use older version to avoid click conflict
+click>=7.1.0,<8.2.0      # Compatible with gtts
+manim-voiceover>=0.3.0,<0.4.0  # Use older version
+python-dotenv>=0.21.0,<0.22.0  # Compatible with manim-voiceover
+pydub>=0.25.0
+SpeechRecognition>=3.10.0
+
+# Utility Libraries
+tqdm>=4.65.0
+rich>=13.0.0
+typer>=0.9.0
+pyyaml>=6.0.0           # Required by chromadb
+toml>=0.10.0
+configparser>=5.3.0
+argparse>=1.4.0
+logging>=0.4.9
+
+# Testing and Development Libraries
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.0.0
+black>=23.0.0
+flake8>=6.0.0
+mypy>=1.0.0
+
+# System and Process Libraries
+psutil>=5.9.0
+subprocess32>=3.5.4; python_version < "3.7"
+
+# Packaging and Version Management
+packaging>=23.2,<25.0   # Compatible with langchain-core and langfuse
+setuptools>=65.0.0
+wheel>=0.40.0
+pip>=23.0.0
+
+# File Processing Libraries
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+PyPDF2>=3.0.0
+python-multipart>=0.0.6
+
+# Network and Communication Libraries
+websockets>=11.0.0
+socketio>=5.8.0
+python-socketio>=5.8.0
+
+# Async and Concurrency Libraries
+asyncio>=3.4.3
+aiofiles>=23.0.0
+anyio>=3.6.0
+
+# Math and Scientific Computing Libraries
+numba>=0.57.0
+cython>=0.29.0
+
+# Date and Time Libraries
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Security and Authentication Libraries
+cryptography>=41.0.0
+passlib>=1.7.0
+python-jose[cryptography]>=3.3.0
+bcrypt>=4.0.0
+
+# Environment and Configuration Libraries
+python-decouple>=3.8
+environs>=9.5.0
+
+# Additional Graphics and Visualization Libraries
+graphviz>=0.20.0
+pygraphviz>=1.10.0
 
 # Text/Subtitle Processing
 pysrt>=1.1.2
 pylatexenc>=2.10
 
 # Audio Processing & TTS (CI/CD compatible)
-SpeechRecognition>=3.14.0
-pydub>=0.25.1
-soundfile>=0.12.1
-gTTS>=2.5.0
 pyttsx3>=2.90
 librosa>=0.10.1
 
-# Audio Libraries (without PyAudio - use alternatives)
-# NOTE: For audio dubbing in GitHub Actions, we use:
-# - gTTS for basic TTS (no API key needed)
-# - pyttsx3 for offline TTS
-# - pydub for audio manipulation
-# - librosa for audio analysis
-
-# RAG/Vector Database/LangChain
-langchain>=0.3.0
-langchain-community>=0.3.0
-langchain-core>=0.3.0
-langchain-text-splitters>=0.3.0
-chromadb>=0.6.0
-
-# Database/Storage
-appwrite>=4.0.0
-requests>=2.31.0
-
-# Web Framework/API
+# Additional Libraries
 gradio>=4.15.0
-fastapi>=0.109.0
-uvicorn>=0.27.0
-
-# Data Processing/Utilities
-pandas>=2.2.0
-tqdm>=4.62.0
-python-multipart>=0.0.7
+imageio>=2.34.0
+imageio-ffmpeg>=0.4.9
+ffmpeg-python
+moviepy>=2.0.0
+appwrite>=4.0.0
 aiofiles>=23.2.1
 
 # Memory and Learning
