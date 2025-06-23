@@ -60,7 +60,7 @@ proto-plus>=1.25.0
 protobuf>=5.28.3
 
 # Video processing dependencies
-manim>=0.18.0
+manim==0.18.1
 manim-physics
 manim-chemistry
 manim-ml

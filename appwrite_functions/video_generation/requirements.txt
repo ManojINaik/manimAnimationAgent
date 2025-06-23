@@ -22,7 +22,7 @@ google-generativeai>=0.7.0
 tavily-python>=0.3.0 
 
 # Animation, Video, and Audio Processing
-manim>=0.18.0
+manim==0.18.1
 manim-voiceover>=0.3.7
 manim-physics
 manim-chemistry

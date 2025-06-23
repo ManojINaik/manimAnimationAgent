@@ -12,7 +12,7 @@ anthropic>=0.18.0
 tiktoken>=0.4.0
 
 # Video/Animation/Graphics Libraries
-manim>=0.18.0
+manim==0.18.1
 manim-physics
 manim-chemistry
 manim-ml
