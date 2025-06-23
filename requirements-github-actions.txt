@@ -89,8 +89,7 @@ rich>=13.0.0
 typer>=0.9.0
 toml>=0.10.0
 configparser>=5.3.0
-argparse>=1.4.0
-logging>=0.4.9
+# Note: argparse and logging are built-in Python modules - no pip installation needed
 
 # Testing and Development Libraries
 pytest>=7.0.0
