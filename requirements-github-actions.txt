@@ -2,7 +2,7 @@
 # Optimized for video rendering with ALL required dependencies including audio dubbing
 
 # Core Python Requirements
-python>=3.11
+# Note: Python version is handled by Dockerfile, not pip requirements
 
 # Video/Animation/Graphics Libraries
 manim>=0.18.1,<0.19.0    # Keep compatible with manim-physics  
