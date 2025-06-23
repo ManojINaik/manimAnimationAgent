@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     
-    # Use custom Docker container with pre-installed dependencies
+    # Use custom Docker container with pre-installed dependencies  
     container:
-      image: ghcr.io/${{ toLower(github.repository) }}/manim-animation-agent:latest
+      image: ghcr.io/manojinaik/manimanimationagent/manim-animation-agent:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
