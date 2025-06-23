@@ -26,7 +26,7 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-      options: --user runner
+      # Remove --user runner to avoid permission issues with GitHub Actions temp files
     
     steps:
     - name: Checkout code
