@@ -651,12 +651,17 @@ class CodeGenerator:
         
         # Fix 4: UpdateFromFunc parameter issues
         if "missing 1 required positional argument" in error and "UpdateFromFunc" in code:
-            # Fix update function signatures to match Manim's requirements
+            # Add the missing 'alpha' parameter to the update function
+            # Pattern to find: UpdateFromFunc(ball, lambda mob: mob.move_to(trace.get_end()))
+            # and change to:  UpdateFromFunc(ball, lambda mob, alpha: mob.move_to(trace.get_end()))
             fixed_code = re.sub(
-                r'def update_ball\(self, obj, alpha\):',
-                'def update_ball(obj):',
+                r'UpdateFromFunc\(([^,]+),\s*lambda\s+([a-zA-Z0-9_]+)\s*:',
+                r'UpdateFromFunc(\1, lambda \2, alpha:',
                 fixed_code
             )
+
+            # Also fix for regular function definitions, e.g., def update_ball(ball):
+            # This is more complex, so we will focus on the lambda fix which is more common
         
         # Fix 5: Array comparison ambiguity with get_bottom(), get_top(), etc.
         if "The truth value of an array with more than one element is ambiguous" in error:
