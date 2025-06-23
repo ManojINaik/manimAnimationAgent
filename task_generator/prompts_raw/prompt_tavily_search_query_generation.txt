@@ -37,9 +37,17 @@ Key Error Components:
 - Context: [Brief context about what was being attempted]
 </OUTPUT_FORMAT>
 
-**Examples of Good Queries:**
-- "manim AttributeError SurroundingRectangle animate wiggle method"
-- "manim TypeError Transform function object len"
-- "manim ImportError missing manim community edition"
+**Examples of Documentation-Targeted Queries:**
+- "manim Polygon ValueError all input arrays must have same number of dimensions site:docs.manim.community"
+- "manim Text AttributeError has no attribute font_size site:docs.manim.community"
+- "manim Transform TypeError takes positional argument site:docs.manim.community"
+- "manim Scene ImportError missing manim community edition site:docs.manim.community"
+
+**Key Requirements for Effective Queries:**
+- ALWAYS include "site:docs.manim.community" to target official documentation
+- Include the specific Manim object/class name (Polygon, Text, Scene, etc.)
+- Include key phrases from the actual error message
+- Prioritize exact error descriptions over generic terms
+- Focus on documentation rather than forum discussions
 
 Generate your response following the OUTPUT_FORMAT exactly. 

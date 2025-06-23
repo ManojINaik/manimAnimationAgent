@@ -116,13 +116,14 @@ class TavilyErrorSearchEngine:
             
         return analysis
 
-    def search_for_solution(self, error_analysis: ErrorAnalysis, max_results: int = 5) -> Dict:
+    def search_for_solution(self, error_analysis: ErrorAnalysis, max_results: int = 5, extract_content: bool = True) -> Dict:
         """
         Step 2: Use Tavily to search for solutions based on the error analysis.
         
         Args:
             error_analysis: ErrorAnalysis object from analyze_error_for_search
             max_results: Maximum number of search results to return
+            extract_content: Whether to extract full page content from URLs using Tavily Extract
             
         Returns:
             Dictionary containing search results and extracted solutions
@@ -138,26 +139,33 @@ class TavilyErrorSearchEngine:
             if self.verbose:
                 print(f"🔍 Searching Tavily for: {error_analysis.search_query}")
                 
-            # Perform the search
+            # Perform the search with documentation priority
             response = self.client.search(
                 query=error_analysis.search_query,
                 search_depth="advanced",
                 max_results=max_results,
                 include_answer=True,
                 include_domains=[
-                    "docs.manim.community",
-                    "github.com",
-                    "stackoverflow.com",
-                    "reddit.com",
-                    "discord.com"
+                    "docs.manim.community",  # Highest priority - official docs
+                    "github.com/ManimCommunity",  # Official GitHub
+                    "github.com",  # Other GitHub repos
+                    "stackoverflow.com"  # Community solutions as backup
+                    # Removed reddit/discord to focus on authoritative sources
                 ]
             )
             
             # Process and structure the results
             processed_results = self._process_search_results(response, error_analysis)
             
+            # Step 3: Extract full content from TOP 3 URLs if requested
+            if extract_content and processed_results.get("solutions"):
+                processed_results = self._extract_full_content(processed_results, max_extractions=3)
+            
             if self.verbose:
                 print(f"✅ Found {len(processed_results.get('solutions', []))} potential solutions")
+                if extract_content:
+                    extracted_count = sum(1 for sol in processed_results.get('solutions', []) if sol.get('extracted_content'))
+                    print(f"📄 Extracted full content from {extracted_count} URLs")
                 
             return processed_results
             
@@ -170,26 +178,28 @@ class TavilyErrorSearchEngine:
                 "fallback_suggestions": self._get_fallback_suggestions(error_analysis)
             }
 
-    def get_error_resolution_suggestions(self, traceback: str, code_context: str = "") -> Dict:
+    def get_error_resolution_suggestions(self, traceback: str, code_context: str = "", extract_content: bool = True) -> Dict:
         """
-        Complete two-step error resolution process.
+        Complete three-step error resolution process.
         
-        This is the main method that combines both steps:
+        This is the main method that combines all steps:
         1. Analyze error and generate search query
         2. Search for solutions using Tavily
+        3. Extract full content from top URLs for deeper analysis
         
         Args:
             traceback: Full error traceback from Manim
             code_context: Additional code context (optional)
+            extract_content: Whether to extract full page content from URLs
             
         Returns:
-            Dictionary containing analysis, search results, and actionable suggestions
+            Dictionary containing analysis, search results, extracted content, and actionable suggestions
         """
         # Step 1: Analyze error
         error_analysis = self.analyze_error_for_search(traceback, code_context)
         
-        # Step 2: Search for solutions
-        search_results = self.search_for_solution(error_analysis)
+        # Step 2: Search for solutions and extract content
+        search_results = self.search_for_solution(error_analysis, extract_content=extract_content)
         
         # Combine results
         return {
@@ -197,6 +207,9 @@ class TavilyErrorSearchEngine:
             "search_results": search_results,
             "actionable_suggestions": self._generate_actionable_suggestions(
                 error_analysis, search_results
+            ),
+            "has_extracted_content": any(
+                sol.get("extracted_content") for sol in search_results.get("solutions", [])
             ),
             "timestamp": self._get_timestamp()
         }
@@ -299,11 +312,124 @@ class TavilyErrorSearchEngine:
                 "url": result.get("url", ""),
                 "content": result.get("content", ""),
                 "relevance_score": result.get("score", 0),
-                "source_type": self._classify_source(result.get("url", ""))
+                "source_type": self._classify_source(result.get("url", "")),
+                "extracted_content": None  # Will be populated by _extract_full_content if enabled
             }
             results["solutions"].append(solution)
         
         return results
+
+    def _extract_full_content(self, search_results: Dict, max_extractions: int = 3) -> Dict:
+        """
+        Step 3: Extract full page content from TOP 3 URLs using Tavily Extract API.
+        
+        Prioritizes URLs by:
+        1. Official docs (docs.manim.community) - highest priority
+        2. GitHub repos - second priority  
+        3. Stack Overflow - third priority
+        
+        Args:
+            search_results: Dictionary containing search results with URLs
+            max_extractions: Maximum number of URLs to extract content from (default: 3)
+            
+        Returns:
+            Updated search results with extracted content from top 3 prioritized URLs
+        """
+        if not self.is_available() or not search_results.get("solutions"):
+            return search_results
+            
+        # Get top URLs based on relevance score and source type priority
+        solutions = search_results["solutions"]
+        prioritized_solutions = self._prioritize_urls_for_extraction(solutions, max_extractions)
+        
+        urls_to_extract = [sol["url"] for sol in prioritized_solutions if sol["url"]]
+        
+        if not urls_to_extract:
+            if self.verbose:
+                print("⚠️ No valid URLs found for content extraction")
+            return search_results
+        
+        try:
+            if self.verbose:
+                print(f"📄 Extracting content from TOP {len(urls_to_extract)} URLs (max 3)...")
+                for i, url in enumerate(urls_to_extract, 1):
+                    print(f"   {i}. {url}")
+                
+            # Use Tavily Extract API to get full page content
+            extract_response = self.client.extract(
+                urls=urls_to_extract,
+                include_images=False,  # Focus on text content for error resolution
+                extract_depth="basic",  # Basic extraction is sufficient for most cases
+                format="markdown"  # Markdown format for better LLM processing
+            )
+            
+            # Process extraction results
+            extraction_results = {}
+            for result in extract_response.get("results", []):
+                url = result.get("url", "")
+                raw_content = result.get("raw_content", "")
+                if url and raw_content:
+                    # Clean and truncate content for LLM processing
+                    cleaned_content = self._clean_extracted_content(raw_content)
+                    extraction_results[url] = cleaned_content
+            
+            # Add extracted content back to solutions
+            for solution in solutions:
+                url = solution["url"]
+                if url in extraction_results:
+                    solution["extracted_content"] = extraction_results[url]
+                    if self.verbose:
+                        content_length = len(extraction_results[url])
+                        print(f"✅ Extracted {content_length} characters from {solution['source_type']}: {solution['title'][:50]}...")
+            
+            # Handle failed extractions
+            failed_results = extract_response.get("failed_results", [])
+            if failed_results and self.verbose:
+                print(f"⚠️ Failed to extract content from {len(failed_results)} URLs")
+                
+        except Exception as e:
+            if self.verbose:
+                print(f"⚠️ Content extraction failed: {e}")
+        
+        return search_results
+
+    def _prioritize_urls_for_extraction(self, solutions: List[Dict], max_extractions: int) -> List[Dict]:
+        """Prioritize which URLs to extract content from based on source type and relevance"""
+        # Define priority order for source types
+        source_priority = {
+            "official_docs": 1,
+            "github": 2,
+            "stackoverflow": 3,
+            "reddit": 4,
+            "other": 5
+        }
+        
+        # Sort by source priority first, then by relevance score
+        prioritized = sorted(
+            solutions,
+            key=lambda x: (
+                source_priority.get(x.get("source_type", "other"), 5),
+                -x.get("relevance_score", 0)
+            )
+        )
+        
+        return prioritized[:max_extractions]
+
+    def _clean_extracted_content(self, raw_content: str, max_length: int = 8000) -> str:
+        """Clean and truncate extracted content for LLM processing"""
+        if not raw_content:
+            return ""
+        
+        # Remove excessive whitespace and clean up formatting
+        cleaned = re.sub(r'\n\s*\n\s*\n', '\n\n', raw_content)  # Reduce multiple newlines
+        cleaned = re.sub(r'[ \t]+', ' ', cleaned)  # Normalize spaces
+        cleaned = cleaned.strip()
+        
+        # Truncate if too long (keep within token limits)
+        if len(cleaned) > max_length:
+            cleaned = cleaned[:max_length] + "\n\n[Content truncated for processing...]"
+        
+        return cleaned
 
     def _classify_source(self, url: str) -> str:
         """Classify the type of source"""
@@ -400,49 +526,151 @@ class TavilyErrorSearchEngine:
         return datetime.now().isoformat()
 
     def _generate_search_query_fallback(self, error_type: str, key_components: List[str], traceback: str) -> str:
-        """Generate a fallback search query when Gemini is not available"""
-        base_query = f"manim {error_type}"
+        """
+        Generate a documentation-targeted search query when Gemini is not available.
         
-        # Add key components in order of importance
-        query_parts = [base_query]
+        Strategy: Focus on official documentation with specific error messages and objects.
+        Format: manim [Object] [ErrorType]: [key error phrase] site:docs.manim.community
+        """
+        # Extract the main Manim object/class involved
+        main_object = self._extract_main_manim_object(traceback, key_components)
         
-        # Add most relevant components
-        for component in key_components[:3]:  # Limit to top 3 components
-            test_query = " ".join(query_parts + [component])
-            if len(test_query) < 350:  # Leave room for additional context
-                query_parts.append(component)
-            else:
-                break
+        # Extract key error phrase from the actual error message
+        error_phrase = self._extract_key_error_phrase(traceback)
         
-        # Add specific context if space allows
-        if "attribute" in traceback.lower() and len(" ".join(query_parts)) < 300:
-            query_parts.append("method attribute")
-        elif "import" in traceback.lower() and len(" ".join(query_parts)) < 300:
-            query_parts.append("import error")
-        elif "argument" in traceback.lower() and len(" ".join(query_parts)) < 300:
-            query_parts.append("parameters arguments")
+        # Build documentation-targeted query
+        query_parts = ["manim"]
         
-        final_query = " ".join(query_parts)
+        # Add the main object if found
+        if main_object:
+            query_parts.append(main_object)
         
-        # Ensure we're under the limit
+        # Add error type
+        query_parts.append(error_type)
+        
+        # Add key error phrase if found and space allows
+        if error_phrase:
+            test_query = " ".join(query_parts + [error_phrase])
+            if len(test_query) < 350:  # Leave room for site: operator
+                query_parts.append(error_phrase)
+        
+        # Always target official documentation first
+        base_query = " ".join(query_parts)
+        final_query = f"{base_query} site:docs.manim.community"
+        
+        # If too long, remove error phrase and try again
         if len(final_query) > 400:
-            final_query = final_query[:397] + "..."
+            base_query = " ".join(query_parts[:-1]) if error_phrase else base_query
+            final_query = f"{base_query} site:docs.manim.community"
+        
+        # Last resort - just basic query
+        if len(final_query) > 400:
+            final_query = f"manim {error_type} {main_object or ''} site:docs.manim.community".strip()
             
         return final_query
 
+    def _extract_main_manim_object(self, traceback: str, key_components: List[str]) -> str:
+        """Extract the main Manim object/class that's causing the error"""
+        # Priority order for Manim objects (most specific first)
+        manim_objects = [
+            # Geometry objects
+            'Polygon', 'Triangle', 'Square', 'Circle', 'Rectangle', 'RegularPolygon', 'Ellipse',
+            'Line', 'Arrow', 'Vector', 'Angle', 'Arc', 'Sector', 'Annulus',
+            
+            # Text and Math
+            'Text', 'MathTex', 'Tex', 'MarkupText', 'Code',
+            
+            # 3D objects
+            'Sphere', 'Cube', 'Cylinder', 'Cone', 'Torus', 'Surface', 'ParametricSurface',
+            
+            # Animations
+            'Transform', 'ReplacementTransform', 'TransformMatchingTex', 'FadeIn', 'FadeOut',
+            'Create', 'Write', 'DrawBorderThenFill', 'ShowCreation', 'GrowFromCenter',
+            'Indicate', 'Flash', 'Circumscribe', 'Wiggle', 'Rotate', 'Move', 'Shift',
+            
+            # Scene and groups
+            'Scene', 'VGroup', 'Group', 'VMobject', 'Mobject',
+            
+            # Number line and graphs
+            'NumberLine', 'Axes', 'Graph', 'BarChart', 'PieChart'
+        ]
+        
+        # Search in traceback and key components
+        text_to_search = (traceback + " " + " ".join(key_components)).lower()
+        
+        for obj in manim_objects:
+            if obj.lower() in text_to_search:
+                return obj
+        
+        # Fallback to first component that looks like a class (capitalized)
+        for component in key_components:
+            if component and component[0].isupper() and len(component) > 2:
+                return component
+                
+        return ""
+
+    def _extract_key_error_phrase(self, traceback: str) -> str:
+        """Extract the most descriptive part of the error message"""
+        # Look for the actual error message line
+        error_message_patterns = [
+            # ValueError patterns
+            r'ValueError: (.+?)(?:\n|$)',
+            # TypeError patterns  
+            r'TypeError: (.+?)(?:\n|$)',
+            # AttributeError patterns
+            r'AttributeError: (.+?)(?:\n|$)',
+            # ImportError patterns
+            r'ImportError: (.+?)(?:\n|$)',
+            r'ModuleNotFoundError: (.+?)(?:\n|$)',
+            # Generic error patterns
+            r'(\w+Error: .+?)(?:\n|$)',
+            r'(\w+Exception: .+?)(?:\n|$)'
+        ]
+        
+        for pattern in error_message_patterns:
+            match = re.search(pattern, traceback, re.MULTILINE | re.IGNORECASE)
+            if match:
+                error_msg = match.group(1).strip()
+                
+                # Clean up and shorten the error message for search
+                # Remove file paths and line numbers
+                error_msg = re.sub(r'/[\w/.-]+\.py:\d+', '', error_msg)
+                error_msg = re.sub(r'File "[^"]+", line \d+', '', error_msg)
+                
+                # Remove excessive technical details but keep key phrases
+                if "same number of dimensions" in error_msg:
+                    return "all input arrays must have same number of dimensions"
+                elif "takes" in error_msg and "argument" in error_msg:
+                    return "takes positional argument"
+                elif "has no attribute" in error_msg:
+                    # Extract the attribute name
+                    attr_match = re.search(r"has no attribute '(\w+)'", error_msg)
+                    if attr_match:
+                        return f"has no attribute {attr_match.group(1)}"
+                elif "unexpected keyword argument" in error_msg:
+                    return "unexpected keyword argument"
+                elif "missing" in error_msg and "required" in error_msg:
+                    return "missing required argument"
+                else:
+                    # Return first 50 characters of cleaned error message
+                    return error_msg[:50].strip()
+        
+        return ""
+
 
 # Helper function for easy integration
-def search_error_solution(traceback: str, code_context: str = "", api_key: Optional[str] = None) -> Dict:
+def search_error_solution(traceback: str, code_context: str = "", api_key: Optional[str] = None, extract_content: bool = True) -> Dict:
     """
-    Convenient function to search for error solutions using Tavily.
+    Convenient function to search for error solutions using Tavily with content extraction.
     
     Args:
         traceback: Full error traceback
         code_context: Additional code context
         api_key: Tavily API key (optional)
+        extract_content: Whether to extract full page content from URLs (default: True)
         
     Returns:
-        Dictionary with error analysis and solution suggestions
+        Dictionary with error analysis, solution suggestions, and extracted content
     """
     engine = TavilyErrorSearchEngine(api_key=api_key, verbose=True)
-    return engine.get_error_resolution_suggestions(traceback, code_context) 
+    return engine.get_error_resolution_suggestions(traceback, code_context, extract_content=extract_content) 

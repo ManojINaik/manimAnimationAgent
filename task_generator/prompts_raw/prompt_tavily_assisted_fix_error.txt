@@ -15,35 +15,48 @@ Error Message:
 Tavily Search Results:
 {tavily_search_results}
 
+Extracted Full Content (from top URLs):
+{extracted_content}
+
 Search Query Used: {search_query}
 </CONTEXT>
 
 <INSTRUCTIONS>
-Using the Tavily search results and your expertise, analyze the error and provide a complete fix. The search results contain real-world solutions and documentation that should guide your fix approach.
+Using the Tavily search results, extracted full content, and your expertise, analyze the error and provide a comprehensive fix. The search results contain real-world solutions and documentation, and the extracted content provides the complete context from the most relevant sources.
 
 **Priority Order for Solutions:**
-1. Official Manim documentation insights
-2. GitHub issues and solutions
-3. Stack Overflow community solutions
-4. Reddit/Discord community fixes
-5. Your expert knowledge as fallback
+1. **Extracted Full Content** - Use the complete pages for detailed implementation guidance
+2. Official Manim documentation insights
+3. GitHub issues and solutions
+4. Stack Overflow community solutions
+5. Reddit/Discord community fixes
+6. Your expert knowledge as fallback
 
 **Key Requirements:**
-- Extract actionable insights from the search results
+- **Prioritize extracted full content** - It contains complete solutions and context
+- Extract actionable insights from both search snippets and full content
+- Cross-reference information between search results and extracted content
 - Apply modern Manim best practices
 - Provide complete, executable code
-- Explain the fix with reference to sources found
+- Explain the fix with reference to specific sources found
+- Quote relevant sections from extracted content when applicable
 </INSTRUCTIONS>
 
 You MUST output in the following format:
 
 <TAVILY_INSIGHTS>
-Key Findings from Search:
-- [Insight 1 from search results]
-- [Insight 2 from search results]
-- [Insight 3 from search results]
+Key Findings from Search Results:
+- [Insight 1 from search snippets]
+- [Insight 2 from search snippets]
+- [Insight 3 from search snippets]
+
+Key Findings from Extracted Content:
+- [Insight 1 from full page content]
+- [Insight 2 from full page content]
+- [Insight 3 from full page content]
 
 Most Relevant Source: [URL or source that best addresses this error]
+Best Extracted Content: [Which extracted page provided the most complete solution]
 </TAVILY_INSIGHTS>
 
 <ERROR_ANALYSIS>
