@@ -59,8 +59,8 @@ jobs:
           
     - name: Fix apt cache permissions
       run: |
-        sudo find /var/cache/apt -type f -exec sudo chmod 644 {} \\;
-        sudo find /var/cache/apt -type d -exec sudo chmod 755 {} \\;
+        sudo find /var/cache/apt -type f -exec sudo chmod 644 {} +
+        sudo find /var/cache/apt -type d -exec sudo chmod 755 {} +
           
     # Cache Python dependencies
     - name: Cache Python dependencies
