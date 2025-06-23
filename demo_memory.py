@@ -25,7 +25,7 @@ def demo_learning_cycle():
         
         # Initialize agent memory
         print("1. Initializing Agent Memory...")
-        memory = AgentMemory(agent_id="demo-theorem-agent")
+        memory = AgentMemory(agent_id="manimAnimationAgent")
         
         if not memory.enabled:
             print("❌ Memory not enabled. Please check your Mem0 API key.")

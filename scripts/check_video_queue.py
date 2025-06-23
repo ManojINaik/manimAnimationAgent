@@ -57,8 +57,13 @@ def check_video_queue():
             
     except Exception as e:
         print(f"Error checking video queue: {str(e)}")
-        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
-            f.write(f"videos_found=false\n")
+        # Only write to GITHUB_OUTPUT if it's available
+        if 'GITHUB_OUTPUT' in os.environ:
+            try:
+                with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+                    f.write(f"videos_found=false\n")
+            except Exception as output_error:
+                print(f"Warning: Could not write to GITHUB_OUTPUT: {output_error}")
         return False
 
 if __name__ == "__main__":

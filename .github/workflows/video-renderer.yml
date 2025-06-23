@@ -18,7 +18,7 @@ on:
 jobs:
   render-video:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120  # Increased timeout to 2 hours to handle video generation
     
     # Use custom Docker container with pre-installed dependencies  
     container:
@@ -26,11 +26,20 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-      # Remove --user runner to avoid permission issues with GitHub Actions temp files
+      options: --user root --shm-size=2g  # Added shared memory for video processing
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      
+    # Clean up disk space to prevent space issues  
+    - name: Free up disk space
+      run: |
+        sudo apt-get clean
+        sudo rm -rf /var/lib/apt/lists/*
+        sudo rm -rf /tmp/*
+        sudo rm -rf /var/tmp/*
+        df -h  # Show available disk space
       
     # No need for Python setup - already in container
     # No need for system dependencies - already in container
@@ -52,6 +61,45 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
         
+    # Validate that all required environment variables are present before starting
+    - name: Validate environment variables
+      env:
+        APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
+        APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
+        APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
+        TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      run: |
+        echo "Validating required environment variables..."
+        
+        # Function to check if variable is set and not empty
+        check_var() {
+          if [ -z "${!1}" ]; then
+            echo "❌ ERROR: $1 is not set or empty"
+            return 1
+          else
+            echo "✅ $1 is set"
+            return 0
+          fi
+        }
+        
+        # Check all required variables
+        check_var "APPWRITE_ENDPOINT" || exit 1
+        check_var "APPWRITE_PROJECT_ID" || exit 1
+        check_var "APPWRITE_API_KEY" || exit 1
+        check_var "GEMINI_API_KEY" || exit 1
+        
+        # Optional variables (don't fail if missing)
+        check_var "OPENAI_API_KEY" || echo "⚠️ OPENAI_API_KEY not set (optional)"
+        check_var "MEM0_API_KEY" || echo "⚠️ MEM0_API_KEY not set (optional)"
+        check_var "TAVILY_API_KEY" || echo "⚠️ TAVILY_API_KEY not set (optional)"
+        check_var "ELEVENLABS_API_KEY" || echo "⚠️ ELEVENLABS_API_KEY not set (optional)"
+        
+        echo "✅ Environment validation complete"
+        
     - name: Set up environment variables
       env:
         APPWRITE_ENDPOINT: ${{ secrets.APPWRITE_ENDPOINT }}
@@ -61,9 +109,16 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         MANIMCE_USE_PROGRESS_BARS: "true"
       run: |
-        echo "Environment variables set"
+        echo "Environment variables set successfully"
+        echo "Working directory: $(pwd)"
+        echo "Available disk space:"
+        df -h
+        
+        # Create necessary directories
+        mkdir -p output api_outputs media temp_audio
         
     - name: Check for queued videos
       id: check_queue
@@ -72,7 +127,12 @@ jobs:
         APPWRITE_PROJECT_ID: ${{ secrets.APPWRITE_PROJECT_ID }}
         APPWRITE_API_KEY: ${{ secrets.APPWRITE_API_KEY }}
       run: |
-        python scripts/check_video_queue.py
+        # Add timeout to prevent hanging
+        timeout 300 python scripts/check_video_queue.py || {
+          echo "❌ Video queue check timed out after 5 minutes"
+          echo "videos_found=false" >> $GITHUB_OUTPUT
+          exit 1
+        }
         
     - name: Render videos
       if: steps.check_queue.outputs.videos_found == 'true'
@@ -84,17 +144,60 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         MANIMCE_USE_PROGRESS_BARS: "true"
         VIDEO_ID: ${{ github.event.inputs.video_id || github.event.client_payload.video_id }}
+      shell: bash  # Explicitly use bash instead of sh to avoid bashism issues
       run: |
-        python scripts/github_video_renderer.py
+        # Set up error handling
+        set -euo pipefail  # Exit on error, undefined variables, pipe failures
         
+        echo "🎬 Starting video rendering process..."
+        echo "Video ID: ${VIDEO_ID:-'Not specified - will process queue'}"
+        echo "Timestamp: $(date)"
+        
+        # Monitor disk space during rendering
+        echo "Initial disk space:"
+        df -h
+        
+        # Run the video renderer with timeout
+        timeout 7200 python scripts/github_video_renderer.py || {
+          exit_code=$?
+          if [ $exit_code -eq 124 ]; then
+            echo "❌ Video rendering timed out after 2 hours"
+            exit 1
+          else
+            echo "❌ Video rendering failed with exit code: $exit_code"
+            exit $exit_code
+          fi
+        }
+        
+        echo "✅ Video rendering completed successfully"
+        echo "Final disk space:"
+        df -h
+        
+    # Enhanced error handling and artifact upload
     - name: Upload artifacts (for debugging)
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: video-render-logs
+        name: video-render-logs-${{ github.run_number }}
         path: |
           output/
           *.log
-        retention-days: 7 
+          **/*.log
+          api_outputs/
+        retention-days: 7
+        if-no-files-found: warn
+        
+    # Clean up after job completion to free space for future runs
+    - name: Cleanup
+      if: always()
+      run: |
+        echo "🧹 Cleaning up workspace..."
+        # Remove large temporary files but keep logs
+        find . -name "*.mp4" -size +100M -delete 2>/dev/null || true
+        find . -name "*.avi" -size +100M -delete 2>/dev/null || true
+        find . -name "temp_*" -type d -exec rm -rf {} + 2>/dev/null || true
+        echo "Cleanup completed"
+        df -h 
