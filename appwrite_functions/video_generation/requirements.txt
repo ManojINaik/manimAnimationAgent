@@ -32,6 +32,7 @@ manim-circuit
 opencv-python>=4.9.0.80
 imageio>=2.34.0
 imageio-ffmpeg>=0.4.9
+ffmpeg-python
 moviepy>=2.0.0
 scipy>=1.12.0
 matplotlib>=3.8.0
