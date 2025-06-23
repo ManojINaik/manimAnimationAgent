@@ -1,17 +1,17 @@
 # GitHub Actions Requirements - Complete dependency list with audio support
 # Optimized for video rendering with ALL required dependencies including audio dubbing
 
-# Python Requirements for GitHub Actions Video Generation
 # Core Python Requirements
 python>=3.11
 
 # Video/Animation/Graphics Libraries
-manim>=0.18.1,<0.19.0    # Keep compatible with manim-physics
+manim>=0.18.1,<0.19.0    # Keep compatible with manim-physics  
 manim-physics>=0.3.0,<0.5.0  # Use older version compatible with manim <0.19.0
 manim-chemistry
 manim-ml
 manim-dsa>=0.2.0,<0.4.0  # Use older version compatible with manim <0.19.0
 manim-circuit
+manim-voiceover>=0.3.0,<0.4.0  # Use older version compatible with dependencies
 
 # Data Science and ML Libraries
 numpy>=1.24.0,<2.1       # Compatible with all packages
@@ -37,6 +37,9 @@ networkx>=3.0
 Pillow>=9.5.0
 opencv-python>=4.8.0
 scikit-image>=0.20.0
+imageio>=2.34.0
+imageio-ffmpeg>=0.4.9
+moviepy>=2.0.0
 
 # Web Framework and API Libraries
 fastapi>=0.104.0,<0.116.0  # Compatible with starlette <0.47.0
@@ -45,6 +48,7 @@ uvicorn[standard]>=0.20.0
 requests>=2.31.0
 httpx>=0.25.0
 aiohttp>=3.8.0
+gradio>=4.15.0
 
 # Database and Storage Libraries
 chromadb>=1.0.0           # Latest version requires PyYAML>=6.0.0
@@ -53,6 +57,7 @@ sqlalchemy>=2.0.0
 asyncpg>=0.28.0
 psycopg2-binary>=2.9.0
 redis>=4.5.0
+appwrite>=4.0.0
 
 # LLM and AI Libraries
 openai>=1.0.0
@@ -66,20 +71,21 @@ langfuse>=2.0.0,<3.0.0    # Avoid packaging<25.0 conflict
 transformers>=4.30.0
 sentence-transformers>=2.2.0
 tiktoken>=0.5.0
+mem0ai>=0.1.0
 
 # Audio Processing Libraries
 gtts>=2.3.0,<2.5.0       # Use older version to avoid click conflict
 click>=7.1.0,<8.2.0      # Compatible with gtts
-manim-voiceover>=0.3.0,<0.4.0  # Use older version
 python-dotenv>=0.21.0,<0.22.0  # Compatible with manim-voiceover
 pydub>=0.25.0
 SpeechRecognition>=3.10.0
+pyttsx3>=2.90
+librosa>=0.10.1
 
 # Utility Libraries
 tqdm>=4.65.0
 rich>=13.0.0
 typer>=0.9.0
-pyyaml>=6.0.0           # Required by chromadb
 toml>=0.10.0
 configparser>=5.3.0
 argparse>=1.4.0
@@ -108,6 +114,8 @@ openpyxl>=3.1.0
 xlsxwriter>=3.1.0
 PyPDF2>=3.0.0
 python-multipart>=0.0.6
+pysrt>=1.1.2
+pylatexenc>=2.10
 
 # Network and Communication Libraries
 websockets>=11.0.0
@@ -141,31 +149,11 @@ environs>=9.5.0
 graphviz>=0.20.0
 pygraphviz>=1.10.0
 
-# Text/Subtitle Processing
-pysrt>=1.1.2
-pylatexenc>=2.10
-
-# Audio Processing & TTS (CI/CD compatible)
-pyttsx3>=2.90
-librosa>=0.10.1
-
-# Additional Libraries
-gradio>=4.15.0
-imageio>=2.34.0
-imageio-ffmpeg>=0.4.9
-ffmpeg-python
-moviepy>=2.0.0
-appwrite>=4.0.0
-aiofiles>=23.2.1
-
-# Memory and Learning
-mem0ai>=0.1.0
-
-# Additional Analysis/Monitoring
-langfuse>=2.0.0
-
-# Web search for error-driven development
+# Web Search and Analysis
 tavily-python>=0.3.0
+
+# Video/Media Processing
+ffmpeg-python
 
 # Audio dubbing strategy for GitHub Actions:
 # 1. Use gTTS (Google Text-to-Speech) - free, no hardware needed
@@ -178,6 +166,4 @@ tavily-python>=0.3.0
 # - PyAudio (requires system audio libraries)
 # - TTS libraries that need audio hardware
 # - Real-time audio processing libraries
-# - ElevenLabs (requires API keys + audio hardware)
-
-manim-voiceover>=0.3.7 
+# - ElevenLabs (requires API keys + audio hardware) 
