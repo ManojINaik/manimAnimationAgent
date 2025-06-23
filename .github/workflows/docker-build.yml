@@ -1,0 +1,97 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+      - 'requirements-github-actions.txt'
+      - '.github/workflows/docker-build.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'Dockerfile'
+      - 'requirements-github-actions.txt'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/manim-animation-agent
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64
+
+    - name: Test Docker image
+      run: |
+        docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest python3.11 -c "
+        import sys
+        print(f'Python version: {sys.version}')
+        
+        # Test key dependencies
+        try:
+            import manim
+            print(f'✓ Manim: {manim.__version__}')
+        except ImportError as e:
+            print(f'✗ Manim import failed: {e}')
+            
+        try:
+            import numpy as np
+            print(f'✓ NumPy: {np.__version__}')
+        except ImportError as e:
+            print(f'✗ NumPy import failed: {e}')
+            
+        try:
+            import cairo
+            print('✓ Cairo imported successfully')
+        except ImportError as e:
+            print(f'✗ Cairo import failed: {e}')
+            
+        try:
+            import cv2
+            print(f'✓ OpenCV: {cv2.__version__}')
+        except ImportError as e:
+            print(f'✗ OpenCV import failed: {e}')
+            
+        print('Docker image test completed!')
+        " 
