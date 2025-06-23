@@ -4,6 +4,10 @@
 # Core Python Requirements
 # Note: Python version is handled by Dockerfile, not pip requirements
 
+# Pydantic Version Fix (Added to resolve ImportError with validate_core_schema)
+pydantic==2.8.2
+pydantic-core==2.20.1
+
 # Video/Animation/Graphics Libraries
 manim>=0.18.1,<0.19.0    # Keep compatible with manim-physics  
 manim-physics>=0.3.0,<0.5.0  # Use older version compatible with manim <0.19.0
