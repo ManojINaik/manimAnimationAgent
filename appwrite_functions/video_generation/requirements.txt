@@ -13,10 +13,33 @@ requests>=2.31.0
 # Basic data handling
 # pydantic>=2.0.0
 # aiofiles>=23.2.1
-# numpy>=1.24.0
-# Pillow>=10.2.0
+numpy>=1.24.0
+Pillow>=10.2.0
 
 # New dependencies
 langfuse>=2.33.0
 google-generativeai>=0.7.0
 tavily-python>=0.3.0 
+
+# Animation, Video, and Audio Processing
+manim>=0.18.0
+manim-voiceover>=0.3.7
+manim-physics
+manim-chemistry
+manim-ml
+manim-dsa
+manim-circuit
+opencv-python>=4.9.0.80
+imageio>=2.34.0
+imageio-ffmpeg>=0.4.9
+moviepy>=2.0.0
+scipy>=1.12.0
+matplotlib>=3.8.0
+pysrt>=1.1.2
+pylatexenc>=2.10
+SpeechRecognition>=3.14.0
+pydub>=0.25.1
+soundfile>=0.12.1
+gTTS>=2.5.0
+pyttsx3>=2.90
+librosa>=0.10.1 

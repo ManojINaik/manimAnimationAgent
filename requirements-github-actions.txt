@@ -13,6 +13,11 @@ tiktoken>=0.4.0
 
 # Video/Animation/Graphics Libraries
 manim>=0.18.0
+manim-physics
+manim-chemistry
+manim-ml
+manim-dsa
+manim-circuit
 opencv-python>=4.9.0.80
 Pillow>=10.2.0
 imageio>=2.34.0

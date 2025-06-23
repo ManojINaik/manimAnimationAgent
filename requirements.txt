@@ -60,6 +60,12 @@ proto-plus>=1.25.0
 protobuf>=5.28.3
 
 # Video processing dependencies
+manim>=0.18.0
+manim-physics
+manim-chemistry
+manim-ml
+manim-dsa
+manim-circuit
 pillow>=8.3.0
 moviepy>=2.0.0
 pysrt>=1.1.0
