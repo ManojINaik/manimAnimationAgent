@@ -81,6 +81,7 @@ pydub>=0.25.0
 SpeechRecognition>=3.10.0
 pyttsx3>=2.90
 librosa>=0.10.1
+elevenlabs>=0.2.0        # Advanced TTS with API key support
 
 # Utility Libraries
 tqdm>=4.65.0
