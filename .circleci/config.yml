@@ -248,7 +248,7 @@ workflows:
   scheduled-video-check:
     triggers:
       - schedule:
-          cron: "*/10 * * * *"  # Every 10 minutes
+          cron: "0 */2 * * *"  # Every 2 hours (more reasonable for video processing)
           filters:
             branches:
               only:
