@@ -103,12 +103,25 @@ export default function VideoGenerator() {
         setScenes([]);
 
         try {
-            const result = await generateVideo(topic, description);
-            if (result.success && result.videoId) {
-                const video = await getVideo(result.videoId);
+            // Call API with topic and description only (CircleCI is default)
+            const result = await fetch('/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    topic,
+                    description
+                }),
+            });
+
+            const data = await result.json();
+            
+            if (data.success && data.videoId) {
+                const video = await getVideo(data.videoId);
                 if (video) setCurrentVideo(video);
             } else {
-                throw new Error(result.error || 'Failed to start video generation');
+                throw new Error(data.error || 'Failed to start video generation');
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
@@ -182,7 +195,7 @@ export default function VideoGenerator() {
             <div className="mx-auto max-w-2xl text-center">
                 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Let's Create a Video</h2>
                 <p className="mt-6 text-lg leading-8 text-gray-600">
-                    Start with a topic and optional description. Our AI will handle the rest.
+                    Start with a topic and optional description. Powered by CircleCI cloud rendering.
                 </p>
             </div>
             
@@ -200,41 +213,63 @@ export default function VideoGenerator() {
                 ))}
             </div>
 
-            <div className="mx-auto mt-8 max-w-2xl">
-                <form onSubmit={handleSubmit} className="glass-card space-y-6">
+            <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl">
+                <div className="space-y-6">
                     <div>
-                        <label htmlFor="topic" className="block text-sm font-medium text-gray-700">Topic</label>
-                        <input
-                            id="topic"
-                            type="text"
-                            value={topic}
-                            onChange={(e) => setTopic(e.target.value)}
-                            placeholder="e.g., Newton's Laws of Motion"
-                            className="input-field"
-                            required
-                            disabled={isGenerating}
-                        />
+                        <label htmlFor="topic" className="block text-sm font-medium leading-6 text-gray-900">
+                            Topic *
+                        </label>
+                        <div className="mt-2">
+                            <input
+                                type="text"
+                                name="topic"
+                                id="topic"
+                                value={topic}
+                                onChange={(e) => setTopic(e.target.value)}
+                                className="input-field"
+                                placeholder="e.g., Newton's Laws of Motion"
+                                required
+                                disabled={isGenerating}
+                            />
+                        </div>
                     </div>
+
                     <div>
-                        <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description (Optional)</label>
-                        <textarea
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Provide additional context or requirements..."
-                            className="input-field"
-                            rows={3}
-                            disabled={isGenerating}
-                        />
+                        <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
+                            Description (Optional)
+                        </label>
+                        <div className="mt-2">
+                            <textarea
+                                name="description"
+                                id="description"
+                                rows={4}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                className="input-field"
+                                placeholder="Provide additional context or specific requirements..."
+                                disabled={isGenerating}
+                            />
+                        </div>
                     </div>
+
+                    {/* CircleCI Info Badge */}
+                    <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                        <svg className="h-5 w-5 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8.96 12c0-1.681 1.359-3.04 3.04-3.04s3.04 1.359 3.04 3.04-1.359 3.04-3.04 3.04S8.96 13.681 8.96 12zM12 0C5.376 0 0 5.376 0 12s5.376 12 12 12c4.104 0 7.792-2.076 9.976-5.548l-4.032-2.328C16.536 17.384 14.424 18.4 12 18.4c-3.536 0-6.4-2.864-6.4-6.4S8.464 5.6 12 5.6s6.4 2.864 6.4 6.4c0 .088-.016.176-.024.256L22.4 14.4c.384-1.472.6-3.008.6-4.8C24 5.376 18.624 0 12 0z"/>
+                        </svg>
+                        <span className="text-sm font-medium text-blue-900">
+                            Videos will be rendered using CircleCI cloud infrastructure
+                        </span>
+                    </div>
+
                     <button
                         type="submit"
-                        disabled={isGenerating || !topic}
+                        disabled={!topic || isGenerating}
                         className="btn-primary w-full"
                     >
                         {isGenerating ? (
                             <>
-                                <svg className="mr-3 h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <svg className="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -242,15 +277,15 @@ export default function VideoGenerator() {
                             </>
                         ) : (
                             <>
-                                <svg className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
-                                </svg>
                                 Generate Video
+                                <svg className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                </svg>
                             </>
                         )}
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
 
             {error && (
                 <div className="mx-auto mt-8 max-w-2xl rounded-md bg-red-50 p-4">

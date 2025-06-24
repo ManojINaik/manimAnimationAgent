@@ -4,7 +4,7 @@ version: 2.1
 parameters:
   workflow:
     type: string
-    default: "ci-cd"
+    default: "video-rendering"
   video_id:
     type: string
     default: ""
@@ -67,8 +67,8 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - pip-deps-v1-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-github-actions.txt" }}
-            - pip-deps-v1-{{ .Environment.CIRCLE_JOB }}-
+            - pip-deps-v2-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-github-actions.txt" }}
+            - pip-deps-v2-{{ .Environment.CIRCLE_JOB }}-
       - run:
           name: Free up disk space
           command: |
@@ -87,8 +87,6 @@ commands:
             export PYTHONPATH="$PWD:$PYTHONPATH"
             
             pip install --upgrade pip setuptools wheel
-            
-            # Install dependencies with legacy resolver to handle conflicts
             pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
             
             # Verify critical packages are installed
@@ -102,7 +100,7 @@ commands:
             python -c "import pygraphviz; print('✅ PyGraphViz installed successfully')" || echo "❌ PyGraphViz import failed"
             echo "✅ Dependency verification completed"
       - save_cache:
-          key: pip-deps-v1-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-github-actions.txt" }}
+          key: pip-deps-v2-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-github-actions.txt" }}
           paths:
             - "~/.cache/pip"
             - "venv"
@@ -140,123 +138,16 @@ commands:
             
             echo "✅ Environment validation complete"
 
-  setup-node-env:
-    description: "Set up Node.js environment with caching"
-    steps:
-      - restore_cache:
-          keys:
-            - node-deps-v1-{{ checksum "frontend_example/package-lock.json" }}
-            - node-deps-v1-
-      - run:
-          name: Install Node.js dependencies
-          working_directory: frontend_example
-          command: npm ci
-      - save_cache:
-          key: node-deps-v1-{{ checksum "frontend_example/package-lock.json" }}
-          paths:
-            - "frontend_example/node_modules"
-
 # Define executors
 executors:
   python-executor:
     docker:
       - image: cimg/python:3.11
-    working_directory: ~/project
-    
-  node-executor:
-    docker:
-      - image: cimg/node:18.17
+    resource_class: large
     working_directory: ~/project
 
 # Define jobs
 jobs:
-  # Test Python backend
-  test-backend:
-    executor: python-executor
-    steps:
-      - checkout
-      - install-system-deps
-      - setup-python-env
-      - run:
-          name: Run Python tests
-          command: |
-            . venv/bin/activate
-            
-            # Set up Python path
-            export PYTHONPATH="$PWD:$PYTHONPATH"
-            
-            # Create test results directory
-            mkdir -p test-results
-            
-            echo "🧪 Running Python tests..."
-            python -m pytest test_*.py -v --tb=short --junitxml=test-results/python-tests.xml || echo "Tests completed with some failures"
-      - run:
-          name: Test Manim installation and basic functionality
-          command: |
-            . venv/bin/activate
-            
-            # Set up Python path
-            export PYTHONPATH="$PWD:$PYTHONPATH"
-            
-            echo "🎬 Testing Manim installation..."
-            python test_simple_manim.py
-            
-            echo "🔧 Testing additional critical components..."
-            python -c "
-            try:
-                import manim
-                from manim import Scene, Circle, Create
-                print('✅ Manim basic classes import successfully')
-            except Exception as e:
-                print(f'❌ Manim basic test failed: {e}')
-                
-            try:
-                import appwrite
-                print('✅ Appwrite SDK available')
-            except Exception as e:
-                print(f'❌ Appwrite test failed: {e}')
-                
-            try:
-                import mem0
-                print('✅ Mem0 AI available')
-            except Exception as e:
-                print(f'⚠️ Mem0 AI not available: {e}')
-                
-            try:
-                import openai
-                print('✅ OpenAI SDK available')
-            except Exception as e:
-                print(f'⚠️ OpenAI SDK not available: {e}')
-            "
-      - store_test_results:
-          path: test-results
-      - store_artifacts:
-          path: test-results
-          destination: test-results
-
-  # Build and test frontend
-  test-frontend:
-    executor: node-executor
-    steps:
-      - checkout
-      - setup-node-env
-      - run:
-          name: Run frontend linting
-          working_directory: frontend_example
-          command: npm run lint
-      - run:
-          name: Build frontend
-          working_directory: frontend_example
-          command: npm run build
-      - run:
-          name: Test frontend build
-          working_directory: frontend_example
-          command: ls -la .next/
-      - store_artifacts:
-          path: frontend_example/.next
-          destination: frontend-build
-
-  # Render videos (manual trigger)
   render-video:
     executor: python-executor
     parameters:
@@ -297,6 +188,7 @@ jobs:
             }
       - run:
           name: Render videos
+          no_output_timeout: 2h
           command: |
             . venv/bin/activate
             
@@ -332,7 +224,6 @@ jobs:
             echo "✅ Video rendering completed successfully"
             echo "Final disk space:"
             df -h
-          no_output_timeout: 2h
       - run:
           name: Cleanup
           when: always
@@ -357,114 +248,20 @@ jobs:
           path: "**/*.log"
           destination: all-logs
 
-  # Deploy frontend to staging
-  deploy-frontend-staging:
-    executor: node-executor
-    steps:
-      - checkout
-      - setup-node-env
-      - run:
-          name: Build frontend for production
-          working_directory: frontend_example
-          command: |
-            npm run build
-            npm run export || echo "Static export not configured"
-      - run:
-          name: Deploy to staging (placeholder)
-          command: |
-            echo "Deploying frontend to staging environment..."
-            echo "Build artifacts ready at frontend_example/.next/"
-      - store_artifacts:
-          path: frontend_example/.next
-          destination: frontend-staging
-
-  # Deploy backend to staging
-  deploy-backend-staging:
-    executor: python-executor
-    steps:
-      - checkout
-      - install-system-deps
-      - setup-python-env
-      - run:
-          name: Prepare deployment package
-          command: |
-            . venv/bin/activate
-            echo "Preparing backend deployment package..."
-            tar -czf backend-package.tar.gz \
-              --exclude='venv' \
-              --exclude='node_modules' \
-              --exclude='.git' \
-              --exclude='output' \
-              --exclude='media' \
-              --exclude='flagged' \
-              --exclude='__pycache__' \
-              .
-      - run:
-          name: Deploy to staging (placeholder)
-          command: |
-            echo "Deploying backend to staging environment..."
-            echo "Package size: $(du -h backend-package.tar.gz)"
-      - store_artifacts:
-          path: backend-package.tar.gz
-          destination: backend-staging
-
 # Define workflows
 workflows:
   version: 2
   
-  # Main CI/CD workflow
-  ci-cd:
-    when:
-      or:
-        - equal: [ "ci-cd", << pipeline.parameters.workflow >> ]
-        - not: << pipeline.parameters.workflow >>
-    jobs:
-      - test-backend:
-          filters:
-            branches:
-              only: /.*/
-      - test-frontend:
-          filters:
-            branches:
-              only: /.*/
-      - deploy-frontend-staging:
-          requires:
-            - test-frontend
-          filters:
-            branches:
-              only: 
-                - main
-                - circleci
-                - staging
-      - deploy-backend-staging:
-          requires:
-            - test-backend
-          filters:
-            branches:
-              only: 
-                - main
-                - circleci
-                - staging
-
-  # Video rendering workflow (manual trigger)
+  # Video rendering workflow (triggered manually via API or frontend)
   video-rendering:
-    when:
-      and:
-        - equal: [ "video-rendering", << pipeline.parameters.workflow >> ]
     jobs:
       - render-video:
           video_id: << pipeline.parameters.video_id >>
+          filters:
+            branches:
+              only: 
+                - main
+                - circleci
+                - staging
 
-  # Scheduled video processing (commented out for now due to cron format issues)
-  # scheduled-video-check:
-  #   triggers:
-  #     - schedule:
-  #         cron: "0 12 * * *"  # Daily at noon UTC
-  #         filters:
-  #           branches:
-  #             only:
-  #               - main
-  #               - circleci
-  #   jobs:
-  #     - render-video:
-  #         video_id: "" 
+ 

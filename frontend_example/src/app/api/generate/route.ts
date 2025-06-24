@@ -1,56 +1,63 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Client, Databases, ID } from 'node-appwrite';
 
-// GitHub dispatch helper
-async function triggerGithubWorkflow(videoId: string) {
-  const owner = process.env.GITHUB_REPO_OWNER!; // e.g. "ManojINaik"
-  const repo = process.env.GITHUB_REPO_NAME!;   // e.g. "manimAnimationAgent"
-  const workflow = process.env.GITHUB_WORKFLOW_FILENAME || 'video-renderer.yml';
-  const ghPat = process.env.GH_PAT!; // Personal Access Token with 'workflow' permission
+// CircleCI dispatch helper
+async function triggerCircleCIWorkflow(videoId: string) {
+  const token = process.env.CIRCLECI_TOKEN;
+  const org = process.env.CIRCLECI_ORG || 'gh/your-username'; // e.g., 'gh/ManojINaik'
+  const project = process.env.CIRCLECI_PROJECT || 'manimAnimationAgent';
+  const branch = process.env.CIRCLECI_BRANCH || 'main';
 
-  console.log('Triggering GitHub workflow:', { owner, repo, workflow, videoId });
-  console.log('GitHub PAT available:', !!ghPat);
+  if (!token) {
+    throw new Error('CircleCI token not configured');
+  }
+
+  console.log('Triggering CircleCI workflow:', { org, project, videoId });
 
   const maxRetries = 3;
   const baseDelay = 1000; // 1 second
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`GitHub dispatch attempt ${attempt}/${maxRetries}`);
+      console.log(`CircleCI dispatch attempt ${attempt}/${maxRetries}`);
       
-      // Add timeout to prevent hanging
       const controller = new AbortController();
-      const timeoutMs = Number(process.env.GITHUB_API_TIMEOUT_MS || 30000); // default 30s if not set
-      console.log(`GitHub fetch timeout set to ${timeoutMs} ms`);
+      const timeoutMs = Number(process.env.CIRCLECI_API_TIMEOUT_MS || 30000);
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
       
-      const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`, {
+      const response = await fetch(`https://circleci.com/api/v2/project/${org}/${project}/pipeline`, {
         method: 'POST',
         headers: {
-          Authorization: `token ${ghPat}`,
+          'Circle-Token': token,
           'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github+json',
-          'User-Agent': 'Manim-Animation-Agent/1.0',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
-          ref: 'main',
-          inputs: { video_id: videoId },
+          branch: branch,
+          parameters: {
+            workflow: 'video-rendering',
+            video_id: videoId
+          }
         }),
         signal: controller.signal,
       }).finally(() => clearTimeout(timeoutId));
       
-      console.log('GitHub API response status:', response.status);
+      console.log('CircleCI API response status:', response.status);
       
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('GitHub API error:', errorText);
-        throw new Error(`GitHub API failed: ${response.status} - ${errorText}`);
+        console.error('CircleCI API error:', errorText);
+        throw new Error(`CircleCI API failed: ${response.status} - ${errorText}`);
       }
       
-      console.log('✅ Successfully triggered GitHub workflow');
-      return; // Success, exit retry loop
+      const result = await response.json();
+      console.log('✅ Successfully triggered CircleCI workflow');
+      console.log(`   Pipeline ID: ${result.id}`);
+      console.log(`   Pipeline Number: ${result.number}`);
+      console.log(`   Dashboard: https://app.circleci.com/pipelines/${org}/${project}/${result.number}`);
+      return result;
     } catch (err: any) {
-      console.error(`❌ GitHub dispatch attempt ${attempt} failed:`, err);
+      console.error(`❌ CircleCI dispatch attempt ${attempt} failed:`, err);
       
       const isNetworkError = err.code === 'ETIMEDOUT' || 
                            err.code === 'ECONNRESET' || 
@@ -60,12 +67,9 @@ async function triggerGithubWorkflow(videoId: string) {
                            err.message?.includes('timeout');
       
       if (attempt === maxRetries || !isNetworkError) {
-        // Last attempt or non-retryable error
-        console.error('❌ All GitHub dispatch attempts failed or non-retryable error');
-        return; // Exit without throwing to avoid blocking document creation
+        throw new Error(`CircleCI workflow trigger failed: ${err.message}`);
       }
       
-      // Wait before retry with exponential backoff
       const delay = baseDelay * Math.pow(2, attempt - 1);
       console.log(`⏳ Waiting ${delay}ms before retry...`);
       await new Promise(resolve => setTimeout(resolve, delay));
@@ -88,14 +92,6 @@ const VIDEOS_COLLECTION_ID = 'videos';
 export async function POST(request: NextRequest) {
   console.log('📥 API /generate POST request received at:', new Date().toISOString());
   
-  // Check required environment variables
-  const requiredEnvVars = ['GITHUB_REPO_OWNER', 'GITHUB_REPO_NAME', 'GH_PAT'];
-  const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
-  
-  if (missingVars.length > 0) {
-    console.error('Missing environment variables:', missingVars);
-  }
-
   try {
     const body = await request.json();
     const { topic, description } = body;
@@ -119,21 +115,47 @@ export async function POST(request: NextRequest) {
         description: description || `Educational video about ${topic}`,
         status: 'queued_for_render',
         scene_count: 0,
+        platform: 'circleci',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
     );
 
-    // Fire GitHub Actions workflow asynchronously (do not await to avoid blocking response)
-    triggerGithubWorkflow((videoDocument as any).$id).catch(err => {
-      console.error('❌ GitHub workflow trigger ultimately failed after all retries:', err);
-      // Don't throw - just log the error so document creation succeeds
-    });
+    const videoId = (videoDocument as any).$id;
+    console.log(`📹 Created video document: ${videoId} for CircleCI processing`);
+
+    // Trigger CircleCI workflow
+    try {
+      const result = await triggerCircleCIWorkflow(videoId);
+      console.log('🎯 CircleCI workflow triggered successfully:', result);
+    } catch (triggerError: any) {
+      console.error('❌ CircleCI workflow trigger failed:', triggerError);
+      // Update video status to failed if trigger fails
+      await databases.updateDocument(
+        DATABASE_ID,
+        VIDEOS_COLLECTION_ID,
+        videoId,
+        {
+          status: 'failed',
+          error_message: `Failed to trigger CircleCI: ${triggerError.message}`,
+          updated_at: new Date().toISOString(),
+        }
+      );
+      
+      return NextResponse.json(
+        {
+          success: false,
+          error: `Failed to trigger video rendering: ${triggerError.message}`,
+        },
+        { status: 500 },
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      videoId: (videoDocument as any).$id,
-      message: 'Video generation task has been successfully queued.',
+      videoId: videoId,
+      platform: 'circleci',
+      message: 'Video generation task has been successfully queued for CircleCI processing.',
     });
   } catch (error: any) {
     console.error('Error creating video document in Appwrite:', error);
