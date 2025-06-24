@@ -928,6 +928,23 @@ class VideoGenerator:
                         except Exception as e:
                             print(f"⚠️ File upload failed: {e}")
                     
+                    # Ensure video status is updated with final file URLs
+                    if self.use_appwrite and self.appwrite_manager:
+                        if video_file_id:
+                            await self.update_video_status(
+                                video_id,
+                                "completed",
+                                combined_video_url=video_file_id,
+                                subtitles_url=subtitles_file_id,
+                            )
+                        else:
+                            # If upload failed, mark as failed with message
+                            await self.update_video_status(
+                                video_id,
+                                "failed",
+                                error_message="Combined video upload failed."
+                            )
+                    
                     # Now that combination is complete, we can clean up individual scene files
                     print("🧹 Cleaning up individual scene files after successful combination...")
                     media_base = os.path.join(self.output_dir, file_prefix, "media", "videos")
