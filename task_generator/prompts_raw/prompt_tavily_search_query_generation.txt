@@ -12,18 +12,18 @@ Implementation Plan Context:
 </CONTEXT>
 
 <TASK>
-Analyze the provided traceback and generate the most effective search query to find a solution. Focus on:
+Analyze the provided traceback and generate the most effective search query to find a solution. The query **MUST** be targeted at the official Manim documentation.
 
-1. **Error Type**: Identify the specific exception (AttributeError, TypeError, etc.)
-2. **Key Components**: Extract the most important Manim classes, methods, or concepts
-3. **Root Cause**: Determine what specifically went wrong
-4. **Search Strategy**: Create a query that will find relevant documentation or solutions
+**Key Requirements for Effective Queries:**
+- **ALWAYS** include `"site:docs.manim.community"` to target official documentation. This is not optional.
+- Include the specific Manim object or class name (e.g., `Polygon`, `Text`, `Scene`).
+- Include the most relevant key phrases from the actual error message (e.g., `"takes 1 positional argument but 2 were given"`).
+- Combine these elements into a precise query.
 
 **Important Constraints:**
-- Query MUST be under 400 characters
-- Focus on the most specific, actionable parts of the error
-- Include "manim" as a keyword
-- Prioritize technical terms over generic descriptions
+- Query MUST be under 400 characters.
+- Query MUST start with "manim".
+- Prioritize technical terms from the traceback.
 </TASK>
 
 <OUTPUT_FORMAT>
@@ -43,11 +43,10 @@ Key Error Components:
 - "manim Transform TypeError takes positional argument site:docs.manim.community"
 - "manim Scene ImportError missing manim community edition site:docs.manim.community"
 
-**Key Requirements for Effective Queries:**
-- ALWAYS include "site:docs.manim.community" to target official documentation
-- Include the specific Manim object/class name (Polygon, Text, Scene, etc.)
-- Include key phrases from the actual error message
-- Prioritize exact error descriptions over generic terms
-- Focus on documentation rather than forum discussions
+**How to Construct the Best Query:**
+1.  **Start with "manim"**: `manim`
+2.  **Add the Class/Object**: `manim Polygon`
+3.  **Add the Core Error Message**: `manim Polygon "takes 1 positional argument but 2 were given"`
+4.  **Append the Site Specifier**: `manim Polygon "takes 1 positional argument but 2 were given" site:docs.manim.community`
 
-Generate your response following the OUTPUT_FORMAT exactly. 
+Generate your response following the OUTPUT_FORMAT exactly.

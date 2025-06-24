@@ -15,6 +15,15 @@ Scene Technical Implementation:
 
 **Code Generation Guidelines:**
 
+**🚨 CRITICAL WARNING: NO EXTERNAL ASSETS ALLOWED! 🚨**
+**Using `ImageMobject("forest_ecosystem.jpg")` or similar will cause fatal OSError crashes!**
+**ALWAYS create procedural alternatives using Rectangle(), Circle(), Polygon(), etc.**
+
+**🚨 CRITICAL WARNING: PREVENT COMMON MANIM ERRORS! 🚨**
+**TypeError Prevention:** Pass vertices as separate args: `Polygon(v1, v2, v3)`, not `Polygon([v1, v2, v3])`
+**AttributeError Prevention:** Use helper object: `helper.create_method()`, not `self.create_method()`
+**ValueError Prevention:** Always use 3D coordinates: `np.array([x, y, 0])`, not `[x, y]`
+
 1.  **Scene Class:** Class name `Scene{scene_number}`, where `{scene_number}` is replaced by the scene number (e.g., `Scene1`, `Scene2`). The scene class should at least inherit from `VoiceoverScene`. However, you can add more Manim Scene classes on top of VoiceoverScene for multiple inheritance if needed.
 2.  **Imports:** Include ALL necessary imports explicitly at the top of the file, based on used Manim classes, functions, colors, and constants. Do not rely on implicit imports. Double-check for required modules, classes, functions, colors, and constants, *ensuring all imports are valid and consistent with the Manim Documentation*.  **Include imports for any used Manim plugins.**
 3.  **Speech Service:** Initialize speech service using `get_speech_service()`. You MUST import like this: `from src.utils.elevenlabs_voiceover import get_speech_service` as this is our custom voiceover service that conditionally enables voice generation.
@@ -28,7 +37,7 @@ Scene Technical Implementation:
         *   Include the necessary import statement at the top of the file.
         *   Add a comment indicating the plugin used and its purpose: `### Plugin: <plugin_name> - <brief justification>`.
         *   Ensure all plugin usage adheres to the plugin's documentation.
-10. **No External Assets:** No external files (images, audio, video). *Use only Manim built-in elements and procedural generation, or elements provided by approved Manim plugins. No external assets are allowed*.
+10. **🚨 NO EXTERNAL ASSETS - FATAL ERROR PREVENTION 🚨:** **ABSOLUTELY NO** external files (images, audio, video). **NEVER use `ImageMobject("filename.jpg")` or `SVGMobject("filename.svg")` - this causes immediate OSError crashes!** *Use ONLY Manim built-in elements and procedural generation. ANY external asset usage will break the rendering pipeline.*
 11. **No Main Function:** Only scene class. No `if __name__ == "__main__":`.
 12. **Spatial Accuracy (Paramount):** Achieve accurate spatial positioning as described in the technical implementation plan, *strictly using relative positioning methods (`next_to`, `align_to`, `shift`, VGroups) and enforcing safe area margins and minimum 0.3 unit spacing, as documented in Manim Documentation Context*. *Spatial accuracy and constraint adherence are the highest priorities in code generation.*
 13. **VGroup Structure:** Implement VGroup hierarchy precisely as defined in the Technical Implementation Plan, using documented VGroup methods for object grouping and manipulation.
@@ -187,14 +196,23 @@ def label_triangle_sides(self, triangle, labels=["a", "b", "c"]):
         return labeled_sides
 ```
 
-**CRITICAL ASSET GUIDELINES:**
-- NEVER use `SVGMobject()` with external files like "car.svg", "person.svg", etc.
-- ALWAYS use built-in Manim objects and basic geometric shapes:
-  * For cars: Use `Rectangle()` with `RoundedRectangle()` for wheels
-  * For people: Use `Circle()` for head, `Rectangle()` for body
-  * For objects: Use `Circle()`, `Rectangle()`, `Triangle()`, `Polygon()`, etc.
-- Use `Text()` or `Tex()` for labels, avoid complex LaTeX when possible
-- Create simple visual representations rather than loading external assets
+**🚨 CRITICAL ASSET GUIDELINES - MANDATORY CONSTRAINTS 🚨**
+**NEVER USE EXTERNAL FILES - THIS WILL CAUSE FATAL ERRORS!**
+
+- **ABSOLUTELY FORBIDDEN:** `SVGMobject()` or `ImageMobject()` with external file paths like "car.svg" or "forest_ecosystem.jpg".
+- **ALWAYS PROCEDURALLY GENERATE:** Use Manim's built-in shapes (`Rectangle`, `Circle`, `Polygon`).
+- **IF A PLAN SUGGESTS AN IMAGE:** You MUST generate a procedural substitute.
+
+**PROCEDURAL ALTERNATIVES FOR COMMON OBJECTS:**
+  * Forest/Ecosystem: Use `Rectangle()` with `GREEN` fill + `Circle()` objects for trees
+  * Cars: Use `Rectangle()` with `RoundedRectangle()` for wheels
+  * People: Use `Circle()` for head, `Rectangle()` for body
+  * Buildings: Use `Rectangle()` and `Polygon()` combinations
+  * Landscapes: Use layered `Rectangle()` objects with different colors
+  * Plants: Use `Line()` for stems + `Circle()` or `Polygon()` for leaves
+  * Cells: Use `Circle()` or `Ellipse()` with internal structures as smaller shapes
+
+**REMEMBER:** External assets cause `OSError: could not find file` - Use procedural generation ONLY!
 
 **TEXT RENDERING BEST PRACTICES:**
 - Prefer `Text()` over `Tex()` for simple labels and titles
@@ -202,16 +220,71 @@ def label_triangle_sides(self, triangle, labels=["a", "b", "c"]):
 - Avoid complex LaTeX packages or special characters that might cause compilation issues
 - Use `DecimalNumber()` for numeric displays instead of LaTeX formatting
 
-**MANIM API BEST PRACTICES:**
-- For curved lines, use `CurvedArrow()` or `ArcBetweenPoints()` instead of manually creating bezier curves
-- Avoid using `add_cubic_bezier_curve_to()` - use built-in curved objects instead
-- For dashed lines: use `DashedLine(start, end)` without additional curve modifications  
-- For simple curves: use `Arc()`, `Circle()`, or `ArcBetweenPoints()`
-- Check Manim documentation for correct method signatures and parameters
-- **Polygon Usage**: When creating polygons (e.g., triangles), pass each vertex as a separate positional argument: `Polygon(v1, v2, v3, ..., color=BLUE)`. **Do NOT** wrap vertices in a list (`Polygon([v1, v2, v3])`) and **do NOT** use the keyword argument `points=`.
-  • For common shapes consider using built-in classes like `Triangle()`, `RightTriangle()`, or `RegularPolygon(n)`, which require fewer manual vertices and reduce errors.
-- **Arrow3D Usage**: When using `Arrow3D`, do NOT use the `buff` parameter as it's not supported. Use only `start`, `end`, `color`, and `thickness` parameters
-- **3D Objects**: For 3D scenes, ensure proper camera setup and avoid mixing 2D positioning methods with 3D objects
+**🚨 MANIM API BEST PRACTICES - ERROR PREVENTION 🚨**
+
+**CRITICAL CONSTRUCTOR PATTERNS:**
+1. **Polygon/Line Creation - PREVENT TypeError:**
+   - ✅ CORRECT: Pass vertices as separate arguments
+     ```python
+     Polygon(v1, v2, v3, color=BLUE)
+     Line(start, end)
+     ```
+   - ❌ WRONG: Never wrap vertices in lists
+     ```python
+     Polygon([v1, v2, v3])  # TypeError: takes 1 positional argument but 2 were given
+     Line([start], [end])   # TypeError: takes 1 positional argument but 2 were given
+     ```
+   - For common shapes, prefer built-in classes:
+     - Use `Triangle()`, `RightTriangle()`, `RegularPolygon(n)`
+     - These require fewer vertices and reduce errors
+
+2. **Helper Method Usage - PREVENT AttributeError:**
+   - ✅ CORRECT: Always use helper object
+     ```python
+     helper = Scene1_Helper(self)
+     formula = helper.create_formula_tex("E=mc^2", BLUE)
+     ```
+   - ❌ WRONG: Never call helper methods on self
+     ```python
+     formula = self.create_formula_tex("E=mc^2", BLUE)  # AttributeError: no attribute 'create_formula_tex'
+     ```
+
+3. **NumPy Array Operations - PREVENT ValueError:**
+   - ✅ CORRECT: Use proper vertex format
+     ```python
+     v1 = np.array([1, 0, 0])
+     v2 = np.array([0, 1, 0])
+     Polygon(v1, v2, v3)
+     ```
+   - ❌ WRONG: Never mix dimensions/types
+     ```python
+     v1 = [1, 0]           # Missing z-coordinate
+     v2 = np.array([0, 1]) # Wrong dimension
+     ```
+
+**ANIMATION & OBJECT BEST PRACTICES:**
+- For curved lines: Use `CurvedArrow()` or `ArcBetweenPoints()`
+- For dashed lines: Use `DashedLine(start, end)`
+- For simple curves: Use `Arc()`, `Circle()`, `ArcBetweenPoints()`
+- For 3D objects: Ensure proper camera setup, avoid mixing 2D/3D methods
+- For Arrow3D: Only use `start`, `end`, `color`, `thickness` (no `buff`)
+
+**METHOD CALL SAFETY:**
+- Always call `.get_center()`, `.get_vertices()` etc. on Manim objects, not NumPy arrays
+- Check return types: `.get_center()` returns ndarray, handle accordingly
+- Validate all coordinates are 3D: [x, y, 0] for 2D scenes
+
+**COORDINATE SYSTEM RULES:**
+- Always use 3D coordinates [x, y, z], even in 2D scenes (z=0)
+- For 2D positioning, use Manim's built-in methods:
+  - `next_to()`, `to_edge()`, `to_corner()`, `move_to()`
+  - These handle z-coordinates automatically
+
+**MOBJECT LIFECYCLE:**
+- Create all objects before animations
+- Use `self.add()` for persistent objects
+- Use `self.play()` for animated creation
+- Remove with `self.remove()` when done
 
 **VOICEOVER INITIALIZATION:**
 - ALWAYS use `self.set_speech_service(get_speech_service())` to initialize the voiceover.

@@ -19,28 +19,88 @@ The following manim plugins are relevant to the scene:
 *   **Safe area margins:** 0.5 units on all sides from the scene edges.  All objects must be positioned within these margins.
 *   **Minimum spacing:** 0.3 units between any two Manim objects (measured edge to edge). This prevents overlaps and maintains visual clarity.
 
-**Positioning Requirements:**
-1.  All positioning MUST be relative (`next_to`, `align_to`, `shift`) from ORIGIN, safe margins, or other objects. **No absolute coordinates are allowed.**
-2.  Use transition buffers (`Wait` times) between sub-scenes and animation steps.
+**🚨 CRITICAL POSITIONING REQUIREMENTS - NO HARDCODED COORDINATES! 🚨**
 
-**Diagrams/Sketches (Highly Recommended):**
-*   Include diagrams/sketches (even text-based) for complex layouts to visualize spatial relationships, improve clarity, and reduce spatial errors.
+1. **All positioning MUST use relative methods:**
+   - ✅ CORRECT - Use these methods:
+     ```python
+     obj2.next_to(obj1, RIGHT, buff=1)
+     obj3.align_to(obj2, UP)
+     obj4.to_edge(LEFT, buff=0.5)  # Relative to scene edge
+     obj5.to_corner(UR, buff=0.5)  # Upper right corner
+     ```
+   - ❌ WRONG - Never use these:
+     ```python
+     obj.move_to([-2, -1, 0])  # NO hardcoded coordinates!
+     obj.shift(RIGHT * 2)      # NO arbitrary shifts!
+     camera.move_to([1, 1, 0]) # NO absolute camera positions!
+     ```
 
-**Common Mistakes:**
-*   The Triangle class in Manim creates equilateral triangles by default. To create a right-angled triangle, use the Polygon class instead.
+2. **Relative Positioning Hierarchy:**
+   - Start from ORIGIN or scene edges (UP, DOWN, LEFT, RIGHT)
+   - Position each new object relative to existing ones
+   - Use VGroups to maintain relative positions during animations
 
-**Manim Plugins:**
-*   You may use established, well-documented Manim plugins if they offer significant advantages in terms of code clarity, efficiency, or functionality not readily available in core Manim.
-*   **If a plugin is used:**
-    *   Clearly state the plugin name and version (if applicable).
-    *   Provide a brief justification for using the plugin (e.g., "Using `manim-plugin-name` for its advanced graph layout capabilities").
-    *   Ensure all plugin usage adheres to the plugin's documentation.
-    *   Include a comment in the plan: `### Plugin: <plugin_name> - <brief justification>`.
+3. **Spacing and Buffers:**
+   - Always specify explicit `buff` values (minimum 0.3)
+   - Use transition buffers (`Wait` times) between sub-scenes
+   - Maintain safe area margins (0.5 units from edges)
 
-**Focus:**
-*   Creating *pedagogically sound and spatially correct Manim code*.
-*   Detailed technical descriptions, referencing Manim documentation.
-*   Strict adherence to spatial constraints and relative positioning.
+3. **Spatial Positioning Strategy**:
+    - **ABSOLUTELY NO HARDCODED COORDINATES OR ARBITRARY SHIFTS!**
+    - **Mandate these relative positioning methods ONLY:**
+        - `next_to(ref_obj, direction, buff=...)` - Position relative to another object
+        - `align_to(ref_obj, direction)` - Align with another object
+        - `to_edge(direction, buff=...)` - Position relative to scene edge
+        - `to_corner(direction, buff=...)` - Position in scene corner
+        - `arrange(direction, buff=...)` - For VGroups
+    - **For EVERY object, you MUST specify:**
+        - Which object it's positioned relative to (or scene edge/ORIGIN)
+        - Which relative positioning method is used
+        - Explicit `buff` value (minimum 0.3 units)
+    - **Positioning Sequence:**
+        1. Start from ORIGIN or scene edges
+        2. Position each new object relative to existing ones
+        3. Use VGroups to maintain relative positions
+        4. Add visual checkpoints to verify margins and spacing
+    - **Text Safety:**
+        - Account for text bounding boxes in spacing
+        - Use recommended font sizes to prevent overflow
+        - Break long text into multiple lines
+
+    **🚨 Camera Movement Guidelines - NO HARDCODED POSITIONS! 🚨**
+    - ✅ CORRECT - Use relative camera movements:
+      ```python
+      # Move camera to focus on an object
+      self.play(self.camera.frame.animate.move_to(target_object.get_center()))
+      
+      # Zoom to show detail
+      self.play(self.camera.frame.animate.scale(0.5))
+      
+      # Pan to follow a path
+      self.play(self.camera.frame.animate.move_to(path.get_end()))
+      ```
+    - ❌ WRONG - Never use absolute coordinates:
+      ```python
+      self.camera.frame.move_to([-2, -1, 0])  # NO!
+      camera_location = [1, 1, 0]             # NO!
+      self.play(self.camera.frame.animate.move_to(camera_location))  # NO!
+      ```
+
+4. **Animation Methods & Object Lifecycle Management**:
+    - Define clear animation sequences using documented methods such as `Create`, `Write`, `FadeIn`, `Transform`, and corresponding removal animations (`FadeOut`, `Uncreate`). Include animation methods from plugins if they are used.
+    - For each animation, specify parameters like `run_time`, `lag_ratio`, and the use of `Wait()` for transition buffers.
+    - Ensure every object's appearance and removal is managed to prevent clutter and maintain scene clarity.
+    
+5. **Code Structure & Reusability**:
+    - Propose modular functions for creating and animating common objects to promote code reusability.
+    - Organize the overall code structure into logical sections: dependencies, object definitions, individual layout stages, and the main `construct` method.
+    - Include inline comments to document the rationale for configuration choices, referencing the Manim Documentation *and the plugin documentation where applicable*.
+    
+***Mandatory Safety Checks***:
+    - **Safe Area Enforcement**: All objects, including text bounding boxes, must remain within 0.5 unit margins.
+    - **Minimum Spacing Validation**: Confirm a minimum of 0.3 units spacing between every pair of objects.
+    - **Transition Buffers**: Use explicit `Wait()` calls to separate animation steps and sub-scenes.
 
 You MUST generate the technical implementation plan for the scene in the following format (from ```xml to </SCENE_TECHNICAL_IMPLEMENTATION_PLAN>```):
 
@@ -71,14 +131,46 @@ You MUST generate the technical implementation plan for the scene in the followi
     - Clearly document the purpose for each grouping (e.g., "formula_group" for mathematical expressions).
     
 3. **Spatial Positioning Strategy**:
-    - Mandate the exclusive use of relative positioning methods (`next_to`, `align_to`, `shift`), based on ORIGIN, safe margins, or other objects.
-    - For every object, specify:
-        - The reference object (or safe edge) used for positioning.
-        - The specific method (and direction/aligned edge) along with a `buff` value (minimum 0.3 units).
-    - Outline the layout in sequential stages, inserting visual checkpoints to verify that every element continues to respect safe margins and spacing.
-    - Highlight measures to safeguard text bounding boxes, especially for multi-line text.
-    - Reference the font size recommendations under "Text Considerations" to ensure appropriate sizing and prevent overflow.
-    
+    - **ABSOLUTELY NO HARDCODED COORDINATES OR ARBITRARY SHIFTS!**
+    - **Mandate these relative positioning methods ONLY:**
+        - `next_to(ref_obj, direction, buff=...)` - Position relative to another object
+        - `align_to(ref_obj, direction)` - Align with another object
+        - `to_edge(direction, buff=...)` - Position relative to scene edge
+        - `to_corner(direction, buff=...)` - Position in scene corner
+        - `arrange(direction, buff=...)` - For VGroups
+    - **For EVERY object, you MUST specify:**
+        - Which object it's positioned relative to (or scene edge/ORIGIN)
+        - Which relative positioning method is used
+        - Explicit `buff` value (minimum 0.3 units)
+    - **Positioning Sequence:**
+        1. Start from ORIGIN or scene edges
+        2. Position each new object relative to existing ones
+        3. Use VGroups to maintain relative positions
+        4. Add visual checkpoints to verify margins and spacing
+    - **Text Safety:**
+        - Account for text bounding boxes in spacing
+        - Use recommended font sizes to prevent overflow
+        - Break long text into multiple lines
+
+    **🚨 Camera Movement Guidelines - NO HARDCODED POSITIONS! 🚨**
+    - ✅ CORRECT - Use relative camera movements:
+      ```python
+      # Move camera to focus on an object
+      self.play(self.camera.frame.animate.move_to(target_object.get_center()))
+      
+      # Zoom to show detail
+      self.play(self.camera.frame.animate.scale(0.5))
+      
+      # Pan to follow a path
+      self.play(self.camera.frame.animate.move_to(path.get_end()))
+      ```
+    - ❌ WRONG - Never use absolute coordinates:
+      ```python
+      self.camera.frame.move_to([-2, -1, 0])  # NO!
+      camera_location = [1, 1, 0]             # NO!
+      self.play(self.camera.frame.animate.move_to(camera_location))  # NO!
+      ```
+
 4. **Animation Methods & Object Lifecycle Management**:
     - Define clear animation sequences using documented methods such as `Create`, `Write`, `FadeIn`, `Transform`, and corresponding removal animations (`FadeOut`, `Uncreate`). Include animation methods from plugins if they are used.
     - For each animation, specify parameters like `run_time`, `lag_ratio`, and the use of `Wait()` for transition buffers.
