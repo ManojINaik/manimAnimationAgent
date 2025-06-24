@@ -737,7 +737,7 @@ class VideoGenerator:
         scene_ids = []  # Initialize scene_ids at the beginning
         try:
             # Get initial scene count estimate (will be updated after planning)
-            estimated_scene_count = 4  # Default estimate
+            estimated_scene_count = 3  # Default estimate
             video_id = await self.create_video_record(topic, description, estimated_scene_count, session_id)
             if video_id:
                 await self.update_video_status(video_id, "planning")

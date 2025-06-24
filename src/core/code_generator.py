@@ -44,7 +44,13 @@ except ImportError:
     HAS_AGENT_MEMORY = False
 
 # Import Tavily search functionality
-from src.utils.tavily_search import TavilyErrorSearchEngine, search_error_solution
+try:
+    from src.utils.tavily_search import TavilyErrorSearchEngine, search_error_solution
+    HAS_TAVILY = True
+except ImportError:
+    TavilyErrorSearchEngine = None
+    search_error_solution = None
+    HAS_TAVILY = False
 
 class CodeGenerator:
     """A class for generating and managing Manim code."""
