@@ -9,6 +9,9 @@ import {
     subscribeToVideoScenes,
     VideoDocument,
     SceneDocument,
+    getFileUrl,
+    FINAL_VIDEOS_BUCKET_ID,
+    SCENE_VIDEOS_BUCKET_ID
 } from '../services/appwrite';
 import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
@@ -328,22 +331,22 @@ export default function VideoGenerator() {
                                     className="w-full max-h-96 object-contain"
                                     preload="metadata"
                                 >
-                                    <source src={currentVideo.combined_video_url} type="video/mp4" />
+                                    <source src={getFileUrl(FINAL_VIDEOS_BUCKET_ID, currentVideo.combined_video_url)} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
                             </div>
 
                             <div className="mt-6">
-                                <a
-                                    href={currentVideo.combined_video_url}
-                                    download
-                                    className="btn-primary inline-flex items-center gap-3 text-lg"
-                                >
-                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                    </svg>
-                                    Download Video
-                                </a>
+                            <a
+                                href={getFileUrl(FINAL_VIDEOS_BUCKET_ID, currentVideo.combined_video_url)}
+                                download
+                                className="btn-primary inline-flex items-center gap-3 text-lg"
+                            >
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                                Download Video
+                            </a>
                             </div>
                         </div>
                     )}
