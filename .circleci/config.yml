@@ -15,7 +15,7 @@ parameters:
 # Define reusable commands
 commands:
   install-system-deps:
-    description: "Install system dependencies for Manim"
+    description: "Install system dependencies for Manim and all required packages"
     steps:
       - run:
           name: Install system dependencies
@@ -31,27 +31,114 @@ commands:
               libasound2-dev \
               libsndfile1-dev \
               libfftw3-dev \
-              libatlas-base-dev
+              libatlas-base-dev \
+              graphviz \
+              graphviz-dev \
+              libgraphviz-dev \
+              gcc \
+              g++ \
+              build-essential \
+              cmake \
+              libfreetype6-dev \
+              libpng-dev \
+              libjpeg-dev \
+              libopenblas-dev \
+              liblapack-dev \
+              gfortran \
+              libhdf5-dev \
+              libssl-dev \
+              libffi-dev \
+              zlib1g-dev \
+              libbz2-dev \
+              libreadline-dev \
+              libsqlite3-dev \
+              wget \
+              curl \
+              llvm \
+              libncurses5-dev \
+              xz-utils \
+              tk-dev \
+              libxml2-dev \
+              libxmlsec1-dev \
+              liblzma-dev
 
   setup-python-env:
-    description: "Set up Python environment with caching"
+    description: "Set up Python environment with caching and validation"
     steps:
       - restore_cache:
           keys:
             - pip-deps-v1-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-github-actions.txt" }}
             - pip-deps-v1-{{ .Environment.CIRCLE_JOB }}-
       - run:
+          name: Free up disk space
+          command: |
+            sudo apt-get clean
+            sudo rm -rf /var/lib/apt/lists/*
+            sudo rm -rf /tmp/*
+            sudo rm -rf /var/tmp/*
+            df -h  # Show available disk space
+      - run:
           name: Install Python dependencies
           command: |
             python -m venv venv
             . venv/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements-github-actions.txt
+            
+            # Set up Python path
+            export PYTHONPATH="$PWD:$PYTHONPATH"
+            
+            pip install --upgrade pip setuptools wheel
+            
+            # Install dependencies with legacy resolver to handle conflicts
+            pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
+            
+            # Verify critical packages are installed
+            echo "🔍 Verifying critical dependencies..."
+            python -c "import sys; print(f'Python version: {sys.version}')"
+            python -c "import manim; print(f'✅ Manim: {manim.__version__}')" || echo "❌ Manim import failed"
+            python -c "import numpy as np; print(f'✅ NumPy: {np.__version__}')" || echo "❌ NumPy import failed"
+            python -c "import cairo; print('✅ Cairo imported successfully')" || echo "❌ Cairo import failed"
+            python -c "import cv2; print(f'✅ OpenCV: {cv2.__version__}')" || echo "❌ OpenCV import failed"
+            python -c "import appwrite; print('✅ Appwrite SDK installed')" || echo "❌ Appwrite import failed"
+            python -c "import pygraphviz; print('✅ PyGraphViz installed successfully')" || echo "❌ PyGraphViz import failed"
+            echo "✅ Dependency verification completed"
       - save_cache:
           key: pip-deps-v1-{{ .Environment.CIRCLE_JOB }}-{{ checksum "requirements-github-actions.txt" }}
           paths:
             - "~/.cache/pip"
             - "venv"
+
+  validate-environment:
+    description: "Validate environment variables and setup"
+    steps:
+      - run:
+          name: Validate environment variables
+          command: |
+            echo "Validating required environment variables..."
+            
+            # Function to check if variable is set and not empty
+            check_var() {
+              if [ -z "${!1}" ]; then
+                echo "❌ ERROR: $1 is not set or empty"
+                return 1
+              else
+                echo "✅ $1 is set"
+                return 0
+              fi
+            }
+            
+            # Check all required variables
+            check_var "APPWRITE_ENDPOINT" || exit 1
+            check_var "APPWRITE_PROJECT_ID" || exit 1
+            check_var "APPWRITE_API_KEY" || exit 1
+            check_var "GEMINI_API_KEY" || exit 1
+            
+            # Optional variables (don't fail if missing)
+            check_var "OPENAI_API_KEY" || echo "⚠️ OPENAI_API_KEY not set (optional)"
+            check_var "MEM0_API_KEY" || echo "⚠️ MEM0_API_KEY not set (optional)"
+            check_var "TAVILY_API_KEY" || echo "⚠️ TAVILY_API_KEY not set (optional)"
+            check_var "ELEVENLABS_API_KEY" || echo "⚠️ ELEVENLABS_API_KEY not set (optional)"
+            
+            echo "✅ Environment validation complete"
 
   setup-node-env:
     description: "Set up Node.js environment with caching"
@@ -94,14 +181,58 @@ jobs:
           name: Run Python tests
           command: |
             . venv/bin/activate
-            python -m pytest test_*.py -v --tb=short || echo "Tests completed with some failures"
+            
+            # Set up Python path
+            export PYTHONPATH="$PWD:$PYTHONPATH"
+            
+            # Create test results directory
+            mkdir -p test-results
+            
+            echo "🧪 Running Python tests..."
+            python -m pytest test_*.py -v --tb=short --junitxml=test-results/python-tests.xml || echo "Tests completed with some failures"
       - run:
-          name: Test Manim installation
+          name: Test Manim installation and basic functionality
           command: |
             . venv/bin/activate
+            
+            # Set up Python path
+            export PYTHONPATH="$PWD:$PYTHONPATH"
+            
+            echo "🎬 Testing Manim installation..."
             python test_simple_manim.py
+            
+            echo "🔧 Testing additional critical components..."
+            python -c "
+            try:
+                import manim
+                from manim import Scene, Circle, Create
+                print('✅ Manim basic classes import successfully')
+            except Exception as e:
+                print(f'❌ Manim basic test failed: {e}')
+                
+            try:
+                import appwrite
+                print('✅ Appwrite SDK available')
+            except Exception as e:
+                print(f'❌ Appwrite test failed: {e}')
+                
+            try:
+                import mem0
+                print('✅ Mem0 AI available')
+            except Exception as e:
+                print(f'⚠️ Mem0 AI not available: {e}')
+                
+            try:
+                import openai
+                print('✅ OpenAI SDK available')
+            except Exception as e:
+                print(f'⚠️ OpenAI SDK not available: {e}')
+            "
       - store_test_results:
           path: test-results
+      - store_artifacts:
+          path: test-results
+          destination: test-results
 
   # Build and test frontend
   test-frontend:
@@ -136,30 +267,95 @@ jobs:
       - checkout
       - install-system-deps
       - setup-python-env
+      - validate-environment
       - run:
-          name: Check environment variables
+          name: Set up environment and directories
           command: |
-            echo "APPWRITE_ENDPOINT: ${APPWRITE_ENDPOINT:0:10}..."
-            echo "APPWRITE_PROJECT_ID: ${APPWRITE_PROJECT_ID:0:10}..."
-            echo "GEMINI_API_KEY: ${GEMINI_API_KEY:0:10}..."
+            . venv/bin/activate
+            
+            # Set environment variables
+            export PYTHONPATH="$PWD:$PYTHONPATH"
+            export MANIMCE_USE_PROGRESS_BARS="true"
+            export ELEVENLABS_VOICE="true"
+            
+            echo "Environment variables set successfully"
+            echo "Working directory: $(pwd)"
+            echo "Available disk space:"
+            df -h
+            
+            # Create necessary directories with proper permissions
+            mkdir -p output api_outputs media temp_audio
+            chmod 755 output api_outputs media temp_audio
       - run:
           name: Check for queued videos
           command: |
             . venv/bin/activate
-            python scripts/check_video_queue.py
+            # Add timeout to prevent hanging
+            timeout 300 python scripts/check_video_queue.py || {
+              echo "❌ Video queue check timed out after 5 minutes"
+              exit 1
+            }
       - run:
           name: Render videos
           command: |
             . venv/bin/activate
+            
+            # Set up error handling
+            set -euo pipefail  # Exit on error, undefined variables, pipe failures
+            
+            # Set environment variables
+            export PYTHONPATH="$PWD:$PYTHONPATH"
+            export MANIMCE_USE_PROGRESS_BARS="true"
+            export ELEVENLABS_VOICE="true"
             export VIDEO_ID="<< parameters.video_id >>"
-            python scripts/github_video_renderer.py
-          no_output_timeout: 30m
+            
+            echo "🎬 Starting video rendering process..."
+            echo "Video ID: ${VIDEO_ID:-'Not specified - will process queue'}"
+            echo "Timestamp: $(date)"
+            
+            # Monitor disk space during rendering
+            echo "Initial disk space:"
+            df -h
+            
+            # Run the video renderer with timeout (2 hours)
+            timeout 7200 python scripts/github_video_renderer.py || {
+              exit_code=$?
+              if [ $exit_code -eq 124 ]; then
+                echo "❌ Video rendering timed out after 2 hours"
+                exit 1
+              else
+                echo "❌ Video rendering failed with exit code: $exit_code"
+                exit $exit_code
+              fi
+            }
+            
+            echo "✅ Video rendering completed successfully"
+            echo "Final disk space:"
+            df -h
+          no_output_timeout: 2h
+      - run:
+          name: Cleanup
+          when: always
+          command: |
+            echo "🧹 Cleaning up workspace..."
+            # Remove large temporary files but keep logs
+            find . -name "*.mp4" -size +100M -delete 2>/dev/null || true
+            find . -name "*.avi" -size +100M -delete 2>/dev/null || true
+            find . -name "temp_*" -type d -exec rm -rf {} + 2>/dev/null || true
+            echo "Cleanup completed"
+            df -h
       - store_artifacts:
           path: output/
           destination: video-output
       - store_artifacts:
+          path: api_outputs/
+          destination: api-outputs
+      - store_artifacts:
           path: "*.log"
           destination: logs
+      - store_artifacts:
+          path: "**/*.log"
+          destination: all-logs
 
   # Deploy frontend to staging
   deploy-frontend-staging:

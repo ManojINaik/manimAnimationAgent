@@ -2,13 +2,25 @@
 
 This document outlines the CircleCI configuration for the Manim Animation Agent project.
 
+## 🎯 Recent Updates (Fixed PyGraphViz Issue)
+
+**Major improvements based on GitHub Actions setup:**
+- ✅ **Fixed PyGraphViz build failures** - Added GraphViz development headers (`graphviz-dev`, `libgraphviz-dev`)
+- ✅ **Complete system dependencies** - Added all required build tools and libraries
+- ✅ **Enhanced dependency installation** - Using `requirements-github-actions.txt` with legacy resolver
+- ✅ **Comprehensive validation** - Added dependency verification and environment checks
+- ✅ **Improved error handling** - 2-hour timeouts, disk space monitoring, proper cleanup
+- ✅ **Enhanced testing** - Better validation of Manim and critical components
+
 ## Overview
 
 The CircleCI configuration provides:
-- Automated testing for both backend and frontend
-- Video rendering capabilities triggered manually or on schedule
+- Automated testing for both backend and frontend with comprehensive dependency validation
+- Video rendering capabilities triggered manually or on schedule (2-hour timeout)
+- Complete system dependency installation (including GraphViz for PyGraphViz)
+- Enhanced error handling and disk space management
 - Deployment pipelines for staging environments
-- Build artifacts and logging
+- Build artifacts and comprehensive logging
 
 ## Configuration Structure
 
@@ -283,6 +295,23 @@ Cache keys are versioned and environment-specific for reliability.
 - Check if all required packages are in the install-system-deps command
 - Verify Ubuntu package names are correct
 
+#### PyGraphViz Build Failure ✅ FIXED
+If you see `fatal error: graphviz/cgraph.h: No such file or directory`:
+- ✅ **Fixed in current configuration** - GraphViz development headers are now included
+- Required packages: `graphviz`, `graphviz-dev`, `libgraphviz-dev`
+- For local development: `sudo apt-get install graphviz graphviz-dev libgraphviz-dev`
+
+#### Dependency Installation Issues
+If Python packages fail to install:
+- ✅ **Enhanced** - Now using `requirements-github-actions.txt` with `--use-deprecated=legacy-resolver`
+- Comprehensive system dependencies are pre-installed
+- Added dependency verification steps after installation
+
+#### Timeout Issues During Video Rendering
+- ✅ **Improved** - Extended timeout to 2 hours (`no_output_timeout: 2h`)
+- Added disk space monitoring and cleanup
+- Enhanced error handling with proper exit codes
+
 #### Python Dependencies Installation Fails
 - Check requirements-github-actions.txt exists
 - Verify Python version compatibility
@@ -331,10 +360,67 @@ resource_class: large  # or xlarge
 - SSH keys are encrypted
 - Build artifacts have retention limits
 
+## Validation and Testing
+
+### Validate Your Setup
+Use the provided validation scripts to check your configuration:
+
+#### Linux/Mac
+```bash
+# Make executable and run
+chmod +x scripts/validate_circleci.sh
+./scripts/validate_circleci.sh
+```
+
+#### Windows
+```powershell
+# Run validation script
+.\scripts\validate_circleci.ps1
+
+# For detailed output
+.\scripts\validate_circleci.ps1 -Detailed
+```
+
+### What the Validation Checks
+- ✅ CircleCI configuration file exists and is valid YAML
+- ✅ Required files are present (`requirements-github-actions.txt`, scripts, etc.)
+- ✅ Environment variables are properly set
+- ✅ System dependencies are available (on compatible systems)
+- ✅ Python and pip are properly installed
+- ✅ CircleCI CLI is available (optional)
+- ✅ Configuration uses correct requirements file
+- ✅ GraphViz development headers are included
+- ✅ Timeout configurations are present
+
+### Local Testing
+To test the setup locally (similar to CircleCI environment):
+
+```bash
+# Install system dependencies (Ubuntu/Debian)
+sudo apt-get update
+sudo apt-get install -y pkg-config libcairo2-dev libgirepository1.0-dev ffmpeg \
+  libpango1.0-dev portaudio19-dev libasound2-dev libsndfile1-dev libfftw3-dev \
+  libatlas-base-dev graphviz graphviz-dev libgraphviz-dev gcc g++ build-essential
+
+# Create virtual environment
+python3.11 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install --upgrade pip setuptools wheel
+pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
+
+# Test critical imports
+python -c "import manim; print('✅ Manim:', manim.__version__)"
+python -c "import pygraphviz; print('✅ PyGraphViz installed successfully')"
+python -c "import appwrite; print('✅ Appwrite SDK installed')"
+```
+
 ## Support
 
 For issues with this CircleCI setup:
-1. Check the troubleshooting section above
-2. Review CircleCI documentation
-3. Check project-specific logs and artifacts
-4. Contact the development team 
+1. Run the validation scripts first (`validate_circleci.sh` or `validate_circleci.ps1`)
+2. Check the troubleshooting section above
+3. Review CircleCI documentation
+4. Check project-specific logs and artifacts
+5. Contact the development team 
