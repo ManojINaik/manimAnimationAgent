@@ -165,7 +165,7 @@ jobs:
             . venv/bin/activate
             
             # Set environment variables
-            export PYTHONPATH="$PWD:$PYTHONPATH"
+            export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
             export MANIMCE_USE_PROGRESS_BARS="true"
             export ELEVENLABS_VOICE="true"
             
@@ -196,7 +196,7 @@ jobs:
             set -euo pipefail  # Exit on error, undefined variables, pipe failures
             
             # Set environment variables
-            export PYTHONPATH="$PWD:$PYTHONPATH"
+            export PYTHONPATH="$PWD${PYTHONPATH:+:$PYTHONPATH}"
             export MANIMCE_USE_PROGRESS_BARS="true"
             export ELEVENLABS_VOICE="true"
             export VIDEO_ID="<< parameters.video_id >>"
