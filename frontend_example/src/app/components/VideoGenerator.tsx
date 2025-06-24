@@ -320,17 +320,31 @@ export default function VideoGenerator() {
                                 </svg>
                             </div>
                             <h2 className="mt-4 text-2xl font-bold">Video Ready!</h2>
-                            <p className="mt-2 text-gray-600">Your video has been successfully generated.</p>
-                            <a
-                                href={currentVideo.combined_video_url}
-                                download
-                                className="btn-primary inline-flex items-center gap-3 text-lg"
-                            >
-                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                </svg>
-                                Download Video
-                            </a>
+                            <p className="mt-2 text-gray-600">Your video has been successfully generated and is ready to watch.</p>
+                            
+                            <div className="mt-6 rounded-lg overflow-hidden border-2 border-gray-200 shadow-lg bg-black">
+                                <video 
+                                    controls 
+                                    className="w-full max-h-96 object-contain"
+                                    preload="metadata"
+                                >
+                                    <source src={currentVideo.combined_video_url} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+
+                            <div className="mt-6">
+                                <a
+                                    href={currentVideo.combined_video_url}
+                                    download
+                                    className="btn-primary inline-flex items-center gap-3 text-lg"
+                                >
+                                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                    </svg>
+                                    Download Video
+                                </a>
+                            </div>
                         </div>
                     )}
                 </div>

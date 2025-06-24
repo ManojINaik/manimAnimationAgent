@@ -440,7 +440,7 @@ class CodeGenerator:
 
     def fix_code_errors(self, implementation_plan: str, code: str, error: str, scene_trace_id: str, topic: str, scene_number: int, session_id: str, rag_queries_cache: Dict = None) -> str:
         """
-        Fix errors in the generated code using the enhanced two-step Tavily strategy.
+        Fix errors in the generated code using dynamic error resolution with LLM, Memory, and Tavily.
 
         Args:
             implementation_plan (str): The implementation plan for context
@@ -456,16 +456,16 @@ class CodeGenerator:
             str: Fixed code
         """
         scene_type = self._infer_scene_type(implementation_plan)
-        original_code = code  # Store original for memory
+        original_code = code
         
-        print("🔧 Starting advanced error-driven development with Tavily integration...")
+        print("🔧 Starting dynamic error resolution with LLM, Memory, and Tavily integration...")
         
         # Check agent memory for similar errors first
         similar_fixes = []
         if self.use_agent_memory and self.agent_memory:
             similar_fixes = self.agent_memory.search_similar_fixes(
                 error_message=error,
-                code_context=code[:300],  # First 300 chars of code as context
+                code_context=code[:300],
                 topic=topic,
                 scene_type=scene_type,
                 limit=3
@@ -474,56 +474,37 @@ class CodeGenerator:
             if similar_fixes:
                 print(f"Found {len(similar_fixes)} similar error patterns in memory")
         
-        # First, try to fix common known issues automatically
-        fixed_code = self._auto_fix_common_issues(code, error)
-        auto_fix_applied = fixed_code != code
-        
-        if auto_fix_applied:
-            print("✅ Auto-fix applied successfully")
-            # Store the auto-fix in memory for future reference
-            if self.use_agent_memory and self.agent_memory:
-                self.agent_memory.store_error_fix(
-                    error_message=error,
-                    original_code=original_code,
-                    fixed_code=fixed_code,
+        # Try Tavily-enhanced error resolution if available
+        tavily_result = None
+        if HAS_TAVILY:
+            try:
+                print("🌐 Attempting Tavily-enhanced error resolution...")
+                tavily_result = self._fix_error_with_tavily(
+                    implementation_plan=implementation_plan,
+                    code=code,
+                    error=error,
+                    scene_trace_id=scene_trace_id,
                     topic=topic,
-                    scene_type=scene_type,
-                    fix_method="auto"
+                    scene_number=scene_number,
+                    session_id=session_id
                 )
-            return fixed_code
-        
-        # Step 1: Try Tavily-enhanced error resolution (Two-step strategy)
-        try:
-            print("🌐 Attempting Tavily-enhanced error resolution...")
-            tavily_result = self._fix_error_with_tavily(
-                implementation_plan=implementation_plan,
-                code=code,
-                error=error,
-                scene_trace_id=scene_trace_id,
-                topic=topic,
-                scene_number=scene_number,
-                session_id=session_id
-            )
-            
-            if tavily_result and tavily_result != code:
-                print("✅ Tavily-enhanced fix applied successfully")
-                # Store the Tavily-based fix in memory for future reference
-                if self.use_agent_memory and self.agent_memory:
-                    self.agent_memory.store_error_fix(
-                        error_message=error,
-                        original_code=original_code,
-                        fixed_code=tavily_result,
-                        topic=topic,
-                        scene_type=scene_type,
-                        fix_method="tavily"
-                    )
-                return tavily_result
                 
-        except Exception as e:
-            print(f"⚠️ Tavily error resolution failed: {e}")
-            print("📚 Falling back to traditional RAG-based fix...")
+                if tavily_result and tavily_result != code:
+                    print("✅ Tavily-enhanced fix applied successfully")
+                    # Store fix metadata for later storage after successful rendering
+                    self._last_fix_metadata = {
+                        "error_message": error,
+                        "original_code": original_code,
+                        "fixed_code": tavily_result,
+                        "topic": topic,
+                        "scene_type": scene_type,
+                        "fix_method": "tavily"
+                    }
+                    return tavily_result
+            except Exception as e:
+                print(f"⚠️ Tavily error resolution failed: {e}")
         
-        # Fallback: Use traditional RAG-based error fixing
+        # Fallback to LLM with memory and RAG context
         context = ""
         
         # Add similar fixes from memory to context
@@ -545,7 +526,7 @@ class CodeGenerator:
             rag_context = self.vector_store.query_documents(rag_queries, limit=5)
             context += rag_context
 
-        # Generate fixed code using LLM
+        # Generate fixed code using LLM with context
         prompt = get_prompt_fix_error(error, code, context)
         fixed_code = self.scene_model(
             _prepare_text_inputs(prompt),
@@ -560,383 +541,208 @@ class CodeGenerator:
             session_id=session_id
         )
 
-        # Store the LLM-based fix in memory for future reference
-        if self.use_agent_memory and self.agent_memory and fixed_code != original_code:
-            self.agent_memory.store_error_fix(
-                error_message=error,
-                original_code=original_code,
-                fixed_code=fixed_code,
-                topic=topic,
-                scene_type=scene_type,
-                fix_method="llm"
-            )
+        # Store fix metadata for later storage after successful rendering (only if fix was actually applied)
+        if fixed_code != original_code:
+            self._last_fix_metadata = {
+                "error_message": error,
+                "original_code": original_code,
+                "fixed_code": fixed_code,
+                "topic": topic,
+                "scene_type": scene_type,
+                "fix_method": "llm"
+            }
+        else:
+            self._last_fix_metadata = None
 
         return fixed_code
 
-    def _auto_fix_common_issues(self, code: str, error: str) -> str:
+    def _fix_error_with_tavily(self, implementation_plan: str, code: str, error: str, 
+                              scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> Optional[str]:
         """
-        Automatically fix common recurring issues in generated code.
+        Implement the two-step Tavily-enhanced error resolution strategy.
+        
+        Step 1: Generate targeted search query using LLM
+        Step 2: Use Tavily to search for solutions and apply them with LLM assistance
         
         Args:
-            code (str): The original code with errors
-            error (str): The error message
+            implementation_plan: Implementation plan for context
+            code: Code with errors
+            error: Error message
+            scene_trace_id: Trace ID for logging
+            topic: Topic name
+            scene_number: Scene number
+            session_id: Session ID
             
         Returns:
-            str: Fixed code if auto-fix applied, otherwise original code
+            Fixed code string or None if Tavily fix failed
         """
-        fixed_code = code
+        try:
+            # Step 1: Generate targeted search query using LLM
+            print("🎯 Step 1: Generating optimized search query...")
+            query_prompt = get_prompt_tavily_search_query_generation(
+                traceback=error,
+                code_context=code[:500],
+                implementation_plan=implementation_plan[:200]
+            )
+            
+            query_response = self.helper_model(
+                _prepare_text_inputs(query_prompt),
+                metadata={
+                    "generation_name": "tavily-query-generation", 
+                    "trace_id": scene_trace_id, 
+                    "tags": [topic, f"scene{scene_number}"], 
+                    "session_id": session_id
+                }
+            )
+            
+            search_query = self._extract_search_query_from_response(query_response)
+            if not search_query:
+                print("⚠️ Failed to generate search query")
+                return None
+                
+            print(f"📝 Generated search query: {search_query}")
+            
+            # Step 2: Use Tavily to search for solutions
+            print("🌐 Step 2: Searching for solutions with Tavily...")
+            tavily_engine = TavilyErrorSearchEngine(verbose=True)
+            
+            if not tavily_engine.is_available():
+                print("⚠️ Tavily not available - skipping Tavily-enhanced fix")
+                return None
+                
+            # Analyze error and search for solutions
+            error_analysis = tavily_engine.analyze_error_for_search(error, code[:500])
+            error_analysis.search_query = search_query  # Use LLM-generated query
+            
+            search_results = tavily_engine.search_for_solution(error_analysis, max_results=5)
+            
+            if not search_results or not search_results.get('success'):
+                print("⚠️ Tavily search failed or not available")
+                return None
+                
+            # Format results for LLM
+            formatted_results = self._format_tavily_results_for_llm(search_results)
+            
+            print("📋 Tavily search completed, applying insights...")
+            
+            # Step 3: Use LLM with Tavily results to fix the code
+            print("🛠️ Step 3: Applying Tavily insights to fix the code...")
+            fix_prompt = get_prompt_tavily_assisted_fix_error(
+                implementation_plan=implementation_plan,
+                manim_code=code,
+                error_message=error,
+                tavily_search_results=formatted_results,
+                search_query=search_query
+            )
+            
+            # Generate fixed code using LLM with Tavily insights
+            fixed_response = self.scene_model(
+                _prepare_text_inputs(fix_prompt),
+                metadata={
+                    "generation_name": "tavily-assisted-fix", 
+                    "trace_id": scene_trace_id, 
+                    "tags": [topic, f"scene{scene_number}"], 
+                    "session_id": session_id
+                }
+            )
+            
+            # Extract fixed code
+            fixed_code = self._extract_code_with_retries(
+                fixed_response,
+                r"```python(.*)```",
+                generation_name="tavily-assisted-fix",
+                trace_id=scene_trace_id,
+                session_id=session_id
+            )
+            
+            if fixed_code != code:
+                print("✅ Tavily-assisted fix completed successfully")
+                return fixed_code
+            else:
+                print("⚠️ Tavily-assisted fix did not produce different code")
+                return None
+                
+        except Exception as e:
+            print(f"❌ Error in Tavily-enhanced fix: {e}")
+            return None
 
-        # Fix: get_edge() instead of get_edge_center()
-        if "takes 1 positional argument but 2 were given" in error and ".get_edge(" in code:
-            fixed_code = fixed_code.replace(".get_edge(", ".get_edge_center(")
-
-        # Fix 1: Config object attribute errors
-        if "'ManimMLConfig' object has no attribute 'frame_x_radius'" in error or \
-           "'ManimMLConfig' object is not subscriptable" in error:
-            # Replace problematic config access with hardcoded constants
-            fixed_code = fixed_code.replace(
-                'FRAME_X_MIN = config["frame_x_radius"]',
-                'FRAME_X_MIN = -7.0'
-            ).replace(
-                'FRAME_X_MAX = config["frame_x_radius"]', 
-                'FRAME_X_MAX = 7.0'
-            ).replace(
-                'FRAME_Y_MIN = config["frame_y_radius"]',
-                'FRAME_Y_MIN = -4.0'
-            ).replace(
-                'FRAME_Y_MAX = config["frame_y_radius"]',
-                'FRAME_Y_MAX = 4.0'
-            ).replace(
-                'FRAME_X_MIN = config.frame_x_radius',
-                'FRAME_X_MIN = -7.0'
-            ).replace(
-                'FRAME_X_MAX = config.frame_x_radius',
-                'FRAME_X_MAX = 7.0'
-            ).replace(
-                'FRAME_Y_MIN = config.frame_y_radius',
-                'FRAME_Y_MIN = -4.0'
-            ).replace(
-                'FRAME_Y_MAX = config.frame_y_radius',
-                'FRAME_Y_MAX = 4.0'
-            ).replace(
-                'FRAME_X_MIN = global_config.frame_x_radius',
-                'FRAME_X_MIN = -7.0'
-            ).replace(
-                'FRAME_X_MAX = global_config.frame_x_radius',
-                'FRAME_X_MAX = 7.0'
-            ).replace(
-                'FRAME_Y_MIN = global_config.frame_y_radius',
-                'FRAME_Y_MIN = -4.0'
-            ).replace(
-                'FRAME_Y_MAX = global_config.frame_y_radius',
-                'FRAME_Y_MAX = 4.0'
-            )
+    def _extract_search_query_from_response(self, response: str) -> Optional[str]:
+        """
+        Extract search query from LLM response.
         
-        # Fix 2: Arrow3D with buff parameter
-        if "unexpected keyword argument 'buff'" in error and "Arrow3D" in code:
-            # Remove buff parameter from Arrow3D calls
-            arrow3d_pattern = r'Arrow3D\([^)]*buff=[^,)]*[,)]'
-            def remove_buff(match):
-                call = match.group(0)
-                # Remove buff parameter and any trailing comma
-                call = re.sub(r',?\s*buff=[^,)]*', '', call)
-                # Fix any double commas
-                call = call.replace(',,', ',').replace('(,', '(')
-                return call
-            fixed_code = re.sub(arrow3d_pattern, remove_buff, fixed_code)
+        Args:
+            response: LLM response containing search query
+            
+        Returns:
+            Extracted search query or None if not found
+        """
+        # Try to extract from JSON format first
+        json_match = re.search(r'```json\s*\{[^}]*"query":\s*"([^"]+)"[^}]*\}\s*```', response, re.DOTALL)
+        if json_match:
+            return json_match.group(1)
         
-        # Fix 3: Syntax errors with stray backticks
-        if "invalid syntax" in error and "```" in code:
-            fixed_code = fixed_code.replace('```', '')
+        # Try to extract from quotes
+        quote_patterns = [
+            r'"([^"]+)"',
+            r"'([^']+)'",
+            r'Query:\s*(.+?)(?:\n|$)',
+            r'Search:\s*(.+?)(?:\n|$)'
+        ]
         
-        # Fix 4: UpdateFromFunc parameter issues
-        if "missing 1 required positional argument" in error and "UpdateFromFunc" in code:
-            # Add the missing 'alpha' parameter to the update function
-            # Pattern to find: UpdateFromFunc(ball, lambda mob: mob.move_to(trace.get_end()))
-            # and change to:  UpdateFromFunc(ball, lambda mob, alpha: mob.move_to(trace.get_end()))
-            fixed_code = re.sub(
-                r'UpdateFromFunc\(([^,]+),\s*lambda\s+([a-zA-Z0-9_]+)\s*:',
-                r'UpdateFromFunc(\1, lambda \2, alpha:',
-                fixed_code
-            )
-
-            # Also fix for regular function definitions, e.g., def update_ball(ball):
-            # This is more complex, so we will focus on the lambda fix which is more common
-        
-        # Fix 5: Array comparison ambiguity with get_bottom(), get_top(), etc.
-        if "The truth value of an array with more than one element is ambiguous" in error:
-            # Fix comparisons like obj.get_bottom() < value to use numpy array indexing
-            patterns = [
-                (r'(\w+)\.get_bottom\(\)\s*([<>]=?)\s*(-?\d+\.?\d*)', r'\1.get_bottom()[1] \2 \3'),
-                (r'(\w+)\.get_top\(\)\s*([<>]=?)\s*(-?\d+\.?\d*)', r'\1.get_top()[1] \2 \3'),
-                (r'(\w+)\.get_left\(\)\s*([<>]=?)\s*(-?\d+\.?\d*)', r'\1.get_left()[0] \2 \3'),
-                (r'(\w+)\.get_right\(\)\s*([<>]=?)\s*(-?\d+\.?\d*)', r'\1.get_right()[0] \2 \3'),
-            ]
-            for pattern, replacement in patterns:
-                fixed_code = re.sub(pattern, replacement, fixed_code)
-        
-        # Fix 6: Missing SVG files - replace with basic shapes
-        if "could not find" in error and ".svg" in error:
-            # Replace SVGMobject with Rectangle for missing SVG files
-            svg_patterns = [
-                (r'SVGMobject\("car\.svg"\)', 'Rectangle(height=0.5, width=1.0, color=BLUE)'),
-                (r'SVGMobject\("arrow\.svg"\)', 'Arrow(start=ORIGIN, end=RIGHT, color=RED)'),
-                (r'SVGMobject\("([^"]+\.svg)"\)', r'Rectangle(height=0.5, width=0.5, color=YELLOW)  # Replaced missing \1'),
-            ]
-            for pattern, replacement in svg_patterns:
-                fixed_code = re.sub(pattern, replacement, fixed_code)
-        
-        # Fix 7: Non-existent Manim classes/functions
-        if "is not defined" in error or "cannot import name" in error:
-            # Replace non-existent Manim functions with working alternatives
-            replacements = [
-                (r'Surround\(([^)]+)\)', r'Circumscribe(\1)'),  # Surround doesn't exist, use Circumscribe
-                (r'from manim import \*, Surround', 'from manim import *'),  # Remove invalid import
-                (r'from manim import Surround[^\n]*\n', ''),  # Remove Surround import line
-            ]
-            for pattern, replacement in replacements:
-                fixed_code = re.sub(pattern, replacement, fixed_code)
-        
-        # Fix 8: Config frame attribute errors  
-        if "'ManimMLConfig' object has no attribute 'frame_width'" in error or \
-           "'ManimMLConfig' object has no attribute 'frame_height'" in error:
-            # Replace config frame access with hardcoded values
-            fixed_code = fixed_code.replace(
-                'config.frame_width', '14.0'
-            ).replace(
-                'config.frame_height', '8.0'
-            ).replace(
-                '-config.frame_width / 2', '-7.0'
-            ).replace(
-                'config.frame_width / 2', '7.0'
-            ).replace(
-                '-config.frame_height / 2', '-4.0'
-            ).replace(
-                'config.frame_height / 2', '4.0'
-            )
-        
-        # Fix 9: Transform animation issues with function objects
-        if "object of type 'function' has no len()" in error and "Transform" in code:
-            # Fix Transform calls with .animate that should use the object directly
-            fixed_code = re.sub(
-                r'Transform\((\w+), \1\.animate\.([^)]+)\)',
-                r'self.play(\1.animate.\2)',
-                fixed_code
-            )
-            # Also fix incorrect Transform usage
-            fixed_code = re.sub(
-                r'self\.play\(Transform\(([^,]+), ([^)]+)\.animate\.([^)]+)\)\)',
-                r'self.play(\2.animate.\3)',
-                fixed_code
-            )
-        
-        # Fix 10: Syntax errors with import statements
-        if "invalid syntax" in error and "import" in error:
-            # Fix malformed import statements
-            fixed_code = re.sub(r'from manim import \*, (\w+)', r'from manim import *', fixed_code)
-            fixed_code = re.sub(r'from manim import \*,', 'from manim import *', fixed_code)
-        
-        # Fix 11: Missing Manim color constants (e.g., LIGHT_BLUE)
-        if "is not defined" in error:
-            missing_const_match = re.search(r"name '([A-Z_]+)' is not defined", error)
-            if missing_const_match:
-                missing_const = missing_const_match.group(1)
-                # Common Manim light color constants
-                light_colors = [
-                    "LIGHT_BLUE", "LIGHT_BROWN", "LIGHT_GREY", "LIGHT_GRAY", "LIGHT_PINK",
-                    "LIGHT_PURPLE", "LIGHT_YELLOW", "LIGHT_RED", "LIGHT_GREEN", "LIGHT_ORANGE"
-                ]
-                if missing_const in light_colors:
-                    # Ensure wildcard import is present to bring in all color constants
-                    if 'from manim import *' not in fixed_code:
-                        # Insert after the first import block if possible, otherwise prepend
-                        lines = fixed_code.splitlines()
-                        insert_idx = 0
-                        for idx, line in enumerate(lines):
-                            if line.startswith('from manim import') or line.startswith('import manim'):
-                                insert_idx = idx + 1
-                                break
-                        lines.insert(insert_idx, 'from manim import *  # Added by auto-fix to include color constants')
-                        fixed_code = "\n".join(lines)
-        
-        # Fix 12: Polygon vertex array dimension errors 
-        if "setting an array element with a sequence" in error and "exceed the maximum number of dimension" in error:
-            # Remove erroneous 'points=' keyword argument usage
-            fixed_code = re.sub(r'Polygon\(\s*points\s*=\s*', 'Polygon(', fixed_code)
-
-            # Convert Polygon([v1, v2, v3]) -> Polygon(v1, v2, v3)
-            # Case 1: no additional args after the list
-            fixed_code = re.sub(
-                r'Polygon\(\[([^\]]+)\]\)',
-                r'Polygon(\1)',
-                fixed_code,
-                flags=re.DOTALL
-            )
-            # Case 2: additional args/kwargs after the list
-            fixed_code = re.sub(
-                r'Polygon\(\[([^\]]+)\],',
-                r'Polygon(\1,',
-                fixed_code,
-                flags=re.DOTALL
-            )
-
-            # Fix wrapped numpy arrays in Polygon calls - remove np.array() wrapping
-            fixed_code = re.sub(
-                r'Polygon\(\[np\.array\(([^)]+)\),\s*np\.array\(([^)]+)\),\s*np\.array\(([^)]+)\)\]',
-                r'Polygon(\1, \2, \3',
-                fixed_code
-            )
-            # Also fix more general cases with multiple np.array wraps
-            fixed_code = re.sub(
-                r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\s*\*\s*([0-9.]+)\)',
-                r'\1 * \2',
-                fixed_code
-            )
-            # Remove simple np.array wrapping around direction constants
-            fixed_code = re.sub(
-                r'np\.array\((ORIGIN|UP|DOWN|LEFT|RIGHT)\)',
-                r'\1',
-                fixed_code
-            )
-        
-        # Fix 13: get_edge_center() with integer instead of direction vector
-        if "'int' object is not subscriptable" in error and "get_edge_center" in error:
-            # Replace get_edge_center(i) with proper direction vectors
-            direction_map = {
-                '0': 'DOWN',    # Bottom edge
-                '1': 'RIGHT',   # Right edge  
-                '2': 'UP',      # Top edge
-                '3': 'LEFT'     # Left edge (if it exists)
-            }
-            for idx, direction in direction_map.items():
-                fixed_code = re.sub(
-                    rf'\.get_edge_center\({idx}\)',
-                    f'.get_edge_center({direction})',
-                    fixed_code
-                )
-            # More general pattern for variable indices
-            fixed_code = re.sub(
-                r'\.get_edge_center\((\w+)\)',
-                r'.get_edge_center([DOWN, RIGHT, UP, LEFT][\1] if \1 < 4 else DOWN)',
-                fixed_code
-            )
-        
-        # Unpack numpy array passed as a single positional argument to Polygon
-        fixed_code = re.sub(
-            r'Polygon\(\s*np\.array\(',
-            'Polygon(*np.array(',
-            fixed_code
-        )
-        
-        # Fix 14: replace nonexistent get_length() calls
-        if "object has no attribute 'length'" in error and ".get_length(" in error:
-            # Attempt to replace c_len calculation using a_len and b_len if present
-            pattern = r'(\w+)\s*=\s*triangle\.get_length\(\)'
-            match = re.search(pattern, fixed_code)
+        for pattern in quote_patterns:
+            match = re.search(pattern, response, re.IGNORECASE)
             if match:
-                var_name = match.group(1)
-                # Use math.hypot(a_len, b_len) if variables exist
-                if re.search(r'\ba_len\b', fixed_code) and re.search(r'\bb_len\b', fixed_code):
-                    replacement = f"{var_name} = math.hypot(a_len, b_len)  # Auto-fixed"
-                    # Ensure math is imported
-                    if 'import math' not in fixed_code:
-                        fixed_code = 'import math\n' + fixed_code
-                else:
-                    # Fallback to width of triangle
-                    replacement = f"{var_name} = triangle.get_width()  # Auto-fixed from get_length()"
-                fixed_code = re.sub(pattern, replacement, fixed_code)
+                query = match.group(1).strip()
+                if len(query) > 10:  # Reasonable query length
+                    return query
+                    
+        # Fallback: take first meaningful line
+        lines = [line.strip() for line in response.split('\n') if line.strip()]
+        for line in lines:
+            if len(line) > 10 and not line.startswith('#'):
+                return line
+                
+        return None
 
-        # Fix 15: Line constructor with array instead of separate points
-        if "setting an array element with a sequence" in error and "Line" in code:
-            # Fix Line([start, end]) to Line(start, end)
-            fixed_code = re.sub(
-                r'Line\(\[(.*?),\s*(.*?)\]\)',
-                r'Line(\1, \2)',
-                fixed_code,
-                flags=re.DOTALL
-            )
-            # Also fix Line(np.array([...]), np.array([...]))
-            fixed_code = re.sub(
-                r'Line\(np\.array\(\[(.*?)\]\),\s*np\.array\(\[(.*?)\]\)\)',
-                r'Line(\1, \2)',
-                fixed_code,
-                flags=re.DOTALL
-            )
-
-        # Fix 16: move_along_path method doesn't exist in Manim
-        if "object has no attribute 'move_along_path'" in error:
-            # Replace move_along_path with MoveAlongPath animation
-            fixed_code = re.sub(
-                r'(\w+)\.animate\.move_along_path\(([^)]+)\)',
-                r'MoveAlongPath(\1, \2)',
-                fixed_code
-            )
-            # Ensure MoveAlongPath is imported
-            if 'from manim import *' not in fixed_code and 'MoveAlongPath' not in fixed_code:
-                # Add import if not present
-                lines = fixed_code.splitlines()
-                for i, line in enumerate(lines):
-                    if line.startswith('from manim import'):
-                        break
-                else:
-                    lines.insert(0, 'from manim import *')
-                fixed_code = '\n'.join(lines)
-
-        # Fix 17: func_to_value method doesn't exist in modern Manim
-        if "object has no attribute 'func_to_value'" in error:
-            # Replace func_to_value with proper function evaluation
-            fixed_code = re.sub(
-                r'axes\.func_to_value\(([^)]+)\)',
-                r'(\1)**2',  # Assuming quadratic function, or use appropriate function
-                fixed_code
-            )
-            # More general pattern for function evaluation
-            fixed_code = re.sub(
-                r'axes\.func_to_value\((\w+)\)',
-                r'\1**2',  # Default to quadratic
-                fixed_code
-            )
-
-        # Fix 18: FadeOutAndShift animation not defined
-        if "name 'FadeOutAndShift' is not defined" in error:
-            # Replace FadeOutAndShift with separate FadeOut and shift
-            fixed_code = re.sub(
-                r'FadeOutAndShift\(([^,]+),\s*([^)]+)\)',
-                r'FadeOut(\1)',  # Just use FadeOut for simplicity
-                fixed_code
-            )
-
-        # Fix 19: Shift animation not defined  
-        if "name 'Shift' is not defined" in error:
-            # Replace Shift with proper Transform or position change
-            fixed_code = re.sub(
-                r'Shift\(([^,]+),\s*([^)]+)\)',
-                r'\1.shift(\2)',  # Use shift method instead
-                fixed_code
-            )
-            # Fix play calls with Shift
-            fixed_code = re.sub(
-                r'self\.play\(FadeOut\(([^)]+)\),\s*Shift\(([^,]+),\s*([^)]+)\)\)',
-                r'self.play(FadeOut(\1))',  # Remove problematic Shift
-                fixed_code
-            )
-
-        # Fix 20: Arrow3D with numpy array dimension issues
-        if "operands could not be broadcast together with shapes" in error and "Arrow3D" in code:
-            # Fix Arrow3D direction vectors to ensure proper 3D coordinates
-            fixed_code = re.sub(
-                r'Arrow3D\(([^,]+),\s*\[([^]]+)\]',
-                r'Arrow3D(\1, [\2, 0]',  # Ensure 3D coordinate
-                fixed_code
-            )
-            # Fix np.array with 2D being used in 3D context
-            fixed_code = re.sub(
-                r'Arrow3D\(([^,]+),\s*([^,]+)\s*\+\s*np\.array\(\[([^]]+)\]\)',
-                r'Arrow3D(\1, \2 + np.array([\3, 0])',  # Add z-component
-                fixed_code
-            )
-
-        return fixed_code
+    def _format_tavily_results_for_llm(self, search_results: dict) -> str:
+        """
+        Format Tavily search results for LLM consumption.
+        
+        Args:
+            search_results: Results from Tavily search
+            
+        Returns:
+            Formatted string for LLM
+        """
+        formatted = "=== TAVILY SEARCH RESULTS ===\n\n"
+        
+        # Add query information
+        if 'query' in search_results:
+            formatted += f"Search Query: {search_results['query']}\n\n"
+        
+        # Add answer if available
+        if 'answer' in search_results and search_results['answer']:
+            formatted += f"AI Answer: {search_results['answer']}\n\n"
+        
+        # Add search results
+        if 'results' in search_results:
+            formatted += "Relevant Solutions:\n"
+            for i, result in enumerate(search_results['results'][:3], 1):
+                formatted += f"{i}. {result.get('title', 'No title')}\n"
+                formatted += f"   URL: {result.get('url', 'No URL')}\n"
+                if 'content' in result:
+                    content = result['content'][:300] + "..." if len(result['content']) > 300 else result['content']
+                    formatted += f"   Content: {content}\n"
+            formatted += "\n"
+        
+        # Add extracted content if available
+        if 'extracted_content' in search_results:
+            formatted += "Detailed Solutions:\n"
+            for i, content in enumerate(search_results['extracted_content'][:2], 1):
+                truncated = content[:500] + "..." if len(content) > 500 else content
+                formatted += f"{i}. {truncated}\n\n"
+                
+        return formatted
 
     def visual_self_reflection(self, code: str, media_path: Union[str, Image.Image], scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> str:
         """Use snapshot image or mp4 video to fix code.
@@ -998,194 +804,37 @@ class CodeGenerator:
         )
         return fixed_code, response_text
 
-    def _fix_error_with_tavily(self, implementation_plan: str, code: str, error: str, 
-                              scene_trace_id: str, topic: str, scene_number: int, session_id: str) -> Optional[str]:
+    def store_successful_fix(self):
         """
-        Implement the two-step Tavily-enhanced error resolution strategy.
-        
-        Step 1: Generate a concise search query from the full traceback
-        Step 2: Use Tavily to search for solutions and apply them with LLM assistance
-        
-        Args:
-            implementation_plan: The implementation plan for context
-            code: The original code with errors
-            error: The error message/traceback to fix
-            scene_trace_id: Trace ID for the scene
-            topic: Topic of the scene
-            scene_number: Scene number
-            session_id: Session identifier
-            
-        Returns:
-            Fixed code string or None if Tavily fix failed
+        Store the last fix in memory only after successful video rendering.
+        This method should be called after confirming that the video was rendered successfully.
         """
-        try:
-            # Step 1: Generate concise search query from the full traceback
-            print("📋 Step 1: Analyzing error and generating search query...")
-            query_prompt = get_prompt_tavily_search_query_generation(
-                traceback=error,
-                code_context=code[:500],  # First 500 chars for context
-                implementation_plan=implementation_plan[:300]  # First 300 chars
+        if (self.use_agent_memory and self.agent_memory and 
+            hasattr(self, '_last_fix_metadata') and self._last_fix_metadata):
+            
+            fix_metadata = self._last_fix_metadata
+            print(f"✅ Storing successful fix in memory: {fix_metadata['fix_method']} method")
+            
+            self.agent_memory.store_error_fix(
+                error_message=fix_metadata["error_message"],
+                original_code=fix_metadata["original_code"],
+                fixed_code=fix_metadata["fixed_code"],
+                topic=fix_metadata["topic"],
+                scene_type=fix_metadata["scene_type"],
+                fix_method=fix_metadata["fix_method"]
             )
             
-            # Use LLM to generate the search query
-            query_response = self.scene_model(
-                _prepare_text_inputs(query_prompt),
-                metadata={
-                    "generation_name": "tavily-query-generation", 
-                    "trace_id": scene_trace_id, 
-                    "tags": [topic, f"scene{scene_number}"], 
-                    "session_id": session_id
-                }
-            )
-            
-            # Extract the search query from the response
-            search_query = self._extract_search_query_from_response(query_response)
-            if not search_query:
-                print("⚠️ Failed to extract search query from LLM response")
-                return None
-                
-            print(f"🔍 Generated search query: {search_query}")
-            
-            # Step 2: Use Tavily to search for solutions
-            print("🌐 Step 2: Searching for solutions with Tavily...")
-            tavily_engine = TavilyErrorSearchEngine(verbose=True)
-            
-            if not tavily_engine.is_available():
-                print("⚠️ Tavily not available - skipping Tavily-enhanced fix")
-                return None
-                
-            # Perform the search using the generated query
-            error_analysis = tavily_engine.analyze_error_for_search(error, code[:500])
-            error_analysis.search_query = search_query  # Use LLM-generated query
-            
-            search_results = tavily_engine.search_for_solution(error_analysis, max_results=5)
-            
-            if not search_results.get("available", False):
-                print("⚠️ Tavily search failed or not available")
-                return None
-                
-            # Format search results for the LLM
-            formatted_results = self._format_tavily_results_for_llm(search_results)
-            
-            print(f"✅ Found {len(search_results.get('solutions', []))} potential solutions")
-            
-            # Step 3: Use LLM with Tavily results to fix the code
-            print("🛠️ Step 3: Applying Tavily insights to fix the code...")
-            fix_prompt = get_prompt_tavily_assisted_fix_error(
-                implementation_plan=implementation_plan,
-                manim_code=code,
-                error_message=error,
-                tavily_search_results=formatted_results,
-                search_query=search_query
-            )
-            
-            # Generate fixed code using LLM with Tavily insights
-            fix_response = self.scene_model(
-                _prepare_text_inputs(fix_prompt),
-                metadata={
-                    "generation_name": "tavily-assisted-fix", 
-                    "trace_id": scene_trace_id, 
-                    "tags": [topic, f"scene{scene_number}"], 
-                    "session_id": session_id
-                }
-            )
-            
-            # Extract the fixed code
-            fixed_code = self._extract_code_with_retries(
-                fix_response,
-                pattern=r'```python\n(.*?)\n```',
-                generation_name="tavily-assisted-fix",
-                trace_id=scene_trace_id,
-                session_id=session_id
-            )
-            
-            if fixed_code and fixed_code != code:
-                print("✅ Tavily-assisted fix completed successfully")
-                return fixed_code
-            else:
-                print("⚠️ Tavily-assisted fix did not produce different code")
-                return None
-                
-        except Exception as e:
-            print(f"❌ Error in Tavily-enhanced fix: {e}")
-            return None
+            # Clear the metadata after storing
+            self._last_fix_metadata = None
+        else:
+            print("No fix metadata to store or memory not available")
 
-    def _extract_search_query_from_response(self, response: str) -> Optional[str]:
+    def clear_fix_metadata(self):
         """
-        Extract the search query from the LLM response.
-        
-        Args:
-            response: The LLM response containing the search query
-            
-        Returns:
-            The extracted search query or None if extraction failed
+        Clear the last fix metadata without storing it.
+        This method should be called when video rendering fails.
         """
-        try:
-            # Look for "Search Query:" pattern
-            query_pattern = r'Search Query:\s*([^\n]+)'
-            match = re.search(query_pattern, response, re.IGNORECASE)
-            
-            if match:
-                query = match.group(1).strip()
-                # Remove quotes if present
-                query = query.strip('"\'')
-                # Ensure it's under 400 characters
-                if len(query) <= 400:
-                    return query
-                else:
-                    return query[:397] + "..."
-                    
-            # Fallback: look for any line that looks like a search query
-            lines = response.split('\n')
-            for line in lines:
-                line = line.strip()
-                if (line.startswith('manim') or 'manim' in line.lower()) and len(line) <= 400:
-                    return line
-                    
-            return None
-            
-        except Exception as e:
-            print(f"⚠️ Error extracting search query: {e}")
-            return None
-
-    def _format_tavily_results_for_llm(self, search_results: dict) -> str:
-        """
-        Format Tavily search results for LLM consumption.
-        
-        Args:
-            search_results: Results from Tavily search
-            
-        Returns:
-            Formatted string for LLM input
-        """
-        formatted = "=== TAVILY SEARCH RESULTS ===\n\n"
-        
-        # Add quick answer if available
-        if search_results.get("answer"):
-            formatted += f"Quick Answer: {search_results['answer']}\n\n"
-        
-        # Add search solutions
-        solutions = search_results.get("solutions", [])
-        for i, solution in enumerate(solutions[:5], 1):  # Limit to top 5
-            formatted += f"--- Source {i} ---\n"
-            formatted += f"Title: {solution.get('title', 'N/A')}\n"
-            formatted += f"URL: {solution.get('url', 'N/A')}\n"
-            formatted += f"Type: {solution.get('source_type', 'N/A')}\n"
-            formatted += f"Relevance: {solution.get('relevance_score', 0):.2f}\n"
-            
-            content = solution.get('content', '')
-            if content:
-                # Truncate content to reasonable length
-                if len(content) > 500:
-                    content = content[:500] + "..."
-                formatted += f"Content: {content}\n"
-            
-            formatted += "\n"
-        
-        # Add actionable suggestions
-        if search_results.get("actionable_suggestions"):
-            formatted += "=== ACTIONABLE SUGGESTIONS ===\n"
-            for suggestion in search_results["actionable_suggestions"]:
-                formatted += f"• {suggestion}\n"
-                
-        return formatted
+        if hasattr(self, '_last_fix_metadata'):
+            if self._last_fix_metadata:
+                print("❌ Clearing unsuccessful fix metadata (video rendering failed)")
+            self._last_fix_metadata = None

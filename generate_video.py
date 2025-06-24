@@ -534,11 +534,16 @@ class VideoGenerator:
                     on_success_callback=upload_scene_callback  # Add the upload callback
                 )
                 if error_message is None: # Render success if error_message is None
+                    # Store any pending fix in memory since rendering was successful
+                    self.code_generator.store_successful_fix()
                     break
 
                 if curr_version >= max_retries: # Max retries reached
                     error_msg = f"Max retries ({max_retries}) reached for scene {curr_scene}, error: {error_message}"
                     print(f"❌ {error_msg}")
+                    
+                    # Clear any pending fix metadata since rendering failed
+                    self.code_generator.clear_fix_metadata()
                     
                     # Update scene record with failure status if using Appwrite
                     if scene_id and self.use_appwrite and self.appwrite_manager:
