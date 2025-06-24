@@ -1,5 +1,17 @@
 version: 2.1
 
+# Pipeline parameters for API triggers
+parameters:
+  workflow:
+    type: string
+    default: "ci-cd"
+  video_id:
+    type: string
+    default: ""
+  force_deploy:
+    type: boolean
+    default: false
+
 # Define reusable commands
 commands:
   install-system-deps:
@@ -206,6 +218,10 @@ workflows:
   
   # Main CI/CD workflow
   ci-cd:
+    when:
+      or:
+        - equal: [ "ci-cd", << pipeline.parameters.workflow >> ]
+        - not: << pipeline.parameters.workflow >>
     jobs:
       - test-backend:
           filters:
@@ -236,24 +252,23 @@ workflows:
 
   # Video rendering workflow (manual trigger)
   video-rendering:
+    when:
+      and:
+        - equal: [ "video-rendering", << pipeline.parameters.workflow >> ]
     jobs:
       - render-video:
-          filters:
-            branches:
-              ignore: /.*/
-            tags:
-              ignore: /.*/
+          video_id: << pipeline.parameters.video_id >>
 
-  # Scheduled video processing
-  scheduled-video-check:
-    triggers:
-      - schedule:
-          cron: "0 */2 * * *"  # Every 2 hours (more reasonable for video processing)
-          filters:
-            branches:
-              only:
-                - main
-                - circleci
-    jobs:
-      - render-video:
-          video_id: "" 
+  # Scheduled video processing (commented out for now due to cron format issues)
+  # scheduled-video-check:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 12 * * *"  # Daily at noon UTC
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #               - circleci
+  #   jobs:
+  #     - render-video:
+  #         video_id: "" 

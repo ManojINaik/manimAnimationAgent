@@ -59,10 +59,11 @@ The CircleCI configuration provides:
 - Manual workflow for rendering specific videos
 - Accepts video_id parameter
 
-### scheduled-video-check (Scheduled)
-- Runs every 10 minutes
-- Checks for queued videos and processes them
-- Only runs on main and circleci branches
+### scheduled-video-check (Scheduled) - Currently Disabled
+- **Note**: Commented out due to CircleCI cron format requirements
+- To enable: Uncomment the workflow and test with a simple cron expression
+- Suggested format: `"0 12 * * *"` (daily at noon)
+- Only runs on main and circleci branches when enabled
 
 ## Environment Variables
 
@@ -140,27 +141,110 @@ npm run type-check
 npm run preview
 ```
 
-## Triggering Video Rendering
+## Triggering Workflows via API
 
-### Manual Trigger via UI
-1. Go to CircleCI project page
-2. Click "Trigger Pipeline"
-3. Select the "video-rendering" workflow
-4. Provide video_id parameter if needed
+CircleCI supports API triggers similar to GitHub Actions. The configuration includes pipeline parameters for programmatic control.
 
-### API Trigger
+### API Endpoints
+- **Trigger Pipeline**: `POST https://circleci.com/api/v2/project/{org}/{project}/pipeline`
+- **Get Pipeline Status**: `GET https://circleci.com/api/v2/pipeline/{pipeline-id}`
+- **List Pipelines**: `GET https://circleci.com/api/v2/project/{org}/{project}/pipeline`
+
+### Using the Trigger Scripts
+
+#### Python Script
+```bash
+# Trigger CI/CD workflow
+python scripts/trigger_circleci_api.py \
+  --token YOUR_TOKEN \
+  --org gh/your-username \
+  --project manimAnimationAgent \
+  --workflow ci-cd
+
+# Trigger video rendering
+python scripts/trigger_circleci_api.py \
+  --token YOUR_TOKEN \
+  --org gh/your-username \
+  --project manimAnimationAgent \
+  --workflow video-rendering \
+  --video-id abc123
+
+# Get pipeline status
+python scripts/trigger_circleci_api.py \
+  --token YOUR_TOKEN \
+  --org gh/your-username \
+  --project manimAnimationAgent \
+  --status pipeline-id-here
+```
+
+#### Bash Script (Linux/Mac)
+```bash
+# Set environment variables
+export CIRCLECI_TOKEN="your-token"
+export CIRCLECI_ORG="gh/your-username"
+export CIRCLECI_PROJECT="manimAnimationAgent"
+
+# Trigger CI/CD workflow
+./scripts/trigger_circleci.sh --workflow ci-cd
+
+# Trigger video rendering
+./scripts/trigger_circleci.sh --workflow video-rendering --video-id abc123
+
+# List recent pipelines
+./scripts/trigger_circleci.sh --list
+```
+
+#### PowerShell Script (Windows)
+```powershell
+# Trigger CI/CD workflow
+.\scripts\trigger_circleci.ps1 -Token "your-token" -Workflow ci-cd
+
+# Trigger video rendering
+.\scripts\trigger_circleci.ps1 -Token "your-token" -Workflow video-rendering -VideoId "abc123"
+
+# Get pipeline status
+.\scripts\trigger_circleci.ps1 -Token "your-token" -Status "pipeline-id"
+```
+
+### Direct API Examples
+
+#### Trigger CI/CD Pipeline
 ```bash
 curl -X POST \
-  https://circleci.com/api/v2/project/github/your-org/your-repo/pipeline \
+  https://circleci.com/api/v2/project/gh/your-username/manimAnimationAgent/pipeline \
   -H "Circle-Token: YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "branch": "main",
     "parameters": {
+      "workflow": "ci-cd",
+      "force_deploy": false
+    }
+  }'
+```
+
+#### Trigger Video Rendering
+```bash
+curl -X POST \
+  https://circleci.com/api/v2/project/gh/your-username/manimAnimationAgent/pipeline \
+  -H "Circle-Token: YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "branch": "main",
+    "parameters": {
+      "workflow": "video-rendering",
       "video_id": "your-video-id"
     }
   }'
 ```
+
+### Manual Trigger via UI
+1. Go to CircleCI project page
+2. Click "Trigger Pipeline"
+3. Select parameters:
+   - `workflow`: "ci-cd" or "video-rendering"
+   - `video_id`: Required for video-rendering workflow
+   - `force_deploy`: Optional boolean for forced deployment
 
 ## Monitoring and Debugging
 
@@ -210,6 +294,15 @@ Cache keys are versioned and environment-specific for reliability.
 #### Video Rendering Timeout
 - Increase `no_output_timeout` in render-video job
 - Check Manim scene complexity
+
+#### Cron Expression Validation Errors
+- CircleCI requires POSIX-compliant cron expressions
+- Use explicit values instead of shorthand (e.g., `"0 6,12,18 * * *"` instead of `"0 */6 * * *"`)
+- Test expressions using CircleCI CLI: `circleci config validate`
+- Common valid formats:
+  - Daily: `"0 12 * * *"`
+  - Every 6 hours: `"0 0,6,12,18 * * *"`
+  - Weekly: `"0 12 * * 0"`
 
 ### Debug Mode
 Enable debug output by setting:
