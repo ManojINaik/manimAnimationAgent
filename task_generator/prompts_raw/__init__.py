@@ -222,7 +222,7 @@ Please generate the scene plan for the video in the following format:
 
 Requirements:
 1. Scenes must build progressively, starting from foundational concepts and advancing to more complex ideas to ensure a logical flow of understanding for the viewer. Each scene should naturally follow from the previous one, creating a cohesive learning narrative. Start with simpler scene layouts and progressively increase complexity in later scenes.
-2. The total number of scenes should be between 3 and 7.
+2. The total number of scenes should be between 3 and 4.
 3. Learning objectives should be distributed evenly across the scenes.
 4. The total video duration must be under 15 minutes.
 5. It is essential to use the exact output format, tags, and headers as specified in the prompt.
