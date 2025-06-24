@@ -86,11 +86,11 @@ class GitHubVideoRenderer:
             # Initialize models
             planner_model = LiteLLMWrapper(
                 #model_name=os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-flash')
-                model_name=os.getenv('DEFAULT_PLANNER_MODEL', 'gemini-2.5-flash-lite-preview-06-17')
+                model_name=os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-flash-lite-preview-06-17')
             )
             scene_model = LiteLLMWrapper(
                 #model_name=os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-flash')
-                model_name=os.getenv('DEFAULT_SCENE_MODEL', 'gemini-2.5-flash-lite-preview-06-17')
+                model_name=os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-flash-lite-preview-06-17')
             )
             
             # Initialize video generator
