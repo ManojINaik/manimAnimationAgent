@@ -1,10 +1,14 @@
 'use client';
 
 import VideoGenerator from './components/VideoGenerator';
+import VideoHistory from './components/VideoHistory';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<'generator' | 'history'>('generator');
+
   const features = [
     {
       icon: (
@@ -122,8 +126,8 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.7 }}
               className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center"
             >
-              <motion.a
-                href="/#generator"
+              <motion.button
+                onClick={() => setActiveTab('generator')}
                 className="btn-primary text-lg"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -132,9 +136,9 @@ export default function Home() {
                 <svg className="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
-              </motion.a>
+              </motion.button>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="/#features" className="btn-secondary text-lg group">
+                <Link href="#features" className="btn-secondary text-lg group">
                   Learn More
                   <svg className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
@@ -207,16 +211,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Generator Section */}
-      <section id="generator" className="py-20 sm:py-32 bg-gradient-to-br from-gray-50 to-blue-50">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-        >
-          <VideoGenerator />
-        </motion.div>
+      {/* Tabs and Content Section */}
+      <section id="app" className="py-20 sm:py-32 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="section-container">
+          {/* Tab Navigation */}
+          <div className="mx-auto max-w-md mb-12">
+            <div className="flex rounded-xl bg-white/80 backdrop-blur-sm p-1 shadow-lg border border-white/20">
+              <button
+                onClick={() => setActiveTab('generator')}
+                data-tab="generator"
+                className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  activeTab === 'generator'
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <svg className="inline-block mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Create Video
+              </button>
+              <button
+                onClick={() => setActiveTab('history')}
+                data-tab="history"
+                className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
+                  activeTab === 'history'
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+              >
+                <svg className="inline-block mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                History
+              </button>
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {activeTab === 'generator' ? <VideoGenerator /> : <VideoHistory />}
+          </motion.div>
+        </div>
       </section>
 
       {/* Stats Section */}

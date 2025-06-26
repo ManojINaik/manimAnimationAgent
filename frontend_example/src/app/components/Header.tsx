@@ -38,23 +38,41 @@ export default function Header() {
 
         <nav className="hidden items-center gap-8 md:flex">
           {[
-            { href: "/#features", label: "Features" },
-            { href: "/#generator", label: "Generator" },
-            { href: "#", label: "Pricing" },
+            { href: "#features", label: "Features" },
+            { href: "#app", label: "Generator" },
+            { href: "#app", label: "History", onClick: () => {
+              // Scroll to app section and switch to history tab
+              document.getElementById('app')?.scrollIntoView({ behavior: 'smooth' });
+              // Small delay to ensure page scroll completes before tab switch
+              setTimeout(() => {
+                const historyTab = document.querySelector('[data-tab="history"]') as HTMLButtonElement;
+                if (historyTab) historyTab.click();
+              }, 500);
+            }},
           ].map((item, index) => (
             <motion.div
-              key={item.href}
+              key={item.href + item.label}
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <Link 
-                href={item.href} 
-                className="relative text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 group"
-              >
-                {item.label}
-                <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
-              </Link>
+              {item.onClick ? (
+                <button
+                  onClick={item.onClick}
+                  className="relative text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 group"
+                >
+                  {item.label}
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+                </button>
+              ) : (
+                <Link 
+                  href={item.href} 
+                  className="relative text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 group"
+                >
+                  {item.label}
+                  <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-300 group-hover:w-full"></span>
+                </Link>
+              )}
             </motion.div>
           ))}
         </nav>
@@ -112,22 +130,47 @@ export default function Header() {
           >
             <div className="section-container py-6 space-y-4">
               {[
-                { href: "/#features", label: "Features" },
-                { href: "/#generator", label: "Generator" },
-                { href: "#", label: "Pricing" },
+                { href: "#features", label: "Features" },
+                { href: "#app", label: "Generator" },
+                { href: "#app", label: "History", onClick: () => {
+                  setIsMobileMenuOpen(false);
+                  document.getElementById('app')?.scrollIntoView({ behavior: 'smooth' });
+                  setTimeout(() => {
+                    const historyTab = document.querySelector('[data-tab="history"]') as HTMLButtonElement;
+                    if (historyTab) historyTab.click();
+                  }, 500);
+                }},
               ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block py-2 text-base font-medium text-gray-600 hover:text-gray-900"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
+                item.onClick ? (
+                  <button
+                    key={item.href + item.label}
+                    onClick={item.onClick}
+                    className="block py-2 text-base font-medium text-gray-600 hover:text-gray-900 w-full text-left"
+                  >
+                    {item.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="block py-2 text-base font-medium text-gray-600 hover:text-gray-900"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                )
               ))}
               <div className="pt-4 space-y-2">
                 <button className="btn-ghost w-full">Sign In</button>
-                <a href="/#generator" className="btn-primary w-full">Get Started</a>
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    document.getElementById('app')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="btn-primary w-full"
+                >
+                  Get Started
+                </button>
               </div>
             </div>
           </motion.div>

@@ -1,4 +1,4 @@
-import { Client, Databases, Functions, Account, Storage, RealtimeResponseEvent } from 'appwrite';
+import { Client, Databases, Functions, Account, Storage, RealtimeResponseEvent, Query } from 'appwrite';
 
 // Initialize Appwrite client
 const client = new Client()
@@ -189,4 +189,78 @@ export async function getVideoScenes(videoId: string): Promise<SceneDocument[]> 
 // Get file URL from storage
 export function getFileUrl(bucketId: string, fileId: string): string {
     return storage.getFileView(bucketId, fileId).toString();
+}
+
+// Test connection to Appwrite
+export async function testConnection(): Promise<{
+    success: boolean;
+    error?: string;
+    endpoint?: string;
+    projectId?: string;
+}> {
+    try {
+        console.log('🔌 Testing Appwrite connection...');
+        console.log('Endpoint:', process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT);
+        console.log('Project ID:', process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
+        
+        // Just return the configuration for now
+        const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
+        const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
+        
+        if (!endpoint || !projectId) {
+            throw new Error('Missing Appwrite configuration');
+        }
+        
+        console.log('✅ Configuration looks good');
+        
+        return {
+            success: true,
+            endpoint,
+            projectId
+        };
+    } catch (error) {
+        console.error('❌ Configuration check failed:', error);
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown configuration error',
+            endpoint: process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT,
+            projectId: process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID
+        };
+    }
+}
+
+// Get all videos for history
+export async function getAllVideos(): Promise<VideoDocument[]> {
+    try {
+        console.log('🔍 Fetching all videos from database...');
+        console.log('Database ID:', DATABASE_ID);
+        console.log('Collection ID:', VIDEOS_COLLECTION_ID);
+        
+        // Test connection first
+        const connectionTest = await testConnection();
+        if (!connectionTest.success) {
+            throw new Error(`Connection failed: ${connectionTest.error}`);
+        }
+        
+        const response = await databases.listDocuments(
+            DATABASE_ID,
+            VIDEOS_COLLECTION_ID,
+            [Query.orderDesc('$createdAt')] // Use proper Query object
+        );
+        
+        console.log('✅ Successfully fetched videos:', response.documents.length);
+        console.log('Videos:', response.documents);
+        
+        return response.documents as unknown as VideoDocument[];
+    } catch (error) {
+        console.error('❌ Failed to get all videos:', error);
+        console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            name: error instanceof Error ? error.name : 'Unknown',
+            stack: error instanceof Error ? error.stack : 'No stack trace'
+        });
+        
+        // Return empty array instead of throwing to prevent loading loop
+        return [];
+    }
 } 
