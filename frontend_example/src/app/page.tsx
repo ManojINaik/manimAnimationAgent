@@ -1,13 +1,19 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import VideoGenerator from './components/VideoGenerator';
 import VideoHistory from './components/VideoHistory';
+import ParticleCanvas from './components/ParticleCanvas';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { useState } from 'react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'generator' | 'history'>('generator');
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   const features = [
     {
@@ -67,235 +73,238 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="min-h-screen relative">
+      {/* Particle Background */}
+      <ParticleCanvas />
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 sm:py-32">
-        <div className="absolute inset-0 bg-mesh opacity-30"></div>
-        <div className="section-container relative">
+      <section className="relative min-h-screen flex flex-col items-center justify-center pt-20 overflow-hidden">
+        <div className="accent-lines">
+          <div>
+            <div className="accent-line-horizontal" style={{ top: '20%' }}></div>
+            <div className="accent-line-horizontal" style={{ top: '80%' }}></div>
+          </div>
+          <div>
+            <div className="accent-line-vertical" style={{ left: '10%' }}></div>
+            <div className="accent-line-vertical" style={{ left: '90%' }}></div>
+          </div>
+        </div>
+        <div className="text-center relative z-20">
+          {/* Introducing Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: isLoaded ? 0.7 : 0, y: 0 }}
+            transition={{ duration: 1.4, ease: "easeOut" }}
+            className="mb-8"
+          >
+            <div className="relative mx-auto w-fit">
+              <p className="text-sm font-medium text-gray-300 relative">
+                <span className="absolute -left-20 top-1/2 w-16 h-px bg-gradient-to-r from-transparent to-blue-400 opacity-30"></span>
+                Introducing
+                <span className="absolute -right-20 top-1/2 w-16 h-px bg-gradient-to-l from-transparent to-blue-400 opacity-30"></span>
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Main Hero Title */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isLoaded ? 1 : 0, y: 0 }}
+            transition={{ duration: 2, delay: 0.6, ease: "easeOut" }}
+            className="relative mb-8"
+          >
+            <h1 className="hero-title" data-text="ManimGen">
+              ManimGen
+            </h1>
+          </motion.div>
+
+          {/* Hero Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isLoaded ? 1 : 0, y: 0 }}
+            transition={{ duration: 2, delay: 2, ease: "easeOut" }}
+            className="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto leading-relaxed"
+          >
+            The world's most advanced platform for <br />
+            AI-powered educational animations
+          </motion.p>
+
+          {/* Features Section Preview */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mx-auto max-w-4xl text-center"
+            animate={{ opacity: isLoaded ? 1 : 0, y: 0 }}
+            transition={{ duration: 1.5, delay: 3, ease: "easeOut" }}
+            id="features"
+            className="mt-20 pt-20"
           >
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-8 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
-              </span>
-              AI-Powered Video Generation
-            </motion.div>
+            <div className="max-w-6xl mx-auto px-4">
+              <div className="text-center mb-16">
+                <div className="relative mx-auto w-fit mb-6">
+                  <p className="text-sm font-medium text-gray-400 relative">
+                    <span className="absolute -left-20 top-1/2 w-16 h-px bg-gradient-to-r from-transparent to-blue-400 opacity-50"></span>
+                    Revolutionary by design
+                    <span className="absolute -right-20 top-1/2 w-16 h-px bg-gradient-to-l from-transparent to-blue-400 opacity-50"></span>
+                  </p>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gradient mb-6">
+                  Harness. Empower.<br />
+                  Unmatched Versatility.
+                </h2>
+                <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+                  At the core lies our revolutionary AI framework, <br />
+                  ensuring adaptability across all educational domains.
+                </p>
+              </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-5xl font-bold tracking-tight text-gray-900 sm:text-7xl"
-            >
-              Create Studio-Quality{' '}
-              <span className="relative">
-                <span className="text-gradient">Educational Videos</span>
-                <motion.div
-                  className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 to-purple-600"
-                  initial={{ width: 0 }}
-                  animate={{ width: '100%' }}
-                  transition={{ duration: 1.2, delay: 0.8 }}
-                />
-              </span>{' '}
-              with AI
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="mt-8 text-xl leading-8 text-gray-600"
-            >
-              Transform your complex ideas into stunning, easy-to-understand animated videos.
-              Our AI agent handles the heavy lifting, from scripting to rendering.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
-              className="mt-12 flex flex-col gap-4 sm:flex-row sm:justify-center"
-            >
-              <motion.button
-                onClick={() => setActiveTab('generator')}
-                className="btn-primary text-lg"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Start Creating
-                <svg className="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-              </motion.button>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Link href="#features" className="btn-secondary text-lg group">
-                  Learn More
-                  <svg className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                  </svg>
-                </Link>
-              </motion.div>
-            </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                {[
+                  {
+                    icon: (
+                      <div className="w-16 h-16 mx-auto mb-4 p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-600/20 border border-blue-500/30">
+                        <svg className="w-full h-full text-blue-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+                        </svg>
+                      </div>
+                    ),
+                    title: "AI-Powered Generation",
+                    description: "Transform your ideas into stunning educational animations with our advanced AI engine."
+                  },
+                  {
+                    icon: (
+                      <div className="w-16 h-16 mx-auto mb-4 p-4 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-orange-600/20 border border-yellow-500/30">
+                        <svg className="w-full h-full text-yellow-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5 10.5 6.75 14.25 10.5 21 3.75m-3-3v6.75h-6.75" />
+                        </svg>
+                      </div>
+                    ),
+                    title: "Lightning Fast",
+                    description: "Generate professional-quality videos in minutes, not hours. Optimized for speed and quality."
+                  },
+                  {
+                    icon: (
+                      <div className="w-16 h-16 mx-auto mb-4 p-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-600/20 border border-purple-500/30">
+                        <svg className="w-full h-full text-purple-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42" />
+                        </svg>
+                      </div>
+                    ),
+                    title: "Beautiful Animations",
+                    description: "Create visually stunning mathematical and scientific animations that captivate your audience."
+                  }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                    className="feature-card text-center"
+                  >
+                    {feature.icon}
+                    <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
+                    <p className="text-gray-400">{feature.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </motion.div>
         </div>
-
-        {/* Floating Elements */}
-        <motion.div
-          className="absolute left-10 top-20 hidden lg:block"
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <div className="h-16 w-16 rounded-2xl bg-gradient-to-r from-blue-400 to-purple-500 opacity-20"></div>
-        </motion.div>
-        <motion.div
-          className="absolute right-16 top-32 hidden lg:block"
-          animate={{ y: [0, 20, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        >
-          <div className="h-12 w-12 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 opacity-20"></div>
-        </motion.div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 sm:py-32">
+      {/* App Section */}
+      <section id="app" className="relative py-20">
         <div className="section-container">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">Everything you need to create</h2>
-            <p className="mt-6 text-xl leading-8 text-gray-600">
-              ManimGen provides a powerful, automated toolkit to bring your educational content to life.
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gradient mb-6">Create Your Animation</h2>
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+              Choose between creating a new video or browsing your animation history
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4"
-          >
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="feature-card group"
-                whileHover={{ scale: 1.02 }}
-              >
-                <motion.div
-                  className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 group-hover:bg-blue-100"
-                  whileHover={{ rotate: 5 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                >
-                  {feature.icon}
-                </motion.div>
-                <h3 className="text-xl font-semibold">{feature.title}</h3>
-                <p className="mt-3 text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Tabs and Content Section */}
-      <section id="app" className="py-20 sm:py-32 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="section-container">
           {/* Tab Navigation */}
-          <div className="mx-auto max-w-md mb-12">
-            <div className="flex rounded-xl bg-white/80 backdrop-blur-sm p-1 shadow-lg border border-white/20">
-              <button
-                onClick={() => setActiveTab('generator')}
-                data-tab="generator"
-                className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  activeTab === 'generator'
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <svg className="inline-block mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Create Video
-              </button>
-              <button
-                onClick={() => setActiveTab('history')}
-                data-tab="history"
-                className={`flex-1 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 ${
-                  activeTab === 'history'
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <svg className="inline-block mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                </svg>
-                History
-              </button>
+          <div className="flex justify-center mb-16">
+            <div className="glass-card p-2 rounded-2xl">
+              <div className="flex">
+                <button
+                  data-tab="generator"
+                  onClick={() => setActiveTab('generator')}
+                  className={`px-8 py-4 rounded-xl font-medium transition-all duration-300 ${
+                    activeTab === 'generator'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Create Video
+                  </span>
+                </button>
+                <button
+                  data-tab="history"
+                  onClick={() => setActiveTab('history')}
+                  className={`px-8 py-4 rounded-xl font-medium transition-all duration-300 ${
+                    activeTab === 'history'
+                      ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    History
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Tab Content */}
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
+          {/* Content */}
+          <div className="relative min-h-[600px]">
             {activeTab === 'generator' ? <VideoGenerator /> : <VideoHistory />}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 sm:py-32">
-        <div className="section-container">
+      {/* Decorative Mountains - Simplified to reduce visual artifacts */}
+      <div className="fixed bottom-0 left-0 right-0 pointer-events-none z-[-2] opacity-40">
+        <div className="relative w-full h-64 overflow-hidden">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="mx-auto max-w-4xl text-center"
-          >
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-12">
-              Trusted by educators worldwide
-            </h2>
-            <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-              {[
-                { number: '1000+', label: 'Videos Created' },
-                { number: '50+', label: 'Topics Covered' },
-                { number: '99%', label: 'Success Rate' },
-                { number: '24/7', label: 'AI Available' },
-              ].map((stat, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="text-center"
-                >
-                  <div className="text-3xl font-bold text-gradient">{stat.number}</div>
-                  <div className="mt-2 text-sm text-gray-600">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+            initial={{ bottom: '-200%' }}
+            animate={{ bottom: '-80%' }}
+            transition={{ duration: 2, delay: 1, ease: "easeOut" }}
+            className="absolute w-80 h-80 rotate-45 bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-sm border border-blue-400/10 rounded-3xl"
+            style={{ 
+              left: 'calc(20% - 10rem)', 
+              transform: 'translateX(-6rem) translateY(2rem) rotate(45deg)',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.1)'
+            }}
+          />
+          <motion.div
+            initial={{ bottom: '-200%' }}
+            animate={{ bottom: '-60%' }}
+            transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
+            className="absolute w-56 h-80 rotate-45 bg-gradient-to-br from-purple-500/10 to-pink-600/10 backdrop-blur-sm border border-purple-400/10 rounded-3xl"
+            style={{ 
+              left: 'calc(50% - 7rem)', 
+              transform: 'translateX(-2rem) rotate(45deg)',
+              boxShadow: '0 0 20px rgba(139, 92, 246, 0.1)'
+            }}
+          />
+          <motion.div
+            initial={{ bottom: '-200%' }}
+            animate={{ bottom: '-80%' }}
+            transition={{ duration: 2, delay: 0.6, ease: "easeOut" }}
+            className="absolute w-80 h-80 rotate-45 bg-gradient-to-br from-blue-500/10 to-purple-600/10 backdrop-blur-sm border border-blue-400/10 rounded-3xl"
+            style={{ 
+              right: 'calc(20% - 10rem)', 
+              transform: 'translateX(6rem) translateY(3rem) rotate(45deg)',
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.1)'
+            }}
+          />
         </div>
-      </section>
-    </>
+      </div>
+    </div>
   );
 } 

@@ -30,6 +30,19 @@ export default function VideoHistory() {
         loadVideoFiles();
     }, []);
 
+    // Handle body scroll and modal classes
+    useEffect(() => {
+        if (selectedVideo) {
+            document.body.classList.add('video-modal-open');
+        } else {
+            document.body.classList.remove('video-modal-open');
+        }
+        
+        return () => {
+            document.body.classList.remove('video-modal-open');
+        };
+    }, [selectedVideo]);
+
     const loadVideoFiles = async () => {
         try {
             setLoading(true);
@@ -86,7 +99,7 @@ export default function VideoHistory() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <p className="mt-4 text-lg text-gray-600">Loading video files from storage...</p>
+                        <p className="mt-4 text-lg text-gray-300">Loading video files from storage...</p>
                     </div>
                 </div>
             </div>
@@ -96,7 +109,7 @@ export default function VideoHistory() {
     if (error) {
         return (
             <div className="section-container">
-                <div className="mx-auto max-w-lg rounded-md bg-red-50 p-6">
+                <div className="mx-auto max-w-lg glass-card border-red-500/20 p-6">
                     <div className="flex">
                         <div className="flex-shrink-0">
                             <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
@@ -104,15 +117,15 @@ export default function VideoHistory() {
                             </svg>
                         </div>
                         <div className="ml-3 w-full">
-                            <h3 className="text-sm font-medium text-red-800">Error Loading Video Files</h3>
-                            <p className="mt-2 text-sm text-red-700">{error}</p>
+                            <h3 className="text-sm font-medium text-red-300">Error Loading Video Files</h3>
+                            <p className="mt-2 text-sm text-red-400">{error}</p>
                             
                             {debugInfo && (
                                 <details className="mt-4">
-                                    <summary className="text-xs text-red-600 cursor-pointer hover:text-red-800">
+                                    <summary className="text-xs text-red-300 cursor-pointer hover:text-red-200">
                                         Debug Information (Click to expand)
                                     </summary>
-                                    <div className="mt-2 p-3 bg-red-100 rounded text-xs text-red-800">
+                                    <div className="mt-2 p-3 bg-red-900/20 rounded text-xs text-red-300 border border-red-500/20">
                                         <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
                                     </div>
                                 </details>
@@ -120,7 +133,7 @@ export default function VideoHistory() {
                             
                             <button 
                                 onClick={loadVideoFiles}
-                                className="mt-3 rounded-md bg-red-100 px-3 py-2 text-sm font-medium text-red-800 hover:bg-red-200"
+                                className="btn-secondary mt-3"
                             >
                                 Try Again
                             </button>
@@ -135,21 +148,45 @@ export default function VideoHistory() {
         <div className="section-container">
             <div className="mx-auto max-w-6xl">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Video Storage</h2>
-                    <p className="mt-6 text-lg leading-8 text-gray-600">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="relative mx-auto w-fit mb-6"
+                    >
+                        <p className="text-sm font-medium text-gray-400 relative">
+                            <span className="absolute -left-16 top-1/2 w-12 h-px bg-gradient-to-r from-transparent to-blue-400 opacity-50"></span>
+                            Your Animation Library
+                            <span className="absolute -right-16 top-1/2 w-12 h-px bg-gradient-to-l from-transparent to-blue-400 opacity-50"></span>
+                        </p>
+                    </motion.div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-4">Video Storage</h2>
+                    <p className="text-lg text-gray-400">
                         All video files in the storage bucket ({videoFiles.length} files)
                     </p>
                 </div>
 
                 {videoFiles.length === 0 ? (
-                    <div className="text-center py-12">
-                        <svg className="mx-auto h-24 w-24 text-gray-300" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026C6.923 9.75 8.25 11.077 8.25 12.75c0 .414.336.75.75.75s.75-.336.75-.75c0-1.673 1.327-3 3-3 .117 0 .232.009.344.026m-7.838 3.47c.395.442.903.814 1.479 1.068.113.05.23.094.351.133.132.042.268.078.409.11.126.028.256.05.388.067.014.002.027.004.041.006.14.018.283.028.428.028 2.484 0 4.5-2.016 4.5-4.5s-2.016-4.5-4.5-4.5c-.145 0-.288.01-.428.028-.014.002-.027.004-.041.006-.132.017-.262.039-.388.067-.141.032-.277.068-.409.11-.121.039-.238.083-.351.133-.576.254-1.084.626-1.479 1.068z" />
-                        </svg>
-                        <h3 className="mt-6 text-xl font-medium text-gray-900">No video files found</h3>
-                        <p className="mt-2 text-gray-500">No videos are currently stored in the final_videos bucket</p>
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center py-12"
+                    >
+                        <div className="relative mb-8">
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-32 h-32 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-full blur-xl"></div>
+                            </div>
+                            <svg className="relative mx-auto h-24 w-24 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-gradient mb-3">No Videos Yet</h3>
+                        <p className="text-gray-400 mb-8 max-w-md mx-auto">
+                            Your animation library is empty. Create your first educational video to get started!
+                        </p>
                         
-                        <div className="mt-6 flex gap-3 justify-center">
+                        <div className="flex gap-4 justify-center">
                             <button
                                 onClick={() => {
                                     // Switch to generator tab
@@ -158,16 +195,25 @@ export default function VideoHistory() {
                                 }}
                                 className="btn-primary"
                             >
-                                Create Your First Video
+                                <span className="glow"></span>
+                                <span className="relative z-10 flex items-center gap-2">
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    </svg>
+                                    Create Your First Video
+                                </span>
                             </button>
                             <button
                                 onClick={loadVideoFiles}
                                 className="btn-secondary"
                             >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
                                 Refresh
                             </button>
                         </div>
-                    </div>
+                    </motion.div>
                 ) : (
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                         {videoFiles.map((file, index) => (
@@ -180,46 +226,55 @@ export default function VideoHistory() {
                             >
                                 <div className="p-6">
                                     <div className="flex items-start justify-between mb-4">
-                                        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                                        <h3 className="text-lg font-semibold text-white line-clamp-2">
                                             {file.name.replace(/\.(mp4|mov|avi|mkv)$/i, '')}
                                         </h3>
-                                        <div className="flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-medium text-white bg-green-500">
-                                            <span>✅</span>
+                                        <div className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium bg-green-500/20 border border-green-500/30 text-green-300">
+                                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                             <span>Available</span>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2 text-xs text-gray-500">
+                                    <div className="space-y-2 text-xs text-gray-400">
                                         <div className="flex justify-between">
                                             <span>File Size:</span>
-                                            <span>{formatFileSize(file.sizeOriginal)}</span>
+                                            <span className="text-gray-300">{formatFileSize(file.sizeOriginal)}</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span>Created:</span>
-                                            <span>{formatDate(file.$createdAt)}</span>
+                                            <span className="text-gray-300">{formatDate(file.$createdAt)}</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span>Type:</span>
-                                            <span>{file.mimeType}</span>
+                                            <span className="text-gray-300">{file.mimeType}</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span>File ID:</span>
-                                            <span className="font-mono text-xs">{file.$id.substring(0, 8)}...</span>
+                                            <span className="font-mono text-xs text-gray-300">{file.$id.substring(0, 8)}...</span>
                                         </div>
                                     </div>
 
-                                    <div className="mt-4 space-y-2">
+                                    <div className="mt-6 space-y-3">
                                         <button
                                             onClick={() => setSelectedVideo(file)}
-                                            className="w-full rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 transition-colors"
+                                            className="btn-primary w-full"
                                         >
-                                            Watch Video
+                                            <span className="glow"></span>
+                                            <span className="relative z-10 flex items-center justify-center gap-2">
+                                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+                                                </svg>
+                                                Watch Video
+                                            </span>
                                         </button>
                                         <a
                                             href={getFileUrl(FINAL_VIDEOS_BUCKET_ID, file.$id)}
                                             download={file.name}
-                                            className="block w-full rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors text-center"
+                                            className="btn-secondary w-full flex items-center justify-center gap-2"
                                         >
+                                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                            </svg>
                                             Download
                                         </a>
                                     </div>
@@ -237,21 +292,21 @@ export default function VideoHistory() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-75"
+                        className="video-modal fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md"
                         onClick={() => setSelectedVideo(null)}
                     >
                         <motion.div
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.9, opacity: 0 }}
-                            className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-auto"
+                            className="glass-card max-w-4xl w-full max-h-[90vh] overflow-auto p-8 relative z-[10000]"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="flex items-center justify-between mb-6">
-                                <h3 className="text-xl font-semibold">{selectedVideo.name}</h3>
+                                <h3 className="text-xl font-semibold text-white">{selectedVideo.name}</h3>
                                 <button
                                     onClick={() => setSelectedVideo(null)}
-                                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                                    className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors text-gray-300 hover:text-white"
                                 >
                                     <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -279,33 +334,36 @@ export default function VideoHistory() {
                                 </video>
                             </div>
 
-                            <div className="mb-4">
-                                <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="mb-6">
+                                <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
                                     <div>
-                                        <span className="font-medium">File Size:</span> {formatFileSize(selectedVideo.sizeOriginal)}
+                                        <span className="font-medium text-gray-300">File Size:</span> {formatFileSize(selectedVideo.sizeOriginal)}
                                     </div>
                                     <div>
-                                        <span className="font-medium">Created:</span> {formatDate(selectedVideo.$createdAt)}
+                                        <span className="font-medium text-gray-300">Created:</span> {formatDate(selectedVideo.$createdAt)}
                                     </div>
                                     <div>
-                                        <span className="font-medium">Type:</span> {selectedVideo.mimeType}
+                                        <span className="font-medium text-gray-300">Type:</span> {selectedVideo.mimeType}
                                     </div>
                                     <div>
-                                        <span className="font-medium">File ID:</span> {selectedVideo.$id}
+                                        <span className="font-medium text-gray-300">File ID:</span> {selectedVideo.$id}
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="flex gap-3">
+                            <div className="flex gap-4">
                                 <a
                                     href={getFileUrl(FINAL_VIDEOS_BUCKET_ID, selectedVideo.$id)}
                                     download={selectedVideo.name}
                                     className="btn-primary flex-1"
                                 >
-                                    <svg className="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                                    </svg>
-                                    Download Video
+                                    <span className="glow"></span>
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
+                                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                        </svg>
+                                        Download Video
+                                    </span>
                                 </a>
                                 <button
                                     onClick={() => setSelectedVideo(null)}
