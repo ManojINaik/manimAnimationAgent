@@ -283,4 +283,27 @@ export async function getAllVideos(): Promise<VideoDocument[]> {
         // Return empty array instead of throwing to prevent loading loop
         return [];
     }
+}
+
+// Get all files from final_videos storage bucket
+export async function getAllVideoFiles(): Promise<any[]> {
+    try {
+        console.log('📁 Fetching all files from final_videos bucket...');
+        
+        const response = await storage.listFiles(FINAL_VIDEOS_BUCKET_ID);
+        
+        console.log('✅ Successfully fetched files from storage:', response.files.length);
+        console.log('Files:', response.files);
+        
+        return response.files;
+    } catch (error) {
+        console.error('❌ Failed to get files from storage:', error);
+        console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            name: error instanceof Error ? error.name : 'Unknown',
+            stack: error instanceof Error ? error.stack : 'No stack trace'
+        });
+        
+        return [];
+    }
 } 
