@@ -7,7 +7,8 @@ import {
     VideoDocument, 
     getFileUrl, 
     FINAL_VIDEOS_BUCKET_ID,
-    testConnection
+    testConnection,
+    checkFileExists
 } from '../services/appwrite';
 
 export default function VideoHistory() {
@@ -16,10 +17,35 @@ export default function VideoHistory() {
     const [error, setError] = useState<string | null>(null);
     const [selectedVideo, setSelectedVideo] = useState<VideoDocument | null>(null);
     const [debugInfo, setDebugInfo] = useState<any>(null);
+    const [videoFileStatus, setVideoFileStatus] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         loadVideos();
     }, []);
+
+    // Check if video file exists when videos are loaded
+    useEffect(() => {
+        if (videos.length > 0) {
+            checkVideoFiles();
+        }
+    }, [videos]);
+
+    const checkVideoFiles = async () => {
+        const statusMap: Record<string, boolean> = {};
+        
+        for (const video of videos) {
+            if (video.status === 'completed' && video.combined_video_url) {
+                console.log('🎬 Checking file for video:', video.topic, video.combined_video_url);
+                const exists = await checkFileExists(FINAL_VIDEOS_BUCKET_ID, video.combined_video_url);
+                statusMap[video.$id] = exists;
+            } else {
+                statusMap[video.$id] = false;
+            }
+        }
+        
+        setVideoFileStatus(statusMap);
+        console.log('🎬 Video file status map:', statusMap);
+    };
 
     const loadVideos = async () => {
         try {
@@ -164,6 +190,51 @@ export default function VideoHistory() {
                     <p className="mt-6 text-lg leading-8 text-gray-600">
                         All your generated videos in one place
                     </p>
+                    
+                    {/* Debug Info for Storage Issues */}
+                    {videos.length > 0 && Object.keys(videoFileStatus).length > 0 && (
+                        <div className="mt-6 mx-auto max-w-2xl">
+                            <details className="bg-gray-50 rounded-lg p-4">
+                                <summary className="text-sm text-gray-600 cursor-pointer hover:text-gray-800">
+                                    📊 Storage Debug Info (Click to expand)
+                                </summary>
+                                <div className="mt-4 text-left space-y-2">
+                                    <div className="grid grid-cols-2 gap-4 text-xs">
+                                        <div>
+                                            <strong>Total Videos:</strong> {videos.length}
+                                        </div>
+                                        <div>
+                                            <strong>Completed:</strong> {videos.filter(v => v.status === 'completed').length}
+                                        </div>
+                                        <div>
+                                            <strong>With Video URLs:</strong> {videos.filter(v => v.combined_video_url).length}
+                                        </div>
+                                        <div>
+                                            <strong>Files Found:</strong> {Object.values(videoFileStatus).filter(Boolean).length}
+                                        </div>
+                                    </div>
+                                    
+                                    {videos.filter(v => v.status === 'completed' && v.combined_video_url && !videoFileStatus[v.$id]).length > 0 && (
+                                        <div className="mt-4 p-3 bg-orange-50 rounded">
+                                            <p className="text-xs font-medium text-orange-800 mb-2">
+                                                ⚠️ Videos marked as completed but missing files:
+                                            </p>
+                                            <div className="space-y-1">
+                                                {videos
+                                                    .filter(v => v.status === 'completed' && v.combined_video_url && !videoFileStatus[v.$id])
+                                                    .map(v => (
+                                                        <div key={v.$id} className="text-xs text-orange-700">
+                                                            • {v.topic} → {v.combined_video_url}
+                                                        </div>
+                                                    ))
+                                                }
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </details>
+                        </div>
+                    )}
                 </div>
 
                 {videos.length === 0 ? (
@@ -260,19 +331,38 @@ export default function VideoHistory() {
 
                                         {video.status === 'completed' && video.combined_video_url && (
                                             <div className="mt-4 space-y-2">
-                                                <button
-                                                    onClick={() => setSelectedVideo(video)}
-                                                    className="w-full rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 transition-colors"
-                                                >
-                                                    Watch Video
-                                                </button>
-                                                <a
-                                                    href={getFileUrl(FINAL_VIDEOS_BUCKET_ID, video.combined_video_url)}
-                                                    download
-                                                    className="block w-full rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors text-center"
-                                                >
-                                                    Download
-                                                </a>
+                                                {videoFileStatus[video.$id] === true ? (
+                                                    <>
+                                                        <button
+                                                            onClick={() => setSelectedVideo(video)}
+                                                            className="w-full rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-600 hover:bg-blue-100 transition-colors"
+                                                        >
+                                                            Watch Video
+                                                        </button>
+                                                        <a
+                                                            href={getFileUrl(FINAL_VIDEOS_BUCKET_ID, video.combined_video_url)}
+                                                            download
+                                                            className="block w-full rounded-lg bg-gray-50 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors text-center"
+                                                        >
+                                                            Download
+                                                        </a>
+                                                    </>
+                                                ) : videoFileStatus[video.$id] === false ? (
+                                                    <div className="p-3 bg-orange-50 rounded-lg">
+                                                        <p className="text-xs text-orange-600 text-center">
+                                                            ⚠️ Video file not found in storage
+                                                        </p>
+                                                        <p className="text-xs text-orange-500 text-center mt-1">
+                                                            File: {video.combined_video_url}
+                                                        </p>
+                                                    </div>
+                                                ) : (
+                                                    <div className="p-3 bg-gray-50 rounded-lg">
+                                                        <p className="text-xs text-gray-500 text-center">
+                                                            🔍 Checking video availability...
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         )}
 
@@ -324,10 +414,50 @@ export default function VideoHistory() {
                                         controls 
                                         className="w-full max-h-96 object-contain"
                                         preload="metadata"
+                                        onError={(e) => {
+                                            console.error('🎬 Video playback error:', e);
+                                            const video = e.target as HTMLVideoElement;
+                                            video.style.display = 'none';
+                                            // Show error message
+                                            const errorDiv = video.parentElement?.querySelector('.video-error') as HTMLDivElement;
+                                            if (errorDiv) {
+                                                errorDiv.style.display = 'block';
+                                            }
+                                        }}
+                                        onLoadStart={() => {
+                                            console.log('🎬 Video loading started for:', selectedVideo.topic);
+                                        }}
+                                        onLoadedData={() => {
+                                            console.log('🎬 Video loaded successfully for:', selectedVideo.topic);
+                                        }}
                                     >
                                         <source src={getFileUrl(FINAL_VIDEOS_BUCKET_ID, selectedVideo.combined_video_url)} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
+                                    
+                                    {/* Error Message (hidden by default) */}
+                                    <div className="video-error p-6 text-center text-white" style={{ display: 'none' }}>
+                                        <div className="space-y-3">
+                                            <div className="text-red-400">
+                                                <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                                                </svg>
+                                            </div>
+                                            <h3 className="text-lg font-medium">Video Playback Error</h3>
+                                            <p className="text-sm text-gray-300">
+                                                The video file could not be loaded. This might be due to:
+                                            </p>
+                                            <ul className="text-xs text-gray-400 text-left space-y-1 max-w-md mx-auto">
+                                                <li>• File not uploaded to storage yet</li>
+                                                <li>• Incorrect file permissions</li>
+                                                <li>• Video still being processed</li>
+                                                <li>• Network connectivity issues</li>
+                                            </ul>
+                                            <p className="text-xs text-gray-500 mt-4">
+                                                File: {selectedVideo.combined_video_url}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             )}
 

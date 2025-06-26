@@ -188,7 +188,27 @@ export async function getVideoScenes(videoId: string): Promise<SceneDocument[]> 
 
 // Get file URL from storage
 export function getFileUrl(bucketId: string, fileId: string): string {
-    return storage.getFileView(bucketId, fileId).toString();
+    try {
+        console.log('🎬 Getting file URL for:', { bucketId, fileId });
+        const url = storage.getFileView(bucketId, fileId).toString();
+        console.log('✅ Generated URL:', url);
+        return url;
+    } catch (error) {
+        console.error('❌ Failed to generate file URL:', { bucketId, fileId, error });
+        return '';
+    }
+}
+
+// Check if file exists in storage
+export async function checkFileExists(bucketId: string, fileId: string): Promise<boolean> {
+    try {
+        await storage.getFile(bucketId, fileId);
+        console.log('✅ File exists:', { bucketId, fileId });
+        return true;
+    } catch (error) {
+        console.error('❌ File does not exist or access denied:', { bucketId, fileId, error });
+        return false;
+    }
 }
 
 // Test connection to Appwrite
