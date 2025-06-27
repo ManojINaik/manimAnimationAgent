@@ -98,12 +98,20 @@ RUN useradd -m -s /bin/bash runner && \
 # Set up working directory
 WORKDIR /workspace
 
-# Copy requirements file
-COPY requirements-github-actions.txt .
+# Copy requirements file into the image - CRITICAL for baking dependencies
+COPY requirements-github-actions.txt /app/requirements-github-actions.txt
 
-# Pre-install Python dependencies to cache them in the Docker image
-# This reduces GitHub Actions time even further
-RUN python3.11 -m pip install --no-cache-dir -r requirements-github-actions.txt --use-deprecated=legacy-resolver
+# Install dependencies during the image build process - NO CACHE to ensure clean install
+# This eliminates all pip install time from GitHub Actions workflows
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r /app/requirements-github-actions.txt --use-deprecated=legacy-resolver
+
+# Verify critical dependencies are installed during build
+RUN python3.11 -c "import manim; print('✅ Manim installed successfully')" && \
+    python3.11 -c "import appwrite; print('✅ Appwrite SDK installed successfully')" && \
+    python3.11 -c "import numpy, scipy; print('✅ Scientific libraries installed successfully')" && \
+    python3.11 -c "import openai, google.generativeai; print('✅ AI libraries installed successfully')" && \
+    echo "✅ All core dependencies verified during Docker build"
 
 # Fix ImageMagick policy for PDF handling (common Manim requirement)
 RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml

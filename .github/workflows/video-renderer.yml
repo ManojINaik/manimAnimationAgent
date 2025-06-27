@@ -62,34 +62,24 @@ jobs:
         rm -rf /var/tmp/*
         df -h  # Show available disk space
       
-    # No need for Python setup - already in container
-    # No need for system dependencies - already in container
-    # No need for most caching - dependencies pre-installed in container
+    # Dependencies are pre-installed in Docker image - no pip install needed!
+    # This eliminates 2-5 minutes of dependency installation time per run
     
-    # Only cache the virtual environment for any additional dependencies
-    - name: Cache additional dependencies
-      uses: actions/cache@v3
-      id: cache-additional-deps
-      with:
-        path: ~/.cache/pip
-        key: additional-deps-${{ runner.os }}-${{ hashFiles('requirements-github-actions.txt') }}
-        restore-keys: |
-          additional-deps-${{ runner.os }}-
-          
-    # Install any additional or updated dependencies
-    - name: Update dependencies if needed
+    # Verify pre-installed dependencies
+    - name: Verify pre-installed dependencies
       shell: bash
       run: |
         # Ensure Python path is set correctly
         export PYTHONPATH="$PWD:$PYTHONPATH"
         echo "PYTHONPATH=$PWD:$PYTHONPATH" >> $GITHUB_ENV
         
-        pip install --upgrade pip
-        pip install -r requirements-github-actions.txt --use-deprecated=legacy-resolver
-        
-        # Verify critical packages are installed
-        python -c "import appwrite; print('✅ Appwrite SDK installed')"
-        python -c "import manim; print('✅ Manim installed')"
+        # Verify critical packages are already installed (from Docker image)
+        echo "🔍 Verifying pre-installed dependencies..."
+        python -c "import appwrite; print('✅ Appwrite SDK already installed')"
+        python -c "import manim; print('✅ Manim already installed')"
+        python -c "import numpy, scipy; print('✅ Scientific libraries already installed')"
+        python -c "import openai, google.generativeai; print('✅ AI libraries already installed')"
+        echo "✅ All dependencies verified - ready to render!"
         
     # Validate that all required environment variables are present before starting
     - name: Validate environment variables
@@ -102,7 +92,7 @@ jobs:
         MEM0_API_KEY: ${{ secrets.MEM0_API_KEY }}
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
-        ELEVENLABS_VOICE: "false"  # Enable ElevenLabs voice generation
+        ELEVENLABS_VOICE: "true"  # Enable ElevenLabs voice generation
       shell: bash  # Use bash for indirect variable expansion
       run: |
         echo "Validating required environment variables..."
