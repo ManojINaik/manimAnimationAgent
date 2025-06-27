@@ -4,8 +4,28 @@ on:
   workflow_dispatch:
     inputs:
       video_id:
-        description: 'Video ID to render'
+        description: "Video ID to render"
         required: true
+        type: string
+
+      topic:
+        description: "Topic (optional)"
+        required: false
+        type: string
+
+      description:
+        description: "Description (optional)"
+        required: false
+        type: string
+
+      subject:
+        description: "Subject (optional)"
+        required: false
+        type: string
+
+      difficulty_level:
+        description: "Difficulty level (optional)"
+        required: false
         type: string
   # Also run on a schedule to check for queued videos
   # schedule:
