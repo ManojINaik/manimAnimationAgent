@@ -117,6 +117,47 @@ export default function VideoGenerator() {
         };
     }, [currentVideo]);
 
+    useEffect(() => {
+        // When the video is marked as completed but we still don't have the combined video URL,
+        // poll the backend every 3 seconds until the URL becomes available.
+        if (currentVideo && currentVideo.status === 'completed' && !currentVideo.combined_video_url) {
+            console.log('🔍 Video marked as completed but no combined_video_url found:', {
+                videoId: currentVideo.$id,
+                status: currentVideo.status,
+                combined_video_url: currentVideo.combined_video_url,
+                fullVideo: currentVideo
+            });
+            
+            let attempts = 0;
+            const maxAttempts = 10; // ~30 seconds
+            const interval = setInterval(async () => {
+                attempts += 1;
+                console.log(`🔄 Polling attempt ${attempts}/${maxAttempts} for video URL...`);
+                try {
+                    const latest = await getVideo(currentVideo.$id);
+                    console.log('📡 Received video data:', latest);
+                    if (latest && latest.combined_video_url) {
+                        console.log('✅ Found combined_video_url:', latest.combined_video_url);
+                        setCurrentVideo(latest);
+                        clearInterval(interval);
+                    } else if (attempts >= maxAttempts) {
+                        console.error('Combined video URL still unavailable after maximum attempts.');
+                        setError('The video finished rendering, but the file is still processing. Please wait a little longer or refresh the page.');
+                        clearInterval(interval);
+                    }
+                } catch (err) {
+                    console.error('Polling for combined video URL failed:', err);
+                    if (attempts >= maxAttempts) {
+                        setError('There was a problem retrieving the final video file. Please try refreshing the page.');
+                        clearInterval(interval);
+                    }
+                }
+            }, 3000); // 3 seconds
+
+            return () => clearInterval(interval);
+        }
+    }, [currentVideo]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (isGenerating) return;
@@ -494,6 +535,39 @@ export default function VideoGenerator() {
                                     </button>
                                 </div>
                             </motion.div>
+                        )}
+
+                        {currentVideo && currentVideo.status === 'completed' && !currentVideo.combined_video_url && (
+                            <div className="mt-6 p-4 border-2 border-yellow-200 rounded-lg bg-yellow-50">
+                                <h4 className="font-medium text-yellow-800 mb-2">Video Processing Complete</h4>
+                                <p className="text-yellow-600 mb-4">
+                                    The video has finished rendering but is still being processed for viewing. 
+                                    This usually takes just a few moments.
+                                </p>
+                                <button
+                                    onClick={async () => {
+                                        console.log('🔄 Manual refresh requested for video:', currentVideo.$id);
+                                        try {
+                                            const latest = await getVideo(currentVideo.$id);
+                                            console.log('📡 Manual refresh - received video data:', latest);
+                                            if (latest) {
+                                                setCurrentVideo(latest);
+                                                if (latest.combined_video_url) {
+                                                    console.log('✅ Manual refresh found video URL:', latest.combined_video_url);
+                                                }
+                                            }
+                                        } catch (err) {
+                                            console.error('Manual refresh failed:', err);
+                                        }
+                                    }}
+                                    className="btn-secondary"
+                                >
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                    Refresh Video
+                                </button>
+                            </div>
                         )}
                     </motion.div>
                 )}

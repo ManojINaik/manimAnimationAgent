@@ -114,8 +114,8 @@ class GitHubVideoRenderer:
                 max_retries=10  # ✅ Increased retries for better error recovery
             )
             
-            # Update status to completed
-            await self.update_video_status(video_id, "completed")
+            # Note: The VideoGenerator.generate_video_pipeline already updates the status to "completed"
+            # with the combined_video_url, so we don't need to update it again here
             print(f"Successfully rendered video {video_id}")
             return True
             
