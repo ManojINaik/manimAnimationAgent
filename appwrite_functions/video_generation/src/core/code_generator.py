@@ -745,7 +745,7 @@ class CodeGenerator:
             
             search_results = tavily_engine.search_for_solution(error_analysis, max_results=5)
             
-            if not search_results or not search_results.get('success'):
+            if not search_results or not search_results.get('available'):
                 print("⚠️ Tavily search failed or not available")
                 return None
                 

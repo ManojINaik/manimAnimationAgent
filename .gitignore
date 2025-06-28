@@ -268,3 +268,6 @@ frontend_example/dist
 frontend_example/node_modules/*
 frontend_example/.next
 frontend_example/dist
+
+echoverse/
+echoverse/bolthackathon2
