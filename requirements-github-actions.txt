@@ -102,6 +102,8 @@ pytest-cov>=4.0.0
 black>=23.0.0
 flake8>=6.0.0
 mypy>=1.0.0
+pylint>=3.0.0
+ruff>=0.4.0
 
 # System and Process Libraries
 psutil>=5.9.0

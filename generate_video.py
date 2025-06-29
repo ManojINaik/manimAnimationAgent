@@ -89,9 +89,9 @@ class VideoGenerator:
                  scene_model=None,
                  helper_model=None,
                  output_dir="output",
-                 verbose=False,
-                 use_rag=False,
-                 use_context_learning=False,
+                 verbose=True,
+                 use_rag=True, #set true
+                 use_context_learning=True,
                  context_learning_path="data/context_learning",
                  chroma_db_path="data/rag/chroma_db",
                  manim_docs_path="data/rag/manim_docs",

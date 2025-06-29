@@ -385,3 +385,7 @@ hyperframe>=6.1.0
 
 # Web search for error-driven development
 tavily-python>=0.3.0
+
+# Development and Linting Libraries
+pylint>=3.0.0
+ruff>=0.4.0
