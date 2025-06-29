@@ -48,3 +48,65 @@ Requirements:
 7. If external assets (e.g., images, audio, video) are referenced, remove them.
 8. Preserve all original code that is not causing the reported error. Do not remove or alter any intentional elements unnecessarily.
 9. Follow best practices for code clarity and the current Manim version.
+
+**🚨 COMMON ERROR PATTERNS TO AVOID - CRITICAL PREVENTION 🚨**
+
+**1. AttributeError: 'str' object has no attribute 'rotate'**
+- ❌ WRONG: `line.get_direction().rotate(PI/2)` when get_direction() returns a string
+- ✅ CORRECT: Use numpy operations for vector math:
+  ```python
+  direction = line.get_unit_vector()  # Get direction as vector
+  perpendicular = np.array([-direction[1], direction[0], 0])  # Manual perpendicular
+  # OR use proper vector rotation:
+  from manim import rotate_vector
+  perpendicular = rotate_vector(direction, PI/2)
+  ```
+
+**2. Modern Manim API - NO deprecated methods**
+- ❌ WRONG: `axes.get_x_labels()`, `axes.get_x_axis_labels()`, `axes.add_labels()`
+- ✅ CORRECT: Modern API equivalents:
+  ```python
+  axes.add_coordinates()  # Add numeric tick labels
+  x_label, y_label = axes.get_axis_labels(x_label="x", y_label="y")  # Get label mobjects
+  # OR just: axes.get_axis_labels() for default labels
+  ```
+
+**3. Constants and Frame Dimensions**
+- ❌ WRONG: `DOWN_SCREEN_EDGE` (undefined constant)
+- ✅ CORRECT: Use proper frame calculations:
+  ```python
+  from manim import config, FRAME_HEIGHT, FRAME_WIDTH
+  bottom_edge = -config.frame_height/2  # or -FRAME_HEIGHT/2
+  top_edge = config.frame_height/2      # or FRAME_HEIGHT/2
+  ```
+
+**4. RightAngle Constructor**
+- ❌ WRONG: `RightAngle(line1, vertex, line2, length=0.4, length=0.4)` (duplicate params)
+- ✅ CORRECT: Use proper parameters:
+  ```python
+  RightAngle(line1, vertex, line2, size=0.4, quadrant=(-1,-1))
+  ```
+
+**5. Line and Vector Methods**
+- ❌ WRONG: `line.get_unit_normal()` (method doesn't exist)
+- ✅ CORRECT: Calculate perpendicular manually:
+  ```python
+  direction = line.get_direction()
+  perpendicular = np.array([-direction[1], direction[0], 0])
+  ```
+
+**6. Polygon/Line Constructor Errors**
+- ❌ WRONG: `Polygon([v1, v2, v3])`, `Line([start], [end])`
+- ✅ CORRECT: Pass vertices as separate arguments:
+  ```python
+  Polygon(v1, v2, v3, color=BLUE)
+  Line(start, end)
+  ```
+
+**7. Helper Method Attribution**
+- ❌ WRONG: `self.create_formula_tex()` (method doesn't exist on Scene)
+- ✅ CORRECT: Use helper object:
+  ```python
+  helper = Scene1_Helper(self)
+  formula = helper.create_formula_tex("E=mc^2", BLUE)
+  ```

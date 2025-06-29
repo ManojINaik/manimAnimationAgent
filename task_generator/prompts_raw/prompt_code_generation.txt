@@ -262,6 +262,42 @@ def label_triangle_sides(self, triangle, labels=["a", "b", "c"]):
      v2 = np.array([0, 1]) # Wrong dimension
      ```
 
+4. **Vector Math & Direction - PREVENT AttributeError:**
+   - ❌ WRONG: `line.get_direction().rotate(PI/2)` when get_direction() returns string
+   - ✅ CORRECT: Use proper vector operations:
+     ```python
+     direction = line.get_unit_vector()  # Get direction as vector
+     perpendicular = np.array([-direction[1], direction[0], 0])  # Manual perpendicular
+     # OR use rotate_vector function:
+     from manim import rotate_vector
+     perpendicular = rotate_vector(direction, PI/2)
+     ```
+
+5. **Modern Axes API - PREVENT AttributeError:**
+   - ❌ WRONG: `axes.get_x_labels()`, `axes.get_x_axis_labels()`, `axes.add_labels()`
+   - ✅ CORRECT: Modern API equivalents:
+     ```python
+     axes.add_coordinates()  # Add numeric tick labels
+     x_label, y_label = axes.get_axis_labels(x_label="x", y_label="y")  # Get label mobjects
+     # OR just: axes.get_axis_labels() for default labels
+     ```
+
+6. **Frame Constants - PREVENT NameError:**
+   - ❌ WRONG: `DOWN_SCREEN_EDGE` (undefined constant)
+   - ✅ CORRECT: Use proper frame calculations:
+     ```python
+     from manim import config, FRAME_HEIGHT, FRAME_WIDTH
+     bottom_edge = -config.frame_height/2  # or -FRAME_HEIGHT/2
+     top_edge = config.frame_height/2      # or FRAME_HEIGHT/2
+     ```
+
+7. **RightAngle Constructor - PREVENT TypeError:**
+   - ❌ WRONG: `RightAngle(line1, vertex, line2, length=0.4, length=0.4)` (duplicate params)
+   - ✅ CORRECT: Use proper parameters:
+     ```python
+     RightAngle(line1, vertex, line2, size=0.4, quadrant=(-1,-1))
+     ```
+
 **ANIMATION & OBJECT BEST PRACTICES:**
 - For curved lines: Use `CurvedArrow()` or `ArcBetweenPoints()`
 - For dashed lines: Use `DashedLine(start, end)`

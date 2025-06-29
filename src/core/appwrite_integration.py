@@ -963,40 +963,71 @@ class AppwriteVideoManager:
                          file_id: str = None,
                          permissions: List[str] = None) -> Optional[str]:
         """
-        Upload a file to Appwrite storage.
-        
+        Upload a file to Appwrite storage with automatic retries.
+
         Args:
             bucket_id: Storage bucket ID
             file_path: Local file path
             file_id: Custom file ID (optional)
             permissions: File permissions
-            
+
         Returns:
             str: File ID if successful
         """
         if not self.enabled or not os.path.exists(file_path):
             return None
-            
-        try:
-            file_id = file_id or ID.unique()
-            permissions = permissions or ["read(\"any\")"]
-            
-            result = self.storage.create_file(
-                bucket_id=bucket_id,
-                file_id=file_id,
-                file=InputFile.from_path(file_path),
-                permissions=permissions
-            )
-            
-            # Get file URL
-            file_url = self._get_file_url(bucket_id, file_id)
-            print(f"✅ Uploaded file: {file_path} -> {file_url}")
-            
-            return file_id
-            
-        except Exception as e:
-            print(f"Failed to upload file {file_path}: {e}")
-            return None
+
+        # -------- NEW: Robust retry logic --------
+        MAX_RETRIES = 3  # total attempts = 1 original + 3 retries = 4
+        BACKOFF_BASE_SECONDS = 2  # exponential back-off factor
+
+        retries = 0
+        # We will keep trying until retries > MAX_RETRIES. The first iteration is attempt 0.
+        while True:
+            try:
+                file_id = file_id or ID.unique()
+                permissions = permissions or ["read(\"any\")"]
+
+                result = self.storage.create_file(
+                    bucket_id=bucket_id,
+                    file_id=file_id,
+                    file=InputFile.from_path(file_path),
+                    permissions=permissions
+                )
+
+                # Get file URL
+                file_url = self._get_file_url(bucket_id, file_id)
+                print(f"✅ Uploaded file: {file_path} -> {file_url}")
+
+                return file_id
+
+            except Exception as e:
+                # Check if it is worth retrying (network / 5xx errors). For AppwriteException we can inspect .code.
+                should_retry = False
+                # AppwriteException may not exist when SDK missing; guard with hasattr.
+                if AppwriteException and isinstance(e, AppwriteException):
+                    # Retry on server-side 5xx errors or timeouts.
+                    error_code = getattr(e, "code", None)
+                    if error_code and 500 <= error_code < 600:
+                        should_retry = True
+                # Fallback: look for common transient error indicators in the message (e.g., "503", "backend read error", "timeout").
+                message_str = str(e).lower()
+                if any(substr in message_str for substr in ["503", "504", "backend read error", "timeout"]):
+                    should_retry = True
+
+                if retries < MAX_RETRIES and should_retry:
+                    retries += 1
+                    sleep_for = BACKOFF_BASE_SECONDS ** retries  # 2,4,8 seconds
+                    print(f"⚠️ Upload failed (attempt {retries}/{MAX_RETRIES}) with error: {e}. Retrying in {sleep_for}s...")
+                    await asyncio.sleep(sleep_for)
+                    # On retry we must not reuse an existing file_id that may be partially created; regenerate
+                    file_id = None
+                    continue
+
+                # Either max retries reached or not retryable error – log and give up.
+                print(f"Failed to upload file {file_path}: {e}")
+                return None
+        # -------- END NEW CODE --------
 
     def _get_file_url(self, bucket_id: str, file_id: str) -> str:
         """Get public URL for a file."""
