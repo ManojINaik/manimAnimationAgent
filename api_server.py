@@ -151,9 +151,9 @@ def initialize_video_generator():
         planner_model = LiteLLMWrapper(
             model_name=Config.DEFAULT_PLANNER_MODEL,
             temperature=Config.DEFAULT_MODEL_TEMPERATURE,
-            print_cost=True,
-            verbose=False,
-            use_langfuse=False
+            print_cost=Config.MODEL_PRINT_COST,
+            verbose=Config.MODEL_VERBOSE,
+            use_langfuse=Config.USE_LANGFUSE
         )
         
         # Initialize video generator
@@ -162,9 +162,6 @@ def initialize_video_generator():
             helper_model=planner_model,
             scene_model=planner_model,
             output_dir=API_OUTPUT_DIR,
-            use_rag=False,
-            use_context_learning=False,
-            use_visual_fix_code=False,
             verbose=True
         )
         

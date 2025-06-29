@@ -103,15 +103,24 @@ class GitHubVideoRenderer:
             # Initialize the LLM wrappers
             planner_model = LiteLLMWrapper(
                 model_name=planner_model_name,
-                temperature=model_temperature
+                temperature=model_temperature,
+                print_cost=Config.MODEL_PRINT_COST,
+                verbose=Config.MODEL_VERBOSE,
+                use_langfuse=Config.USE_LANGFUSE
             )
             scene_model = LiteLLMWrapper(
                 model_name=scene_model_name,
-                temperature=model_temperature
+                temperature=model_temperature,
+                print_cost=Config.MODEL_PRINT_COST,
+                verbose=Config.MODEL_VERBOSE,
+                use_langfuse=Config.USE_LANGFUSE
             )
             helper_model = LiteLLMWrapper(
                 model_name=helper_model_name,
-                temperature=model_temperature
+                temperature=model_temperature,
+                print_cost=Config.MODEL_PRINT_COST,
+                verbose=Config.MODEL_VERBOSE,
+                use_langfuse=Config.USE_LANGFUSE
             )
             
             # Initialize video generator
@@ -121,9 +130,9 @@ class GitHubVideoRenderer:
                 helper_model=helper_model,
                 output_dir=f"output/{video_id}",
                 verbose=True,
-                use_rag=False,  # ✅ Enable RAG for context-aware error fixing
-                use_context_learning=True,  # ✅ Enable learning from examples
-                use_visual_fix_code=True,  # ✅ Enable visual feedback for code improvements
+                use_rag=Config.USE_RAG,
+                use_context_learning=Config.USE_CONTEXT_LEARNING,
+                use_visual_fix_code=Config.USE_VISUAL_FIX_CODE,
                 use_appwrite=True
             )
             

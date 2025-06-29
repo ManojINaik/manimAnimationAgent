@@ -12,6 +12,16 @@ class Config:
     MANIM_DOCS_PATH = "data/rag/manim_docs"
     EMBEDDING_MODEL = "gemini/text-embedding-004"
     
+    # Feature toggles – control globally from env or by editing this file once
+    _rag_flag = os.getenv("USE_RAG", "false").lower()
+    USE_RAG = _rag_flag in ["true", "1", "yes", "on", "enabled"]
+
+    _context_flag = os.getenv("USE_CONTEXT_LEARNING", "false").lower()
+    USE_CONTEXT_LEARNING = _context_flag in ["true", "1", "yes", "on", "enabled"]
+
+    _visual_fix_flag = os.getenv("USE_VISUAL_FIX_CODE", "false").lower()
+    USE_VISUAL_FIX_CODE = _visual_fix_flag in ["true", "1", "yes", "on", "enabled"]
+    
     # AI Model configurations - configurable from environment variables
     DEFAULT_PLANNER_MODEL = os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-pro')
     DEFAULT_SCENE_MODEL = os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-pro')
@@ -39,4 +49,12 @@ class Config:
     
     # OPTIONAL VOICE-ENABLED RENDER: Whether to enable TTS after video rendering
     # Can be disabled even if ELEVENLABS is set up to reduce costs or processing time
-    VOICE_NARRATION = os.getenv('VOICE_NARRATION', 'false').lower() in ['true', '1', 'yes'] 
+    VOICE_NARRATION = os.getenv('VOICE_NARRATION', 'false').lower() in ['true', '1', 'yes']
+
+    # Logging / debugging toggles
+    def _bool_env(key: str, default: str = 'false'):
+        return os.getenv(key, default).lower() in ['true', '1', 'yes', 'on', 'enabled']
+
+    MODEL_VERBOSE = _bool_env('MODEL_VERBOSE', 'false')
+    MODEL_PRINT_COST = _bool_env('MODEL_PRINT_COST', 'true')
+    USE_LANGFUSE = _bool_env('USE_LANGFUSE', 'false') 

@@ -40,9 +40,9 @@ async def test_video_generation_with_appwrite():
         planner_model = LiteLLMWrapper(
             model_name=Config.DEFAULT_PLANNER_MODEL,
             temperature=Config.DEFAULT_MODEL_TEMPERATURE,
-            print_cost=True,
-            verbose=False,
-            use_langfuse=False
+            print_cost=Config.MODEL_PRINT_COST,
+            verbose=Config.MODEL_VERBOSE,
+            use_langfuse=Config.USE_LANGFUSE
         )
         
         print("✅ AI models initialized")

@@ -101,9 +101,9 @@ def initialize_video_generator():
         planner_model = LiteLLMWrapper(
             model_name=Config.DEFAULT_PLANNER_MODEL,
             temperature=Config.DEFAULT_MODEL_TEMPERATURE,
-            print_cost=True,
-            verbose=False,
-            use_langfuse=False
+            print_cost=Config.MODEL_PRINT_COST,
+            verbose=Config.MODEL_VERBOSE,
+            use_langfuse=Config.USE_LANGFUSE
         )
         
         # Initialize video generator
@@ -112,9 +112,6 @@ def initialize_video_generator():
             helper_model=planner_model,
             scene_model=planner_model,
             output_dir=GRADIO_OUTPUT_DIR,
-            use_rag=False,
-            use_context_learning=False,
-            use_visual_fix_code=False,
             verbose=True
         )
         
@@ -384,7 +381,7 @@ with gr.Blocks(
     if not CAN_IMPORT_DEPENDENCIES:
         gr.HTML("""
         <div style="background: #e3f2fd; padding: 20px; border-radius: 10px; margin: 15px 0; border: 1px solid #2196f3;">
-            <h4 style="color: #1976d2; margin-top: 0;">🎮 Demo Mode Active</h4>
+            <h4 style="color: #1976d2; margin-top: 0;">�� Demo Mode Active</h4>
             <p>This HF Spaces instance runs in demonstration mode due to system dependency limitations.</p>
             
             <div style="background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0;">

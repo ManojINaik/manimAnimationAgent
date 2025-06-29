@@ -90,20 +90,19 @@ class VideoGenerator:
                  helper_model=None,
                  output_dir="output",
                  verbose=True,
-                 use_rag=True, #set true
-                 use_context_learning=True,
+                 use_rag=None,
+                 use_context_learning=None,
                  context_learning_path="data/context_learning",
                  chroma_db_path="data/rag/chroma_db",
                  manim_docs_path="data/rag/manim_docs",
                  embedding_model="gemini/text-embedding-004",
-                 use_visual_fix_code=False,
+                 use_visual_fix_code=None,
                  use_langfuse=True,
                  trace_id=None,
                  max_scene_concurrency: int = 5,
                  use_appwrite=True):
         self.output_dir = output_dir
         self.verbose = verbose
-        self.use_visual_fix_code = use_visual_fix_code
         self.session_id = self._load_or_create_session_id()  # Modified to load existing or create new
         self.scene_semaphore = asyncio.Semaphore(max_scene_concurrency)
         self.banned_reasonings = get_banned_reasonings()
@@ -127,15 +126,20 @@ class VideoGenerator:
         # Initialize the planner with the model instance, not a string
         self.planner_model = planner_model
 
+        # Resolve feature toggles – fall back to central config when not explicitly provided
+        self.use_rag = Config.USE_RAG if use_rag is None else use_rag
+        self.use_context_learning = Config.USE_CONTEXT_LEARNING if use_context_learning is None else use_context_learning
+        self.use_visual_fix_code = Config.USE_VISUAL_FIX_CODE if use_visual_fix_code is None else use_visual_fix_code
+
         # Initialize separate modules
         self.planner = VideoPlanner(
             planner_model=self.planner_model, # Pass the initialized model
             helper_model=helper_model,
             output_dir=output_dir,
             print_response=verbose,
-            use_context_learning=use_context_learning,
+            use_context_learning=self.use_context_learning,
             context_learning_path=context_learning_path,
-            use_rag=use_rag,
+            use_rag=self.use_rag,
             session_id=self.session_id,
             chroma_db_path=chroma_db_path,
             manim_docs_path=manim_docs_path,
@@ -147,13 +151,13 @@ class VideoGenerator:
             helper_model=helper_model if helper_model is not None else self.planner_model, # Pass the model
             output_dir=output_dir,
             print_response=verbose,
-            use_rag=use_rag,
-            use_context_learning=use_context_learning,
+            use_rag=self.use_rag,
+            use_context_learning=self.use_context_learning,
             context_learning_path=context_learning_path,
             chroma_db_path=chroma_db_path,
             manim_docs_path=manim_docs_path,
             embedding_model=embedding_model,
-            use_visual_fix_code=use_visual_fix_code,
+            use_visual_fix_code=self.use_visual_fix_code,
             use_langfuse=use_langfuse,
             session_id=self.session_id,
             use_agent_memory=True  # Enable agent memory for error learning
@@ -161,7 +165,7 @@ class VideoGenerator:
         self.video_renderer = VideoRenderer(
             output_dir=output_dir,
             print_response=verbose,
-            use_visual_fix_code=use_visual_fix_code
+            use_visual_fix_code=self.use_visual_fix_code
         )
 
     def _load_or_create_session_id(self) -> str:
@@ -1100,23 +1104,23 @@ if __name__ == "__main__":
     planner_model = LiteLLMWrapper(
         model_name=args.model,
         temperature=Config.DEFAULT_MODEL_TEMPERATURE,
-        print_cost=True,
-        verbose=verbose,
-        use_langfuse=args.use_langfuse
+        print_cost=Config.MODEL_PRINT_COST,
+        verbose=verbose or Config.MODEL_VERBOSE,
+        use_langfuse=args.use_langfuse if args.use_langfuse else Config.USE_LANGFUSE
     )
     helper_model = LiteLLMWrapper(
-        model_name=args.helper_model if args.helper_model else args.model, # Use helper_model if provided, else planner_model
+        model_name=args.helper_model if args.helper_model else args.model,
         temperature=Config.DEFAULT_MODEL_TEMPERATURE,
-        print_cost=True,
-        verbose=verbose,
-        use_langfuse=args.use_langfuse
+        print_cost=Config.MODEL_PRINT_COST,
+        verbose=verbose or Config.MODEL_VERBOSE,
+        use_langfuse=args.use_langfuse if args.use_langfuse else Config.USE_LANGFUSE
     )
-    scene_model = LiteLLMWrapper( # Initialize scene_model separately
+    scene_model = LiteLLMWrapper(
         model_name=args.model,
         temperature=Config.DEFAULT_MODEL_TEMPERATURE,
-        print_cost=True,
-        verbose=verbose,
-        use_langfuse=args.use_langfuse
+        print_cost=Config.MODEL_PRINT_COST,
+        verbose=verbose or Config.MODEL_VERBOSE,
+        use_langfuse=args.use_langfuse if args.use_langfuse else Config.USE_LANGFUSE
     )
     print(f"Planner model: {args.model}, Helper model: {args.helper_model if args.helper_model else args.model}, Scene model: {args.model}") # Print all models
 

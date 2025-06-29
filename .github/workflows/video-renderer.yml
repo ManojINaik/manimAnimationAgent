@@ -103,6 +103,13 @@ jobs:
         DEFAULT_MODEL_TEMPERATURE: "0.7"
         DEFAULT_MAX_RETRIES: "5"
         DEFAULT_MAX_SCENE_CONCURRENCY: "4"
+        # Feature toggles (centralized)
+        USE_RAG: "${{ vars.USE_RAG || 'true' }}"
+        USE_CONTEXT_LEARNING: "${{ vars.USE_CONTEXT_LEARNING || 'true' }}"
+        USE_VISUAL_FIX_CODE: "${{ vars.USE_VISUAL_FIX_CODE || 'false' }}"
+        MODEL_VERBOSE: "${{ vars.MODEL_VERBOSE || 'true' }}"
+        MODEL_PRINT_COST: "${{ vars.MODEL_PRINT_COST || 'true' }}"
+        USE_LANGFUSE: "${{ vars.USE_LANGFUSE || 'false' }}"
       shell: bash  # Use bash for indirect variable expansion
       run: |
         echo "Validating required environment variables..."
@@ -162,6 +169,13 @@ jobs:
         DEFAULT_MODEL_TEMPERATURE: "0.7"
         DEFAULT_MAX_RETRIES: "5"
         DEFAULT_MAX_SCENE_CONCURRENCY: "5"
+        # Feature toggles (centralized – same as above)
+        USE_RAG: "${{ vars.USE_RAG || 'false' }}"
+        USE_CONTEXT_LEARNING: "${{ vars.USE_CONTEXT_LEARNING || 'false' }}"
+        USE_VISUAL_FIX_CODE: "${{ vars.USE_VISUAL_FIX_CODE || 'false' }}"
+        MODEL_VERBOSE: "${{ vars.MODEL_VERBOSE || 'false' }}"
+        MODEL_PRINT_COST: "${{ vars.MODEL_PRINT_COST || 'true' }}"
+        USE_LANGFUSE: "${{ vars.USE_LANGFUSE || 'false' }}"
       shell: bash
       run: |
         echo "Environment variables set successfully"
@@ -212,6 +226,13 @@ jobs:
         DEFAULT_MODEL_TEMPERATURE: "0.7"
         DEFAULT_MAX_RETRIES: "5"
         DEFAULT_MAX_SCENE_CONCURRENCY: "5"
+        # Feature toggles (centralized – same as above)
+        USE_RAG: "${{ vars.USE_RAG || 'false' }}"
+        USE_CONTEXT_LEARNING: "${{ vars.USE_CONTEXT_LEARNING || 'false' }}"
+        USE_VISUAL_FIX_CODE: "${{ vars.USE_VISUAL_FIX_CODE || 'false' }}"
+        MODEL_VERBOSE: "${{ vars.MODEL_VERBOSE || 'false' }}"
+        MODEL_PRINT_COST: "${{ vars.MODEL_PRINT_COST || 'true' }}"
+        USE_LANGFUSE: "${{ vars.USE_LANGFUSE || 'false' }}"
       shell: bash  # Explicitly use bash instead of sh to avoid bashism issues
       run: |
         # Set up error handling

@@ -29,6 +29,8 @@ from task_generator.prompts_raw import (
     _code_limit,
     _prompt_manim_cheatsheet
 )
+# Central configuration
+from src.config.config import Config
 try:
     from src.rag.vector_store import RAGVectorStore # Import RAGVectorStore
     HAS_RAG = True
@@ -55,7 +57,7 @@ except ImportError:
 class CodeGenerator:
     """A class for generating and managing Manim code."""
 
-    def __init__(self, scene_model, helper_model, output_dir="output", print_response=False, use_rag=False, use_context_learning=False, context_learning_path="data/context_learning", chroma_db_path="rag/chroma_db", manim_docs_path="rag/manim_docs", embedding_model="gemini/text-embedding-004", use_visual_fix_code=False, use_langfuse=True, session_id=None, use_agent_memory=True):
+    def __init__(self, scene_model, helper_model, output_dir="output", print_response=False, use_rag=None, use_context_learning=None, context_learning_path="data/context_learning", chroma_db_path="rag/chroma_db", manim_docs_path="rag/manim_docs", embedding_model="gemini/text-embedding-004", use_visual_fix_code=None, use_langfuse=True, session_id=None, use_agent_memory=True):
         """Initialize the CodeGenerator.
 
         Args:
@@ -63,13 +65,13 @@ class CodeGenerator:
             helper_model: The model used for helper tasks
             output_dir (str, optional): Directory for output files. Defaults to "output".
             print_response (bool, optional): Whether to print model responses. Defaults to False.
-            use_rag (bool, optional): Whether to use RAG. Defaults to False.
-            use_context_learning (bool, optional): Whether to use context learning. Defaults to False.
+            use_rag (bool, optional): Whether to use RAG. Defaults to None.
+            use_context_learning (bool, optional): Whether to use context learning. Defaults to None.
             context_learning_path (str, optional): Path to context learning examples. Defaults to "data/context_learning".
             chroma_db_path (str, optional): Path to ChromaDB. Defaults to "rag/chroma_db".
             manim_docs_path (str, optional): Path to Manim docs. Defaults to "rag/manim_docs".
             embedding_model (str, optional): Name of embedding model. Defaults to "gemini/text-embedding-004".
-            use_visual_fix_code (bool, optional): Whether to use visual code fixing. Defaults to False.
+            use_visual_fix_code (bool, optional): Whether to use visual code fixing. Defaults to None.
             use_langfuse (bool, optional): Whether to use Langfuse logging. Defaults to True.
             session_id (str, optional): Session identifier. Defaults to None.
             use_agent_memory (bool, optional): Whether to use agent memory for learning. Defaults to True.
@@ -78,13 +80,14 @@ class CodeGenerator:
         self.helper_model = helper_model
         self.output_dir = output_dir
         self.print_response = print_response
-        self.use_rag = use_rag
-        self.use_context_learning = use_context_learning
+        # Resolve feature toggles from central config when not explicitly provided
+        self.use_rag = Config.USE_RAG if use_rag is None else use_rag
+        self.use_context_learning = Config.USE_CONTEXT_LEARNING if use_context_learning is None else use_context_learning
         self.context_learning_path = context_learning_path
-        self.context_examples = self._load_context_examples() if use_context_learning else None
+        self.context_examples = self._load_context_examples() if self.use_context_learning else None
         self.manim_docs_path = manim_docs_path
 
-        self.use_visual_fix_code = use_visual_fix_code
+        self.use_visual_fix_code = Config.USE_VISUAL_FIX_CODE if use_visual_fix_code is None else use_visual_fix_code
         self.banned_reasonings = get_banned_reasonings()
         self.session_id = session_id # Use session_id passed from VideoGenerator
 
@@ -97,7 +100,7 @@ class CodeGenerator:
             if use_agent_memory:
                 print("Warning: Agent memory requested but not available. Install mem0ai for self-improving capabilities.")
 
-        if use_rag:
+        if self.use_rag:
             try:
                 self.vector_store = RAGVectorStore(
                     chroma_db_path=chroma_db_path,

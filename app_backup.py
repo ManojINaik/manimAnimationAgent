@@ -42,16 +42,14 @@ def initialize_video_generator():
             return "⚠️ Running in fallback mode due to missing dependencies"
         
         from generate_video import VideoGenerator
+        from src.config.config import Config
         
         video_generator = VideoGenerator(
-            planner_model="gemini/gemini-2.5-pro",
-            helper_model="gemini/gemini-2.5-pro",
-            scene_model="gemini/gemini-2.5-pro",
+            planner_model=Config.DEFAULT_PLANNER_MODEL,
+            helper_model=Config.DEFAULT_HELPER_MODEL,
+            scene_model=Config.DEFAULT_SCENE_MODEL,
             output_dir="output",
-            use_rag=False,
-            use_context_learning=False,
-            use_visual_fix_code=False,
-            print_response=False
+            verbose=Config.MODEL_VERBOSE
         )
         return "✅ Video generator initialized successfully"
     except Exception as e:

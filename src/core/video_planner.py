@@ -2,6 +2,7 @@ import os
 import re
 import json
 import glob
+import math
 from typing import List, Optional
 import uuid
 import asyncio
@@ -20,6 +21,7 @@ from task_generator import (
     get_prompt_context_learning_code
 )
 from src.rag.rag_integration import RAGIntegration
+from src.config.config import Config
 
 class VideoPlanner:
     """A class for planning and generating video content.
@@ -42,22 +44,23 @@ class VideoPlanner:
         use_langfuse (bool): Whether to use Langfuse logging. Defaults to True
     """
 
-    def __init__(self, planner_model, helper_model=None, output_dir="output", print_response=False, use_context_learning=False, context_learning_path="data/context_learning", use_rag=False, session_id=None, chroma_db_path="data/rag/chroma_db", manim_docs_path="data/rag/manim_docs", embedding_model="text-embedding-ada-002", use_langfuse=True):
+    def __init__(self, planner_model, helper_model=None, output_dir="output", print_response=True, use_context_learning=None, context_learning_path="data/context_learning", use_rag=None, session_id=None, chroma_db_path="data/rag/chroma_db", manim_docs_path="data/rag/manim_docs", embedding_model="text-embedding-ada-002", use_langfuse=True):
         self.planner_model = planner_model
         self.helper_model = helper_model if helper_model is not None else planner_model
         self.output_dir = output_dir
         self.print_response = print_response
-        self.use_context_learning = use_context_learning
+        # Resolve feature toggles
+        self.use_context_learning = Config.USE_CONTEXT_LEARNING if use_context_learning is None else use_context_learning
         self.context_learning_path = context_learning_path
         # Initialize different types of context examples
-        self.scene_plan_examples = self._load_context_examples('scene_plan') if use_context_learning else None
-        self.vision_storyboard_examples = self._load_context_examples('scene_vision_storyboard') if use_context_learning else None
-        self.technical_implementation_examples = self._load_context_examples('technical_implementation') if use_context_learning else None
-        self.animation_narration_examples = self._load_context_examples('scene_animation_narration') if use_context_learning else None
-        self.code_examples = self._load_context_examples('code') if use_context_learning else None
-        self.use_rag = use_rag
+        self.scene_plan_examples = self._load_context_examples('scene_plan') if self.use_context_learning else None
+        self.vision_storyboard_examples = self._load_context_examples('scene_vision_storyboard') if self.use_context_learning else None
+        self.technical_implementation_examples = self._load_context_examples('technical_implementation') if self.use_context_learning else None
+        self.animation_narration_examples = self._load_context_examples('scene_animation_narration') if self.use_context_learning else None
+        self.code_examples = self._load_context_examples('code') if self.use_context_learning else None
+        self.use_rag = Config.USE_RAG if use_rag is None else use_rag
         self.rag_integration = None
-        if use_rag:
+        if self.use_rag:
             try:
                 self.rag_integration = RAGIntegration(
                     helper_model=self.helper_model,
