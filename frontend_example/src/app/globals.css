@@ -24,10 +24,24 @@ html { -ms-overflow-style: none; scrollbar-width: none; }
   body {
     margin: 0;
     font-family: 'Inter', 'Hubot-Sans', system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Open Sans, Helvetica Neue, sans-serif;
+    
+    --grid-size: 40px;
+    --grid-color: rgba(186, 215, 247, 0.07);
+    
     background: #05060f;
     background-image: 
+      /* Grid */
+      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px),
+      /* Original Gradients */
       linear-gradient(180deg, rgba(5, 6, 15, 0.9) 0%, rgba(5, 6, 15, 0.95) 50%, rgba(5, 6, 15, 0.9) 100%),
       linear-gradient(0deg, rgba(216, 236, 248, 0.03), rgba(152, 192, 239, 0.03));
+    background-size: 
+      var(--grid-size) var(--grid-size), 
+      var(--grid-size) var(--grid-size),
+      auto,
+      auto;
+
     color: #d8ecf8;
     font-size: max(calc(var(--_size) * 0.03), 10px);
     --_factor: min(600px, 80vh);
