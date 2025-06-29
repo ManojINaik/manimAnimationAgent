@@ -21,6 +21,7 @@ from datetime import datetime, timezone
 from generate_video import VideoGenerator
 from mllm_tools.litellm import LiteLLMWrapper
 from src.core.appwrite_integration import AppwriteVideoManager
+from src.config.config import Config
 
 class GitHubVideoRenderer:
     """Handles video rendering in GitHub Actions environment"""
@@ -84,21 +85,40 @@ class GitHubVideoRenderer:
             await self.update_video_status(video_id, "rendering")
             
             # Determine which LLM models to use for planning and scene generation
-            planner_model_name = os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-pro')
-            scene_model_name = os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-pro')
+            planner_model_name = os.getenv('DEFAULT_PLANNER_MODEL', Config.DEFAULT_PLANNER_MODEL)
+            scene_model_name = os.getenv('DEFAULT_SCENE_MODEL', Config.DEFAULT_SCENE_MODEL)
+            helper_model_name = os.getenv('DEFAULT_HELPER_MODEL', Config.DEFAULT_HELPER_MODEL)
+            
+            # Get model parameters from environment or config
+            model_temperature = float(os.getenv('DEFAULT_MODEL_TEMPERATURE', Config.DEFAULT_MODEL_TEMPERATURE))
+            max_retries = int(os.getenv('DEFAULT_MAX_RETRIES', Config.DEFAULT_MAX_RETRIES))
 
             # Log the chosen models so they appear in the GitHub Actions output
             print("🧠 Using planner model:", planner_model_name)
             print("🎬 Using scene model:", scene_model_name)
+            print("🤝 Using helper model:", helper_model_name)
+            print("🌡️ Model temperature:", model_temperature)
+            print("🔄 Max retries:", max_retries)
 
             # Initialize the LLM wrappers
-            planner_model = LiteLLMWrapper(model_name=planner_model_name)
-            scene_model = LiteLLMWrapper(model_name=scene_model_name)
+            planner_model = LiteLLMWrapper(
+                model_name=planner_model_name,
+                temperature=model_temperature
+            )
+            scene_model = LiteLLMWrapper(
+                model_name=scene_model_name,
+                temperature=model_temperature
+            )
+            helper_model = LiteLLMWrapper(
+                model_name=helper_model_name,
+                temperature=model_temperature
+            )
             
             # Initialize video generator
             generator = VideoGenerator(
                 planner_model=planner_model,
                 scene_model=scene_model,
+                helper_model=helper_model,
                 output_dir=f"output/{video_id}",
                 verbose=True,
                 use_rag=False,  # ✅ Enable RAG for context-aware error fixing
@@ -113,7 +133,7 @@ class GitHubVideoRenderer:
             await generator.generate_video_pipeline(
                 topic=topic,
                 description=description,
-                max_retries=10  # ✅ Increased retries for better error recovery
+                max_retries=max_retries  # ✅ Use configurable max retries
             )
             
             # Note: The VideoGenerator.generate_video_pipeline already updates the status to "completed"

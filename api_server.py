@@ -22,6 +22,11 @@ import uuid
 import logging
 import requests
 
+# Add src to path for imports
+sys.path.append('src')
+
+from src.config.config import Config
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,8 +46,8 @@ class VideoGenerationRequest(BaseModel):
     topic: str
     context: str = ""
     max_scenes: int = 3
-    ai_model: str = "gemini/gemini-2.5-pro"  # Renamed to avoid conflict
-    temperature: float = 0.7
+    ai_model: str = Config.DEFAULT_PLANNER_MODEL  # Use Config default
+    temperature: float = Config.DEFAULT_MODEL_TEMPERATURE
 
 class VideoGenerationResponse(BaseModel):
     success: bool
@@ -144,8 +149,8 @@ def initialize_video_generator():
         
         # Initialize models with comma-separated API key support
         planner_model = LiteLLMWrapper(
-            model_name="gemini/gemini-2.5-pro",
-            temperature=0.7,
+            model_name=Config.DEFAULT_PLANNER_MODEL,
+            temperature=Config.DEFAULT_MODEL_TEMPERATURE,
             print_cost=True,
             verbose=False,
             use_langfuse=False

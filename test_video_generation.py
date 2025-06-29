@@ -16,6 +16,8 @@ load_dotenv()
 # Add src to path for imports
 sys.path.append('src')
 
+from src.config.config import Config
+
 async def test_video_generation_with_appwrite():
     """Test video generation with Appwrite metadata management."""
     print("🧪 Testing Video Generation with Appwrite Integration")
@@ -36,8 +38,8 @@ async def test_video_generation_with_appwrite():
             
         # Initialize models
         planner_model = LiteLLMWrapper(
-            model_name="gemini/gemini-2.5-pro",
-            temperature=0.7,
+            model_name=Config.DEFAULT_PLANNER_MODEL,
+            temperature=Config.DEFAULT_MODEL_TEMPERATURE,
             print_cost=True,
             verbose=False,
             use_langfuse=False

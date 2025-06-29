@@ -13,6 +13,11 @@ from typing import Dict, Any, Tuple, Optional
 from pathlib import Path
 import gradio as gr
 
+# Add src to path for imports
+sys.path.append('src')
+
+from src.config.config import Config
+
 # Environment setup
 DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
 video_generator = None
@@ -94,8 +99,8 @@ def initialize_video_generator():
         
         # Initialize models with comma-separated API key support
         planner_model = LiteLLMWrapper(
-            model_name="gemini/gemini-2.5-pro",
-            temperature=0.7,
+            model_name=Config.DEFAULT_PLANNER_MODEL,
+            temperature=Config.DEFAULT_MODEL_TEMPERATURE,
             print_cost=True,
             verbose=False,
             use_langfuse=False

@@ -93,6 +93,16 @@ jobs:
         TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         ELEVENLABS_VOICE: "true"  # Enable ElevenLabs voice generation
+        # AI Model Configuration - Centralized in GitHub Actions
+        DEFAULT_PLANNER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_SCENE_MODEL: "gemini/gemini-2.5-pro" 
+        DEFAULT_HELPER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_TEXT_MODEL: "azure/gpt-4o"
+        DEFAULT_EVALUATION_VIDEO_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_IMAGE_MODEL: "azure/gpt-4o"
+        DEFAULT_MODEL_TEMPERATURE: "0.7"
+        DEFAULT_MAX_RETRIES: "5"
+        DEFAULT_MAX_SCENE_CONCURRENCY: "5"
       shell: bash  # Use bash for indirect variable expansion
       run: |
         echo "Validating required environment variables..."
@@ -120,6 +130,14 @@ jobs:
         check_var "TAVILY_API_KEY" || echo "⚠️ TAVILY_API_KEY not set (optional)"
         check_var "ELEVENLABS_API_KEY" || echo "⚠️ ELEVENLABS_API_KEY not set (optional)"
         
+        # Validate model configuration
+        echo "✅ Model configuration:"
+        echo "  DEFAULT_PLANNER_MODEL: $DEFAULT_PLANNER_MODEL"
+        echo "  DEFAULT_SCENE_MODEL: $DEFAULT_SCENE_MODEL"
+        echo "  DEFAULT_HELPER_MODEL: $DEFAULT_HELPER_MODEL"
+        echo "  DEFAULT_MODEL_TEMPERATURE: $DEFAULT_MODEL_TEMPERATURE"
+        echo "  DEFAULT_MAX_RETRIES: $DEFAULT_MAX_RETRIES"
+        
         echo "✅ Environment validation complete"
         
     - name: Set up environment variables
@@ -134,6 +152,16 @@ jobs:
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         ELEVENLABS_VOICE: "true"  # Enable ElevenLabs voice generation
         MANIMCE_USE_PROGRESS_BARS: "true"
+        # AI Model Configuration - Centralized in GitHub Actions
+        DEFAULT_PLANNER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_SCENE_MODEL: "gemini/gemini-2.5-pro" 
+        DEFAULT_HELPER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_TEXT_MODEL: "azure/gpt-4o"
+        DEFAULT_EVALUATION_VIDEO_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_IMAGE_MODEL: "azure/gpt-4o"
+        DEFAULT_MODEL_TEMPERATURE: "0.7"
+        DEFAULT_MAX_RETRIES: "5"
+        DEFAULT_MAX_SCENE_CONCURRENCY: "5"
       shell: bash
       run: |
         echo "Environment variables set successfully"
@@ -174,6 +202,16 @@ jobs:
         ELEVENLABS_VOICE: "true"  # Enable ElevenLabs voice generation
         MANIMCE_USE_PROGRESS_BARS: "true"
         VIDEO_ID: ${{ github.event.inputs.video_id || github.event.client_payload.video_id }}
+        # AI Model Configuration - Centralized in GitHub Actions
+        DEFAULT_PLANNER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_SCENE_MODEL: "gemini/gemini-2.5-pro" 
+        DEFAULT_HELPER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_TEXT_MODEL: "azure/gpt-4o"
+        DEFAULT_EVALUATION_VIDEO_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_IMAGE_MODEL: "azure/gpt-4o"
+        DEFAULT_MODEL_TEMPERATURE: "0.7"
+        DEFAULT_MAX_RETRIES: "5"
+        DEFAULT_MAX_SCENE_CONCURRENCY: "5"
       shell: bash  # Explicitly use bash instead of sh to avoid bashism issues
       run: |
         # Set up error handling

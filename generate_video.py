@@ -1053,7 +1053,7 @@ class VideoGenerator:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate Manim videos using AI')
     parser.add_argument('--model', type=str, choices=allowed_models,
-                      default='gemini/gemini-2.5-pro', help='Select the AI model to use')
+                      default=Config.DEFAULT_PLANNER_MODEL, help='Select the AI model to use')
     parser.add_argument('--topic', type=str, default=None, help='Topic to generate videos for')
     parser.add_argument('--context', type=str, default=None, help='Context of the topic')
     parser.add_argument('--helper_model', type=str, choices=allowed_models,
@@ -1065,7 +1065,7 @@ if __name__ == "__main__":
     parser.add_argument('--theorems_path', type=str, default=None, help='Path to theorems json file')
     parser.add_argument('--sample_size', '--sample', type=int, default=None, help='Number of theorems to sample')
     parser.add_argument('--verbose', action='store_true', help='Print verbose output')
-    parser.add_argument('--max_retries', type=int, default=5, help='Maximum number of retries for code generation')
+    parser.add_argument('--max_retries', type=int, default=Config.DEFAULT_MAX_RETRIES, help='Maximum number of retries for code generation')
     parser.add_argument('--use_rag', '--rag', action='store_true', help='Use Retrieval Augmented Generation (requires working embedding services)')
     parser.add_argument('--use_visual_fix_code','--visual_fix_code', action='store_true', help='Use VLM to fix code with rendered visuals')
     parser.add_argument('--chroma_db_path', type=str, default=Config.CHROMA_DB_PATH, help="Path to Chroma DB") # Use Config
@@ -1081,7 +1081,7 @@ if __name__ == "__main__":
                        help='Path to context learning examples')
     parser.add_argument('--use_langfuse', action='store_true',
                        help='Enable Langfuse logging')
-    parser.add_argument('--max_scene_concurrency', type=int, default=1, help='Maximum number of scenes to process concurrently')
+    parser.add_argument('--max_scene_concurrency', type=int, default=Config.DEFAULT_MAX_SCENE_CONCURRENCY, help='Maximum number of scenes to process concurrently')
     parser.add_argument('--max_topic_concurrency', type=int, default=1,
                        help='Maximum number of topics to process concurrently')
     parser.add_argument('--debug_combine_topic', type=str, help='Debug combine videos', default=None)
@@ -1099,21 +1099,21 @@ if __name__ == "__main__":
         verbose = False
     planner_model = LiteLLMWrapper(
         model_name=args.model,
-        temperature=0.7,
+        temperature=Config.DEFAULT_MODEL_TEMPERATURE,
         print_cost=True,
         verbose=verbose,
         use_langfuse=args.use_langfuse
     )
     helper_model = LiteLLMWrapper(
         model_name=args.helper_model if args.helper_model else args.model, # Use helper_model if provided, else planner_model
-        temperature=0.7,
+        temperature=Config.DEFAULT_MODEL_TEMPERATURE,
         print_cost=True,
         verbose=verbose,
         use_langfuse=args.use_langfuse
     )
     scene_model = LiteLLMWrapper( # Initialize scene_model separately
         model_name=args.model,
-        temperature=0.7,
+        temperature=Config.DEFAULT_MODEL_TEMPERATURE,
         print_cost=True,
         verbose=verbose,
         use_langfuse=args.use_langfuse

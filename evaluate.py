@@ -4,6 +4,7 @@ import argparse
 import tempfile
 from typing import Dict, List, Union
 from datetime import datetime
+import sys
 
 from dotenv import load_dotenv
 from moviepy import VideoFileClip
@@ -14,6 +15,11 @@ from eval_suite.utils import calculate_geometric_mean
 from eval_suite.text_utils import parse_srt_to_text, fix_transcript, evaluate_text
 from eval_suite.video_utils import evaluate_video_chunk_new
 from eval_suite.image_utils import evaluate_sampled_images
+
+# Add src to path for imports
+sys.path.append('src')
+
+from src.config.config import Config
 
 load_dotenv()
 
@@ -356,18 +362,18 @@ def main():
     parser = argparse.ArgumentParser(description='Automatic evaluation of theorem explanation videos with LLMs')
     parser.add_argument('--model_text', type=str, 
                        choices=ALLOWED_MODELS,
-                       default='azure/gpt-4o',
+                       default=Config.DEFAULT_EVALUATION_TEXT_MODEL,
                        help='Select the AI model to use for text evaluation')
     parser.add_argument('--model_video', type=str,
                        choices=['gemini/gemini-1.5-pro-002',
                                 'gemini/gemini-2.5-flash-exp',
                                 'gemini/gemini-2.0-pro-exp-02-05',
                                 'gemini/gemini-2.5-pro'],
-                       default='gemini/gemini-2.5-pro',
+                       default=Config.DEFAULT_EVALUATION_VIDEO_MODEL,
                        help='Select the AI model to use for video evaluation')
     parser.add_argument('--model_image', type=str,
                        choices=ALLOWED_MODELS,
-                       default='azure/gpt-4o',
+                       default=Config.DEFAULT_EVALUATION_IMAGE_MODEL,
                        help='Select the AI model to use for image evaluation')
     parser.add_argument('--eval_type', type=str, choices=['text', 'video', 'image', 'all'], default='all', help='Type of evaluation to perform')
     parser.add_argument('--file_path', type=str, help='Path to a file or a theorem folder', required=True)
