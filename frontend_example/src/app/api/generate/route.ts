@@ -124,11 +124,17 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    // Fire GitHub Actions workflow asynchronously (do not await to avoid blocking response)
-    triggerGithubWorkflow((videoDocument as any).$id).catch(err => {
+    // Trigger GitHub Actions workflow *synchronously* so the serverless function
+    // doesn't exit before the request completes, which caused intermittent
+    // failures in production. We still swallow errors so the client receives a
+    // successful response as long as the DB document was created.
+    try {
+      await triggerGithubWorkflow((videoDocument as any).$id);
+    } catch (err) {
       console.error('❌ GitHub workflow trigger ultimately failed after all retries:', err);
-      // Don't throw - just log the error so document creation succeeds
-    });
+      // Proceed without throwing – we don't want to block the response if the
+      // GitHub API is temporarily unavailable.
+    }
 
     return NextResponse.json({
       success: true,
