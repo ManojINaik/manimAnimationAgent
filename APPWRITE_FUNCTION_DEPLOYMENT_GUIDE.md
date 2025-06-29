@@ -80,8 +80,8 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 mem0_api_key=<your_mem0_key>
 
 # Default Models (optional)
-DEFAULT_PLANNER_MODEL=gemini/gemini-1.5-flash-002
-DEFAULT_SCENE_MODEL=gemini/gemini-1.5-flash-002
+DEFAULT_PLANNER_MODEL=gemini/gemini-2.5-pro
+DEFAULT_SCENE_MODEL=gemini/gemini-2.5-pro
 ```
 
 ### Getting API Keys:

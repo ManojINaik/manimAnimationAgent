@@ -16,7 +16,7 @@ class GeminiWrapper:
     
     def __init__(
         self,
-        model_name: str = "gemini-1.5-pro-002",
+        model_name: str = "gemini-2.5-pro",
         temperature: float = 0.7,
         print_cost: bool = False,
         verbose: bool = False,

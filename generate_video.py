@@ -1053,7 +1053,7 @@ class VideoGenerator:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate Manim videos using AI')
     parser.add_argument('--model', type=str, choices=allowed_models,
-                      default='gemini/gemini-1.5-pro-002', help='Select the AI model to use')
+                      default='gemini/gemini-2.5-pro', help='Select the AI model to use')
     parser.add_argument('--topic', type=str, default=None, help='Topic to generate videos for')
     parser.add_argument('--context', type=str, default=None, help='Context of the topic')
     parser.add_argument('--helper_model', type=str, choices=allowed_models,
