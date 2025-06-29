@@ -83,15 +83,17 @@ class GitHubVideoRenderer:
             # Update status to rendering
             await self.update_video_status(video_id, "rendering")
             
-            # Initialize models
-            planner_model = LiteLLMWrapper(
-                #model_name=os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-flash')
-                model_name=os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-pro')
-            )
-            scene_model = LiteLLMWrapper(
-                #model_name=os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-flash')
-                model_name=os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-pro')
-            )
+            # Determine which LLM models to use for planning and scene generation
+            planner_model_name = os.getenv('DEFAULT_PLANNER_MODEL', 'gemini/gemini-2.5-pro')
+            scene_model_name = os.getenv('DEFAULT_SCENE_MODEL', 'gemini/gemini-2.5-pro')
+
+            # Log the chosen models so they appear in the GitHub Actions output
+            print("🧠 Using planner model:", planner_model_name)
+            print("🎬 Using scene model:", scene_model_name)
+
+            # Initialize the LLM wrappers
+            planner_model = LiteLLMWrapper(model_name=planner_model_name)
+            scene_model = LiteLLMWrapper(model_name=scene_model_name)
             
             # Initialize video generator
             generator = VideoGenerator(
