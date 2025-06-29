@@ -43,6 +43,66 @@ The system follows a sophisticated pipeline that transforms user input into prof
 
 ## 🔄 Complete Workflow: From Input to Video
 
+## 🏗️ High-Level Architecture
+```mermaid
+flowchart TD
+    A[👤 User Input via Frontend] --> B[📝 Next.js Frontend UI]
+    B --> C[🌐 API Route /api/generate]
+    C --> D[🗄️ Appwrite Database Record]
+    D --> E[🚀 GitHub Actions Trigger]
+    
+    E --> F[⚙️ GitHub Workflow Runner]
+    F --> G[🐳 Docker Container<br/>Pre-installed Dependencies]
+    G --> H[📋 Check Video Queue]
+    
+    H --> I[🎯 Video Generation Pipeline]
+    I --> J[📖 Video Planner]
+    I --> K[💻 Code Generator]  
+    I --> L[🎬 Video Renderer]
+    
+    J --> J1[🔍 Scene Outline Generation]
+    J1 --> J2[📚 Scene Implementation Plans]
+    J2 --> J3[🎨 Vision Storyboards]
+    J3 --> J4[🔧 Technical Implementation]
+    J4 --> J5[🎵 Animation Narration]
+    
+    K --> K1[🧠 AI Code Generation<br/>Gemini 2.5 Flash]
+    K1 --> K2[❌ Error Detection]
+    K2 --> K3[🔍 Tavily Search<br/>Error Solutions]
+    K3 --> K4[💾 MemoAI Learning<br/>Pattern Storage]
+    K4 --> K5[🛠️ Auto-fix Application]
+    
+    L --> L1[🎥 Manim Scene Rendering]
+    L1 --> L2[🔊 ElevenLabs Voice Generation]
+    L2 --> L3[🎞️ Video Combination]
+    
+    M[📚 RAG System] --> J
+    M --> K
+    N[🧠 Agent Memory<br/>Mem0.ai] --> K
+    O[🔍 Tavily Search] --> K
+    P[🗄️ Appwrite Storage] --> Q[📁 File Management]
+    
+    L3 --> R[☁️ Upload Final Video]
+    R --> S[✅ Update Status Complete]
+    S --> T[📺 User Access Video]
+    
+    U[⚠️ Error Handling] --> K2
+    U --> V[📊 Error Logging]
+    V --> N
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style I fill:#fff3e0
+    style J fill:#e8f5e8
+    style K fill:#fff8e1
+    style L fill:#fce4ec
+    style M fill:#f1f8e9
+    style N fill:#e3f2fd
+    style O fill:#f9fbe7
+    style P fill:#fef7ff
+```
+
+
 ### Phase 1: User Input & Queueing
 1. **User Interface**: User enters educational topic through Next.js frontend
 2. **API Processing**: `/api/generate` endpoint receives and validates request
