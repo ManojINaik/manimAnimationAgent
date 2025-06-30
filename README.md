@@ -45,6 +45,105 @@ The system follows a sophisticated pipeline that transforms user input into prof
 
 ## 🏗️ High-Level Architecture
 ```mermaid
+graph TD
+    %% =============================================
+    %% CI / AUTOMATION (The Trigger)
+    %% =============================================
+    subgraph "CI / Automation - GitHub"
+        Scheduler("(Scheduled Trigger)") --> Poller["Queue Poller\n(check_video_queue.py)"]
+        Poller -->|"Task Found"| VidGenPipeline["Video Generation Pipeline\n(github_video_renderer.py)"]
+    end
+
+    %% =============================================
+    %% USER-FACING LAYERS
+    %% =============================================
+    subgraph "User-Facing Layers"
+        direction LR
+        FE["User Interface\n(React / Tailwind)"] -->|"1. POST /api/generate"| API["FastAPI Controller"]
+        FE -->|"Polling: GET /api/status/{id}"| API
+    end
+
+    %% =============================================
+    %% STATE & STORAGE (The Central Hub)
+    %% =============================================
+    subgraph "State & Storage - Appwrite"
+        AppwriteDB[("Appwrite Database\n(Video & Scene Tasks)")]
+        AppwriteBuckets[("Appwrite Buckets\n(Storage)")]
+    end
+    
+    %% Connections to/from Appwrite
+    API -->|"2. Create Task"| AppwriteDB
+    API -->|"Read/Update Status"| AppwriteDB
+    Poller -->|"3. Polls for 'pending' tasks"| AppwriteDB
+    VidGenPipeline -->|"Updates status"| AppwriteDB
+    FinalVideo -->|"Upload Final Video"| AppwriteBuckets
+    Subtitles -->|"Upload Subtitles"| AppwriteBuckets
+    Snapshots -->|"Upload Snapshots"| AppwriteBuckets
+    ManimCode -->|"Upload Source"| AppwriteBuckets
+    AppwriteBuckets -->|"Load Final Video/Assets"| FE
+
+    %% =============================================
+    %% MAIN VIDEO GENERATION PIPELINE
+    %% =============================================
+    subgraph "VideoGenerator Pipeline"
+        VidGenPipeline --> Planner["VideoPlanner"]
+        Planner --> SceneOutline["Scene Outline"]
+        SceneOutline --> Impl["Scene Implementation"]
+        Impl --> CodeGen["CodeGenerator"]
+        CodeGen --> ManimCode["Manim .py code"]
+        
+        subgraph "Media Generation"
+            ManimCode --> Renderer["VideoRenderer"]
+            Renderer --> Manim["Manim CLI"]
+            Renderer --> TTS["TTS – ElevenLabs"]
+            Manim --> SceneMP4["Scene Video (mp4)"]
+            TTS -->|"Audio Track"| Manim
+        end
+        
+        SceneMP4 --> Combiner["Combine Scenes"]
+        Renderer -->|"Snapshots (PNG)"| Snapshots
+        Combiner --> FinalVideo["Final Video (mp4)"]
+        Combiner --> Subtitles["Subtitles (.srt)"]
+    end
+
+    %% =============================================
+    %% AI & KNOWLEDGE SERVICES
+    %% =============================================
+    subgraph "AI & Knowledge Services"
+        direction LR
+        subgraph "LLM Access"
+            LLM["LiteLLM Wrapper"] --> ExternalLLMs[("External LLMs\n(Gemini / GPT-4)")]
+        end
+        subgraph "Knowledge Retrieval"
+            RAG["RAGIntegration"] --> VectorStore[("Chroma DB")]
+            RAG --> Tavily["Tavily Web Search"]
+        end
+        subgraph "Agent Memory"
+            Mem0["AgentMemory\n(Mem0AI)"]
+        end
+    end
+    
+    %% Connections to AI Services
+    Planner --> LLM
+    Planner --> RAG
+    CodeGen --> LLM
+    CodeGen --> Tavily
+    CodeGen <--> Mem0
+
+    %% =============================================
+    %% SELF-CORRECTING ERROR LOOP
+    %% =============================================
+    subgraph "Self-Correcting Error Loop"
+        direction LR
+        ErrorHandler["Error Handler"]
+    end
+    
+    Manim -->|"Render Error"| ErrorHandler
+    ErrorHandler -->|"Fix with LLM + Tavily + Memory"| CodeGen
+    ErrorHandler -->|"Store Successful Fix"| Mem0
+
+```
+```mermaid
 flowchart TD
     A[👤 User Input via Frontend] --> B[📝 Next.js Frontend UI]
     B --> C[🌐 API Route /api/generate]
