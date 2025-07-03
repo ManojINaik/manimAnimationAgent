@@ -94,14 +94,14 @@ jobs:
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         ELEVENLABS_VOICE: "true"  # Enable ElevenLabs voice generation
         # AI Model Configuration - Centralized in GitHub Actions
-        DEFAULT_PLANNER_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_PLANNER_MODEL: "gemini-2.5-flash"
         DEFAULT_SCENE_MODEL: "gemini-2.5-flash-lite-preview-06-17" 
         DEFAULT_HELPER_MODEL: "gemini/gemini-2.5-pro"
         DEFAULT_EVALUATION_TEXT_MODEL: "azure/gpt-4o"
-        DEFAULT_EVALUATION_VIDEO_MODEL: "gemini/gemini-2.5-pro"
+        DEFAULT_EVALUATION_VIDEO_MODEL: "gemini-2.5-flash"
         DEFAULT_EVALUATION_IMAGE_MODEL: "azure/gpt-4o"
         DEFAULT_MODEL_TEMPERATURE: "0.7"
-        DEFAULT_MAX_RETRIES: "5"
+        DEFAULT_MAX_RETRIES: "10"
         DEFAULT_MAX_SCENE_CONCURRENCY: "4"
         # Feature toggles (centralized)
         USE_RAG: "${{ vars.USE_RAG || 'true' }}"
