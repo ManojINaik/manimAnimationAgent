@@ -71,6 +71,9 @@ class VideoGenerator:
         use_langfuse (bool): Whether to enable Langfuse logging
         trace_id (str, optional): Trace ID for logging
         max_scene_concurrency (int): Maximum number of scenes to process concurrently
+        use_memvid (bool, optional): Whether to use Memvid for error patterns and learning
+        memvid_video_file (str, optional): Path to Memvid video file
+        memvid_index_file (str, optional): Path to Memvid index file
 
     Attributes:
         output_dir (str): Directory for output files
@@ -89,18 +92,21 @@ class VideoGenerator:
                  scene_model=None,
                  helper_model=None,
                  output_dir="output",
-                 verbose=False,
-                 use_rag=False,
-                 use_context_learning=False,
+                 verbose=True,
+                 use_rag=None,
+                 use_context_learning=None,
                  context_learning_path="data/context_learning",
                  chroma_db_path="data/rag/chroma_db",
                  manim_docs_path="data/rag/manim_docs",
                  embedding_model="gemini/text-embedding-004",
-                 use_visual_fix_code=False,
+                 use_visual_fix_code=None,
                  use_langfuse=True,
                  trace_id=None,
                  max_scene_concurrency: int = 5,
-                 use_appwrite=True):
+                 use_appwrite=True,
+                 use_memvid=None,
+                 memvid_video_file="manim_memory.mp4",
+                 memvid_index_file="manim_memory_index.json"):
         self.output_dir = output_dir
         self.verbose = verbose
         self.use_visual_fix_code = use_visual_fix_code
@@ -127,15 +133,32 @@ class VideoGenerator:
         # Initialize the planner with the model instance, not a string
         self.planner_model = planner_model
 
+        # Resolve feature toggles – fall back to central config when not explicitly provided
+        self.use_rag = Config.USE_RAG if use_rag is None else use_rag
+        self.use_context_learning = Config.USE_CONTEXT_LEARNING if use_context_learning is None else use_context_learning
+        self.use_visual_fix_code = Config.USE_VISUAL_FIX_CODE if use_visual_fix_code is None else use_visual_fix_code
+
+        # Resolve memvid configuration from environment variable or parameter
+        if use_memvid is None:
+            # Read from environment variable, default to True
+            self.use_memvid = os.getenv('USE_MEMVID', 'true').lower() in ('true', '1', 'yes', 'on')
+        else:
+            self.use_memvid = use_memvid
+            
+        print(f"🎬 Memvid video-based RAG: {'Enabled' if self.use_memvid else 'Disabled'}")
+        if self.use_memvid:
+            print(f"📹 Memvid video file: {memvid_video_file}")
+            print(f"📊 Memvid index file: {memvid_index_file}")
+
         # Initialize separate modules
         self.planner = VideoPlanner(
             planner_model=self.planner_model, # Pass the initialized model
             helper_model=helper_model,
             output_dir=output_dir,
             print_response=verbose,
-            use_context_learning=use_context_learning,
+            use_context_learning=self.use_context_learning,
             context_learning_path=context_learning_path,
-            use_rag=use_rag,
+            use_rag=self.use_rag,
             session_id=self.session_id,
             chroma_db_path=chroma_db_path,
             manim_docs_path=manim_docs_path,
@@ -147,21 +170,24 @@ class VideoGenerator:
             helper_model=helper_model if helper_model is not None else self.planner_model, # Pass the model
             output_dir=output_dir,
             print_response=verbose,
-            use_rag=use_rag,
-            use_context_learning=use_context_learning,
+            use_rag=self.use_rag,
+            use_context_learning=self.use_context_learning,
             context_learning_path=context_learning_path,
             chroma_db_path=chroma_db_path,
             manim_docs_path=manim_docs_path,
             embedding_model=embedding_model,
-            use_visual_fix_code=use_visual_fix_code,
+            use_visual_fix_code=self.use_visual_fix_code,
             use_langfuse=use_langfuse,
             session_id=self.session_id,
-            use_agent_memory=True  # Enable agent memory for error learning
+            use_agent_memory=True,  # Enable agent memory for error learning
+            use_memvid=self.use_memvid,
+            memvid_video_file=memvid_video_file,
+            memvid_index_file=memvid_index_file
         )
         self.video_renderer = VideoRenderer(
             output_dir=output_dir,
             print_response=verbose,
-            use_visual_fix_code=use_visual_fix_code
+            use_visual_fix_code=self.use_visual_fix_code
         )
 
     def _load_or_create_session_id(self) -> str:
