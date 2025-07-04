@@ -189,7 +189,6 @@ media/
 logs/
 temp/
 cache/
-*.mp4
 *.mp3
 *.wav
 *.avi
@@ -270,4 +269,5 @@ frontend_example/.next
 frontend_example/dist
 
 echoverse/
-echoverse/bolthackathon2
+echoverse/bolthackathon2.venv-py310/
+!manim_memory.mp4
