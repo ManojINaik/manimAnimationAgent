@@ -52,10 +52,19 @@ except ImportError:
     search_error_solution = None
     HAS_TAVILY = False
 
+# Import Memvid integration for video-based RAG
+try:
+    from src.rag.memvid_integration import MemvidRAGIntegration, get_memvid_integration
+    HAS_MEMVID = True
+except ImportError:
+    MemvidRAGIntegration = None
+    get_memvid_integration = None
+    HAS_MEMVID = False
+
 class CodeGenerator:
     """A class for generating and managing Manim code."""
 
-    def __init__(self, scene_model, helper_model, output_dir="output", print_response=False, use_rag=False, use_context_learning=False, context_learning_path="data/context_learning", chroma_db_path="rag/chroma_db", manim_docs_path="rag/manim_docs", embedding_model="gemini/text-embedding-004", use_visual_fix_code=False, use_langfuse=True, session_id=None, use_agent_memory=True):
+    def __init__(self, scene_model, helper_model, output_dir="output", print_response=False, use_rag=False, use_context_learning=False, context_learning_path="data/context_learning", chroma_db_path="rag/chroma_db", manim_docs_path="rag/manim_docs", embedding_model="gemini/text-embedding-004", use_visual_fix_code=False, use_langfuse=True, session_id=None, use_agent_memory=True, use_memvid=True, memvid_video_file="manim_memory.mp4", memvid_index_file="manim_memory_index.json"):
         """Initialize the CodeGenerator.
 
         Args:
@@ -73,6 +82,9 @@ class CodeGenerator:
             use_langfuse (bool, optional): Whether to use Langfuse logging. Defaults to True.
             session_id (str, optional): Session identifier. Defaults to None.
             use_agent_memory (bool, optional): Whether to use agent memory for learning. Defaults to True.
+            use_memvid (bool, optional): Whether to use Memvid video-based RAG. Defaults to True.
+            memvid_video_file (str, optional): Path to memvid video file. Defaults to "manim_memory.mp4".
+            memvid_index_file (str, optional): Path to memvid index file. Defaults to "manim_memory_index.json".
         """
         self.scene_model = scene_model
         self.helper_model = helper_model
@@ -87,6 +99,11 @@ class CodeGenerator:
         self.use_visual_fix_code = use_visual_fix_code
         self.banned_reasonings = get_banned_reasonings()
         self.session_id = session_id # Use session_id passed from VideoGenerator
+
+        # Store memvid configuration
+        self.use_memvid = use_memvid
+        self.memvid_video_file = memvid_video_file
+        self.memvid_index_file = memvid_index_file
 
         # Initialize Agent Memory for self-improving capabilities
         self.use_agent_memory = use_agent_memory and HAS_AGENT_MEMORY
@@ -114,6 +131,31 @@ class CodeGenerator:
                 self.use_rag = False  # Disable RAG functionality
         else:
             self.vector_store = None
+
+        # Initialize Memvid video-based RAG system
+        if self.use_memvid and HAS_MEMVID:
+            try:
+                self.memvid_rag = get_memvid_integration(
+                    video_file=self.memvid_video_file,
+                    index_file=self.memvid_index_file,
+                    session_id=self.session_id,
+                    use_langfuse=use_langfuse
+                )
+                if self.memvid_rag and self.memvid_rag.is_available():
+                    print("✅ Memvid video-based RAG initialized successfully")
+                else:
+                    print("⚠️ Memvid RAG initialization failed - memory files not found")
+                    self.memvid_rag = None
+                    self.use_memvid = False
+            except Exception as e:
+                print(f"⚠️ Memvid RAG initialization failed: {e}")
+                print("🔄 Continuing without Memvid RAG")
+                self.memvid_rag = None
+                self.use_memvid = False
+        else:
+            self.memvid_rag = None
+            if self.use_memvid and not HAS_MEMVID:
+                print("Warning: Memvid RAG requested but not available. Install memvid for video-based documentation retrieval.")
 
     def _load_context_examples(self) -> str:
         """Load all context learning examples from the specified directory.

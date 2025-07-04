@@ -107,6 +107,7 @@ jobs:
         USE_RAG: "${{ vars.USE_RAG || 'true' }}"
         USE_CONTEXT_LEARNING: "${{ vars.USE_CONTEXT_LEARNING || 'true' }}"
         USE_VISUAL_FIX_CODE: "${{ vars.USE_VISUAL_FIX_CODE || 'false' }}"
+        USE_MEMVID: "${{ vars.USE_MEMVID || 'true' }}"  # Enable Memvid video-based RAG by default
         MODEL_VERBOSE: "${{ vars.MODEL_VERBOSE || 'true' }}"
         MODEL_PRINT_COST: "${{ vars.MODEL_PRINT_COST || 'true' }}"
         USE_LANGFUSE: "${{ vars.USE_LANGFUSE || 'false' }}"
@@ -173,6 +174,7 @@ jobs:
         USE_RAG: "${{ vars.USE_RAG || 'false' }}"
         USE_CONTEXT_LEARNING: "${{ vars.USE_CONTEXT_LEARNING || 'true' }}"
         USE_VISUAL_FIX_CODE: "${{ vars.USE_VISUAL_FIX_CODE || 'false' }}"
+        USE_MEMVID: "${{ vars.USE_MEMVID || 'true' }}"
         MODEL_VERBOSE: "${{ vars.MODEL_VERBOSE || 'true' }}"
         MODEL_PRINT_COST: "${{ vars.MODEL_PRINT_COST || 'true' }}"
         USE_LANGFUSE: "${{ vars.USE_LANGFUSE || 'false' }}"
@@ -230,6 +232,7 @@ jobs:
         USE_RAG: "${{ vars.USE_RAG || 'false' }}"
         USE_CONTEXT_LEARNING: "${{ vars.USE_CONTEXT_LEARNING || 'true' }}"
         USE_VISUAL_FIX_CODE: "${{ vars.USE_VISUAL_FIX_CODE || 'false' }}"
+        USE_MEMVID: "${{ vars.USE_MEMVID || 'true' }}"
         MODEL_VERBOSE: "${{ vars.MODEL_VERBOSE || 'true' }}"
         MODEL_PRINT_COST: "${{ vars.MODEL_PRINT_COST || 'true' }}"
         USE_LANGFUSE: "${{ vars.USE_LANGFUSE || 'false' }}"

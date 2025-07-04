@@ -116,13 +116,18 @@ RUN python3.11 -c "import manim; print('✅ Manim installed successfully')" && \
 # Fix ImageMagick policy for PDF handling (common Manim requirement)
 RUN sed -i 's/policy domain="coder" rights="none" pattern="PDF"/policy domain="coder" rights="read|write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
 
+# Copy Memvid video memory files for documentation RAG system
+COPY manim_memory.mp4 /workspace/manim_memory.mp4
+COPY manim_memory_index.json /workspace/manim_memory_index.json
+COPY manim_memory_index.faiss /workspace/manim_memory_index.faiss
+
 # Set environment variables for optimal performance
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV MANIMCE_USE_PROGRESS_BARS=true
 ENV PATH="/home/runner/.local/bin:$PATH"
 
-# Change ownership to runner user
+# Change ownership to runner user (including memvid memory files)
 RUN chown -R runner:runner /workspace
 
 # Switch to non-root user
