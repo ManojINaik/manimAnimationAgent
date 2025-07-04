@@ -1,4 +1,5 @@
 name: Video Renderer
+# Updated 2025-01-04: Force rebuild for memvid dependencies
 on:
   # Trigger manually or via webhook
   workflow_dispatch:

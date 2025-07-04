@@ -1,5 +1,6 @@
 # Multi-stage Docker build for optimized Manim Animation Agent
 # This image pre-installs all system dependencies to eliminate the 2-minute apt-get installation in GitHub Actions
+# UPDATED 2025-01-04: Added memvid video-based RAG system support
 
 FROM ubuntu:22.04 as base
 
@@ -111,6 +112,7 @@ RUN python3.11 -c "import manim; print('✅ Manim installed successfully')" && \
     python3.11 -c "import appwrite; print('✅ Appwrite SDK installed successfully')" && \
     python3.11 -c "import numpy, scipy; print('✅ Scientific libraries installed successfully')" && \
     python3.11 -c "import openai, google.generativeai; print('✅ AI libraries installed successfully')" && \
+    python3.11 -c "import memvid; print('✅ Memvid video-based RAG installed successfully')" && \
     echo "✅ All core dependencies verified during Docker build"
 
 # Fix ImageMagick policy for PDF handling (common Manim requirement)
@@ -141,7 +143,7 @@ RUN mkdir -p /workspace/{output,media,temp_audio,api_outputs}
 
 # Health check to ensure Python and key dependencies work
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python3.11 -c "import manim, numpy, cairo, cv2; print('All dependencies working')" || exit 1
+    CMD python3.11 -c "import manim, numpy, cairo, cv2, memvid; print('All dependencies working')" || exit 1
 
 # Default command
 CMD ["/bin/bash"]
