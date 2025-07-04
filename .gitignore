@@ -271,3 +271,6 @@ frontend_example/dist
 echoverse/
 echoverse/bolthackathon2.venv-py310/
 !manim_memory.mp4
+
+.venv-py310
+.venv-py310/*
