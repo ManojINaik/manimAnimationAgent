@@ -9,8 +9,8 @@ pydantic==2.8.2
 pydantic-core==2.20.1
 
 # Video/Animation/Graphics Libraries
-manim>=0.19.0    # Updated to match manim-dsa requirement
-manim-physics>=0.3.0,<0.5.0
+manim==0.18.1    # Pin to version compatible with manim-physics and numpy<2
+manim-physics==0.4.0  # Pin to version compatible with manim 0.18.x
 manim-chemistry
 manim-ml
 manim-dsa>=0.3.0  # Updated to latest version
@@ -18,7 +18,7 @@ manim-circuit
 manim-voiceover>=0.3.0,<0.4.0
 
 # Data Science and ML Libraries
-numpy>=1.24.0,<2.0.0       # Required by memvid
+numpy==1.26.4
 scipy>=1.10.0
 scikit-learn>=1.2.0
 pandas>=1.5.0
@@ -189,4 +189,5 @@ ffmpeg-python
 # - ElevenLabs (requires API keys + audio hardware)
 
 # Additional dependencies
-pyzbar>=0.1.9              # Needed for QR code decoding in memvid 
+pyzbar>=0.1.9              # Needed for QR code decoding in memvid
+huggingface-hub>=0.10.1,<0.23.0  # Ensure cached_download alias available 
