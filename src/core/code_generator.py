@@ -440,20 +440,27 @@ class CodeGenerator:
                     )
 
                 if memvid_queries:
-                    # Search memvid memory for relevant documentation
-                    memvid_results = self.memvid_rag.search_documents(
-                        queries=memvid_queries,
-                        top_k=3  # Get top 3 results per query
-                    )
+                    # Ensure memvid_queries is a list of plain strings (extract "query" field from dicts if needed)
+                    if isinstance(memvid_queries, list) and memvid_queries and isinstance(memvid_queries[0], dict):
+                        memvid_queries_strs = [q.get("query", "") for q in memvid_queries if isinstance(q, dict)]
+                    else:
+                        memvid_queries_strs = memvid_queries
 
-                    if memvid_results:
-                        # Format memvid results for LLM consumption
-                        memvid_context = self.memvid_rag.format_rag_context(memvid_results)
-                        
-                        if additional_context is None:
-                            additional_context = []
-                        additional_context.append(memvid_context)
-                        print(f"✅ Added {len(memvid_results)} results from memvid video memory")
+                    if memvid_queries_strs:
+                        # Search memvid memory for relevant documentation
+                        memvid_results = self.memvid_rag.search_documents(
+                            queries=memvid_queries_strs,
+                            top_k=3  # Get top 3 results per query
+                        )
+
+                        if memvid_results:
+                            # Format memvid results for LLM consumption
+                            memvid_context = self.memvid_rag.format_rag_context(memvid_results)
+                            
+                            if additional_context is None:
+                                additional_context = []
+                            additional_context.append(memvid_context)
+                            print(f"✅ Added {len(memvid_results)} results from memvid video memory")
 
             except Exception as e:
                 print(f"⚠️ Memvid RAG search failed: {e}")
@@ -633,17 +640,25 @@ class CodeGenerator:
                     )
 
                 if memvid_error_queries:
-                    # Search memvid memory for error-fixing documentation
-                    memvid_error_results = self.memvid_rag.search_documents(
-                        queries=memvid_error_queries,
-                        top_k=3  # Get top 3 results per query for error fixing
-                    )
+                    # Ensure memvid_error_queries is a list of plain strings
+                    if isinstance(memvid_error_queries, list) and memvid_error_queries and isinstance(memvid_error_queries[0], dict):
+                        memvid_error_queries_strs = [q.get("query", "") for q in memvid_error_queries if isinstance(q, dict)]
+                    else:
+                        memvid_error_queries_strs = memvid_error_queries
 
-                    if memvid_error_results:
-                        # Format memvid results for error fixing context
-                        memvid_error_context = self.memvid_rag.format_rag_context(memvid_error_results)
-                        context += "\n\n" + memvid_error_context
-                        print(f"✅ Added {len(memvid_error_results)} error-fixing results from memvid video memory")
+                    if memvid_error_queries_strs:
+                        # Search memvid memory for error-fixing documentation
+                        memvid_error_results = self.memvid_rag.search_documents(
+                            queries=memvid_error_queries_strs,
+                            top_k=3  # Get top 3 results per query for error fixing
+                        )
+
+                        if memvid_error_results:
+                            # Format memvid results for error fixing context
+                            memvid_error_context = self.memvid_rag.format_rag_context(memvid_error_results)
+                            context += "\n\n" + memvid_error_context
+                            print(f"✅ Added {len(memvid_error_results)} error-fixing results from memvid video memory")
+                        # Skip if conversion results empty list
 
             except Exception as e:
                 print(f"⚠️ Memvid RAG error fixing search failed: {e}")
