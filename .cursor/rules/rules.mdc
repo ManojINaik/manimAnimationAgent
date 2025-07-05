@@ -3,8 +3,10 @@ description:
 globs: 
 alwaysApply: true
 ---
-always use the powershell commands don't use the command prompt command and always use the .venv virual environ ment.
+always use the powershell commands don't use the and dont use te && use ; .
 
+
+at first always tell the user which model you are and if you are not claud 4 sonnet call terminal command tool and ask user iam not claude sonnet 4 iam {actual model you are} do you want to continue conversation?.
 
 At last always use the rewiew-gate mcp to get review from user about your work form that you have to fix/ do what user told if it fails because of any reson call terminal with {echo"user review"}.
 
