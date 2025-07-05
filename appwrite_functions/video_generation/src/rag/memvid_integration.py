@@ -94,13 +94,33 @@ class MemvidRAGIntegration:
                 results = self.retriever.search(query, top_k=top_k)
                 
                 # Format results to match expected interface
-                for chunk, score in results:
-                    all_results.append({
-                        "content": chunk,
-                        "score": float(score),
-                        "query": query,
-                        "source": "memvid_memory"
-                    })
+                # Handle different return formats from memvid
+                for result in results:
+                    try:
+                        # Try to unpack as (chunk, score) first
+                        if isinstance(result, (tuple, list)) and len(result) == 2:
+                            chunk, score = result
+                        elif isinstance(result, (tuple, list)) and len(result) > 2:
+                            # If more than 2 values, take first two as chunk and score
+                            chunk, score = result[0], result[1]
+                        elif isinstance(result, dict):
+                            # If result is a dict, extract content and score
+                            chunk = result.get('content', result.get('text', str(result)))
+                            score = result.get('score', 0.0)
+                        else:
+                            # Fallback: treat as string with default score
+                            chunk = str(result)
+                            score = 0.0
+                            
+                        all_results.append({
+                            "content": chunk,
+                            "score": float(score),
+                            "query": query,
+                            "source": "memvid_memory"
+                        })
+                    except Exception as unpack_error:
+                        logger.error(f"Error unpacking result {result}: {unpack_error}")
+                        continue
                     
             except Exception as e:
                 logger.error(f"Error searching for query '{query}': {e}")
@@ -137,13 +157,32 @@ class MemvidRAGIntegration:
                 context_parts = []
                 current_tokens = 0
                 
-                for chunk, score in results:
-                    # Rough token estimation (4 chars ≈ 1 token)
-                    estimated_tokens = len(chunk) // 4
-                    if current_tokens + estimated_tokens > max_tokens:
-                        break
-                    context_parts.append(f"[Score: {score:.3f}] {chunk}")
-                    current_tokens += estimated_tokens
+                for result in results:
+                    try:
+                        # Handle different return formats from memvid
+                        if isinstance(result, (tuple, list)) and len(result) == 2:
+                            chunk, score = result
+                        elif isinstance(result, (tuple, list)) and len(result) > 2:
+                            # If more than 2 values, take first two as chunk and score
+                            chunk, score = result[0], result[1]
+                        elif isinstance(result, dict):
+                            # If result is a dict, extract content and score
+                            chunk = result.get('content', result.get('text', str(result)))
+                            score = result.get('score', 0.0)
+                        else:
+                            # Fallback: treat as string with default score
+                            chunk = str(result)
+                            score = 0.0
+                            
+                        # Rough token estimation (4 chars ≈ 1 token)
+                        estimated_tokens = len(chunk) // 4
+                        if current_tokens + estimated_tokens > max_tokens:
+                            break
+                        context_parts.append(f"[Score: {score:.3f}] {chunk}")
+                        current_tokens += estimated_tokens
+                    except Exception as unpack_error:
+                        logger.error(f"Error unpacking result {result} in get_context: {unpack_error}")
+                        continue
                     
                 context = "\n\n".join(context_parts)
                 
