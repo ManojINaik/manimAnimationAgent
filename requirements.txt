@@ -67,11 +67,11 @@ protobuf>=5.28.3
 
 # Video processing dependencies
 manim==0.18.1
-manim-physics
-manim-chemistry
-manim-ml
-manim-dsa
-manim-circuit
+manim-physics==0.4.0
+# manim-chemistry
+# manim-ml
+# manim-dsa
+# manim-circuit
 pillow>=8.3.0
 moviepy>=2.0.0
 pysrt>=1.1.0
@@ -313,7 +313,7 @@ uritemplate>=4.1.1
 wrapt>=1.17.2
 
 # Manim animation dependencies (required for local development)
-manim>=0.18.0
+# manim>=0.18.0  # duplicate, replaced by pinned version earlier
 pylatexenc>=2.10
 manim-voiceover>=0.3.7
 
