@@ -102,6 +102,9 @@ WORKDIR /workspace
 # Copy requirements file into the image - CRITICAL for baking dependencies
 COPY requirements-github-actions.txt /app/requirements-github-actions.txt
 
+# Set TRANSFORMERS_NO_TF env variable before pip install
+ENV TRANSFORMERS_NO_TF=1  # Disable TensorFlow integration in transformers
+
 # Install dependencies during the image build process - NO CACHE to ensure clean install
 # This eliminates all pip install time from GitHub Actions workflows
 RUN pip install --no-cache-dir --upgrade pip && \

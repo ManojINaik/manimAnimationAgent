@@ -30,8 +30,8 @@ plotly>=5.10.0
 torch>=2.0.0
 torchvision>=0.15.0
 torchaudio>=2.0.0
-tensorflow>=2.12.0
-keras>=2.12.0,<3.0.0  # Pin <3 due to transformers incompatibility with Keras 3
+tensorflow==2.15.1  # Python 3.11 compatible CPU build
+keras==2.15.0  # Matching version with TensorFlow to avoid import mismatches
 
 # Mathematical Libraries
 sympy>=1.12
@@ -72,8 +72,8 @@ langchain>=0.1.0,<0.3.0
 langchain-core>=0.1.0,<0.3.0
 langchain-community>=0.0.20,<0.3.0
 langfuse>=2.0.0,<3.0.0    # Avoid packaging<25.0 conflict
-transformers>=4.30.0
-sentence-transformers>=2.2.0
+transformers>=4.33.0,<4.40.0   # Pin to avoid TF import
+sentence-transformers>=2.2.2,<2.3.0
 tiktoken>=0.5.0
 mem0ai>=0.1.0
 
